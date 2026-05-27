@@ -1,0 +1,18 @@
+{% liquid
+  if pages.mozarf != blank
+    assign moz_url = pages.mozarf.url
+  else
+    assign moz_url = '/pages/mozarf'
+  endif
+  if pages.contact != blank
+    assign con_url = pages.contact.url
+  else
+    assign con_url = '/pages/contact'
+  endif
+%}
+<li>
+  <a href="{{ moz_url }}" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">MOZARF</a>
+</li>
+<li>
+  <a href="{{ con_url }}" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">CONTACT</a>
+</li>

@@ -1,0 +1,32 @@
+{% comment %}
+  Un morceau pour data-mozarf-album : sort un objet JSON (sans accolades externes).
+  Metaobject Shopify : track.nom_champ.value (voir shopify.dev metaobject).
+  Repli : track.fields.nom_champ.value (anciennes variantes).
+{% endcomment %}
+{% liquid
+  assign t_title = track.titre.value | default: track.title.value | default: track.fields.titre.value | default: track.fields.title.value | default: track.fields.nom.value | default: track.titre | default: track.title
+
+  assign raw_file = track.src.value | default: track.audio.value | default: track.fichier.value | default: track.preview.value | default: track.file.value | default: track.fields.src.value | default: track.fields.audio.value | default: track.fields.fichier.value | default: track.fields.preview.value | default: track.fields.file.value | default: track.src | default: track.audio
+
+  assign raw_link = track.product_url.value | default: track.url.value | default: track.lien.value | default: track.fields.product_url.value | default: track.fields.url.value | default: track.fields.lien.value | default: track.product_url | default: track.url
+
+  assign t_src = ''
+  if raw_file.url != blank
+    assign t_src = raw_file.url
+  elsif raw_file != blank
+    assign t_src = raw_file | file_url
+    if t_src == blank
+      assign t_src = raw_file
+    endif
+  endif
+
+  assign t_url = ''
+  if raw_link != blank
+    if raw_link.url != blank
+      assign t_url = raw_link.url
+    else
+      assign t_url = raw_link
+    endif
+  endif
+%}
+{"title":{{ t_title | json }},"src":{{ t_src | json }},"productUrl":{{ t_url | json }},"previewOnly":false}

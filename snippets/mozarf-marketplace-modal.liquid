@@ -1,0 +1,70 @@
+{%- comment -%}
+  Modale lecteur + liste de titres (un par section [data-mozarf-marketplace]).
+  Variables : modal_suffix, tracklist_heading, empty_tracks_hint, preview_legal_hint
+  inline_mode : true = panneau fixe type page album (pas d’overlay plein écran)
+{%- endcomment -%}
+{%- liquid
+  if inline_mode
+    assign mozarf_modal_class = 'mozarf-mp-modal mozarf-mp-modal--inline is-open'
+  else
+    assign mozarf_modal_class = 'mozarf-mp-modal'
+  endif
+-%}
+<div
+  class="{{ mozarf_modal_class }}"
+  role="dialog"
+  aria-modal="{% if inline_mode %}false{% else %}true{% endif %}"
+  aria-labelledby="mozarf-mp-modal-title-{{ modal_suffix }}"
+>
+  <div class="mozarf-mp-modal__backdrop" tabindex="-1" {% if inline_mode %}hidden{% endif %}></div>
+  <div class="mozarf-mp-modal__panel">
+    <div class="mozarf-mp-buy-gate" hidden aria-live="assertive">
+      <div class="mozarf-mp-buy-gate__inner">
+        <svg class="mozarf-mp-buy-gate__icon" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <p class="mozarf-mp-buy-gate__label">PRÉCOUTE TERMINÉE</p>
+        <p class="mozarf-mp-buy-gate__sub">Achète l'album pour accéder aux fichiers complets et à la licence</p>
+        <a href="#" class="mozarf-mp-buy-gate__cta mozarf-mp-btn mozarf-mp-btn--primary" target="_blank" rel="noopener">ACHETER L'ALBUM</a>
+        <button type="button" class="mozarf-mp-buy-gate__replay">← Rejouer depuis le début</button>
+      </div>
+    </div>
+    <button type="button" class="mozarf-mp-modal__close" aria-label="Close" {% if inline_mode %}hidden{% endif %}>
+      ×
+    </button>
+    <div class="mozarf-mp-modal__art">
+      <img src="" alt="" width="800" height="800" loading="lazy">
+    </div>
+    <div class="mozarf-mp-modal__main">
+      <h2 class="mozarf-mp-modal__h" id="mozarf-mp-modal-title-{{ modal_suffix }}"></h2>
+
+      <div class="mozarf-mp-player">
+        <button type="button" class="mozarf-mp-player__btn mozarf-mp-player__main-toggle" aria-label="Play">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+        <div
+          class="mozarf-mp-player__bar"
+          role="progressbar"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+        >
+          <div class="mozarf-mp-player__bar-fill"></div>
+        </div>
+        <span class="mozarf-mp-player__time">0:00 / 0:00</span>
+      </div>
+      <audio class="mozarf-mp-modal__audio" preload="metadata" playsinline></audio>
+      <p class="mozarf-mp-modal__hint mozarf-mp-modal__hint--tracks">
+        {{ empty_tracks_hint | escape }}
+      </p>
+
+      <div class="mozarf-mp-tracks">
+        <div class="mozarf-mp-tracks__head">{{ tracklist_heading | escape }}</div>
+        <div class="mozarf-mp-modal__tracklist"></div>
+      </div>
+
+      <div class="mozarf-mp-modal__full"></div>
+      <p class="mozarf-mp-modal__hint" style="margin-top: 0.5rem;">
+        {{ preview_legal_hint | escape }}
+      </p>
+    </div>
+  </div>
+</div>

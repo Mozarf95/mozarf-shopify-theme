@@ -1,0 +1,58 @@
+{% comment %}
+  Métaobjet piste → JSON marketplace / lecteur (titres + URL audio).
+  Paramètre : mo (métaobjet ou entrée avec .fields)
+{% endcomment %}
+{% liquid
+  assign tr_title = ''
+  assign pv = ''
+  assign av = ''
+
+  if mo.fields != blank
+    assign tr_title = mo.fields.title.value | default: mo.fields.titre.value | default: mo.fields.nom.value | default: mo.fields.track_name.value | default: mo.fields.name.value
+    assign pv = mo.fields.preview_url.value | default: mo.fields.preview.value
+    assign av = mo.fields.audio_url.value | default: mo.fields.audio.value | default: mo.fields.src.value | default: mo.fields.fichier.value | default: mo.fields.file.value
+    if pv == blank
+      assign pv = mo.fields.preview_mp3.value | default: mo.fields.mp3.value
+    endif
+    if av == blank
+      assign av = mo.fields.preview_mp3.value | default: mo.fields.mp3.value
+    endif
+  else
+    assign tr_title = mo.titre.value | default: mo.title.value | default: mo.titre | default: mo.title
+    assign raw_file = mo.src.value | default: mo.audio.value | default: mo.fichier.value | default: mo.preview.value | default: mo.file.value | default: mo.src | default: mo.audio
+    if pv == blank
+      assign pv = raw_file
+    endif
+    if av == blank
+      assign av = raw_file
+    endif
+  endif
+
+  if tr_title == blank
+    assign tr_title = mo.display_name | default: ''
+  endif
+
+  assign preview_s = ''
+  if pv != blank
+    if pv.url != blank
+      assign preview_s = pv.url
+    else
+      assign preview_s = pv | file_url
+      if preview_s == blank
+        assign preview_s = pv
+      endif
+    endif
+  endif
+
+  if preview_s == blank and av != blank
+    if av.url != blank
+      assign preview_s = av.url
+    else
+      assign preview_s = av | file_url
+      if preview_s == blank
+        assign preview_s = av
+      endif
+    endif
+  endif
+%}
+{"title":{{ tr_title | json }},"preview_url":{{ preview_s | json }},"audio_url":{{ preview_s | json }},"purchase":{}}

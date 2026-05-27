@@ -1,0 +1,26 @@
+{
+  "sections": {
+    "main": {
+      "type": "mozarf-marketplace-albums",
+      "settings": {
+        "products_per_page": 24,
+        "preview_seconds": 30,
+        "show_tag_filter_bar": true,
+        "show_filters": true,
+        "enable_filtering": true,
+        "enable_sorting": true,
+        "filter_type": "horizontal",
+        "beatstars_collections_url": "https://www.beatstars.com/explore-collections",
+        "beatstars_link_label": "BeatStars",
+        "tracklist_heading": "Titres",
+        "empty_tracks_hint": "Ajoutez custom.mozarf_album_data (JSON) sur chaque produit album.",
+        "preview_legal_hint": "Aperçu limité. Achat pour téléchargement et licence.",
+        "empty_collection_hint": "Aucun album dans cette collection.",
+        "open_album_page_label": "Voir l'album",
+        "show_preview_button": true,
+        "preview_button_label": "▶ Play"
+      }
+    }
+  },
+  "order": ["main"]
+}

@@ -1,0 +1,26 @@
+{% comment %}
+  Liens fixes MOZARF + CONTACT (pages /pages/mozarf et /pages/contact).
+  À ajouter dans l’admin : Pages avec handles exacts « mozarf » et « contact ».
+{% endcomment %}
+{% liquid
+  if pages.mozarf != blank
+    assign moz_url = pages.mozarf.url
+  else
+    assign moz_url = '/pages/mozarf'
+  endif
+  if pages.contact != blank
+    assign con_url = pages.contact.url
+  else
+    assign con_url = '/pages/contact'
+  endif
+%}
+<li class="0 text-menu top-level-link dt-sc-child mozarf-nav-extra">
+  <a href="{{ moz_url }}" class="dt-sc-nav-link dropdown">
+    <span>MOZARF</span>
+  </a>
+</li>
+<li class="0 text-menu top-level-link dt-sc-child mozarf-nav-extra">
+  <a href="{{ con_url }}" class="dt-sc-nav-link dropdown">
+    <span>CONTACT</span>
+  </a>
+</li>

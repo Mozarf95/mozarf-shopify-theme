@@ -1,0 +1,208 @@
+<div class="album-grid" id="album-grid">
+  {% for product in collection.products %}
+    {% assign badge = 'ALBUM' %}
+    {% if product.tags contains 'single' %}
+      {% assign badge = 'SINGLE' %}
+    {% endif %}
+
+    {% assign audio_url = product.metafields.custom.audio_preview.value %}
+    {% assign is_active = false %}
+
+    <div class="product-card {% if forloop.first %}product-card--active{% endif %}"
+         data-product-id="{{ product.id }}"
+         data-product-url="{{ product.url }}"
+         data-audio="{{ audio_url }}"
+         data-title="{{ product.title | escape }}"
+         data-vendor="{{ product.vendor | escape }}"
+         data-image="{{ product.featured_image | image_url: width: 400 }}">
+
+      <a href="{{ product.url }}" class="product-card__overlay-link" aria-label="{{ product.title | escape }} — voir la fiche"></a>
+
+      <div class="product-card__badge">{{ badge }}</div>
+
+      <div class="product-card__image-wrap">
+        {% if product.featured_image %}
+          <img src="{{ product.featured_image | image_url: width: 400 }}"
+               alt="{{ product.title | escape }}"
+               class="product-card__image"
+               loading="lazy">
+        {% else %}
+          <div class="product-card__image product-card__image--placeholder"></div>
+        {% endif %}
+
+        <button class="product-card__play-btn"
+                aria-label="Écouter {{ product.title | escape }}"
+                data-product-id="{{ product.id }}">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <polygon points="5,3 17,10 5,17" fill="#000"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="product-card__info">
+        <h3 class="product-card__title">{{ product.title | upcase }}</h3>
+        <p class="product-card__vendor">{{ product.vendor | upcase }}</p>
+
+        <div class="product-card__meta">
+          {% assign track_count = product.metafields.custom.track_count.value | default: 1 %}
+          <span class="meta-item">{{ track_count }} TITRES · ACHAT À L'UNITÉ</span>
+        </div>
+
+        <div class="product-card__tags">
+          {% for tag in product.tags %}
+            {% unless tag == 'single' or tag == 'album' %}
+              <span class="tag-pill tag-pill--{{ tag | downcase | replace: ' ', '-' }}">{{ tag | upcase }}</span>
+            {% endunless %}
+          {% endfor %}
+        </div>
+
+        <p class="product-card__price">
+          {{ product.price | money_without_trailing_zeros }} <span class="price-tax">TTC</span>
+        </p>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+<style>
+.album-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  padding: 0 32px 120px;
+  background: #000;
+}
+
+@media (max-width: 1200px) { .album-grid { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 900px)  { .album-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 600px)  { .album-grid { grid-template-columns: repeat(2, 1fr); } }
+
+.product-card {
+  background: #111;
+  border-radius: 6px;
+  padding: 12px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  position: relative;
+}
+/* Lien natif sur toute la carte (sous le bouton play) */
+.product-card__overlay-link {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: 6px;
+}
+.product-card__image-wrap,
+.product-card__badge,
+.product-card__info {
+  position: relative;
+  z-index: 0;
+}
+.product-card--active,
+.product-card:hover {
+  border-color: #c8f000;
+}
+.product-card__badge {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #888;
+  margin-bottom: 8px;
+}
+.product-card__image-wrap {
+  position: relative;
+  aspect-ratio: 1;
+  margin-bottom: 12px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #1a1a1a;
+}
+.product-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.product-card__image--placeholder {
+  width: 100%;
+  height: 100%;
+  background: #222;
+}
+.product-card__play-btn {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #c8f000;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s, background 0.15s;
+  z-index: 2;
+}
+.product-card__play-btn:hover { transform: scale(1.1); }
+.product-card__play-btn.is-playing {
+  background: #fff;
+}
+.product-card__title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 2px;
+  letter-spacing: 0.05em;
+  line-height: 1.3;
+}
+.product-card__vendor {
+  font-size: 9px;
+  color: #666;
+  margin: 0 0 6px;
+  letter-spacing: 0.08em;
+}
+.product-card__meta {
+  font-size: 8px;
+  color: #555;
+  margin-bottom: 6px;
+  letter-spacing: 0.05em;
+}
+.product-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+.tag-pill {
+  font-size: 8px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: #222;
+  color: #888;
+  letter-spacing: 0.06em;
+}
+.tag-pill--expert { background: #1a3a1a; color: #4caf50; }
+.tag-pill--hot    { background: #3a1a1a; color: #f44336; }
+.tag-pill--new    { background: #1a2a3a; color: #2196f3; }
+.product-card__price {
+  font-size: 14px;
+  font-weight: 700;
+  color: #c8f000;
+  margin: 0;
+}
+.price-tax {
+  font-size: 9px;
+  color: #666;
+  font-weight: 400;
+}
+</style>
+<script src="{{ 'collection-album-player.js' | asset_url }}" defer></script>
+{% schema %}
+{
+  "name": "Album Grid",
+  "settings": []
+}
+{% endschema %}

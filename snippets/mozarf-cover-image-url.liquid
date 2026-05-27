@@ -1,0 +1,62 @@
+{%- comment -%}
+  Sort une seule URL (chaîne) pour la cover d'un produit : Shopify (médias / vedette)
+  puis repli sur custom.mozarf_album_data.featured_image (URL absolue ou objet .url).
+  Paramètres : product (requis), width (optionnel, défaut 1200).
+{%- endcomment -%}
+{%- liquid
+  assign w = width | default: 1200
+  if w == blank or w == 0
+    assign w = 1200
+  endif
+
+  assign src_media = nil
+  if product.featured_media != blank
+    if product.featured_media.media_type == 'image'
+      assign src_media = product.featured_media
+    elsif product.featured_media.preview_image != blank
+      assign src_media = product.featured_media.preview_image
+    endif
+  endif
+
+  if src_media == blank and product.featured_image != blank
+    assign src_media = product.featured_image
+  endif
+
+  if src_media == blank
+    for m in product.media
+      if m.media_type == 'image'
+        assign src_media = m
+        break
+      endif
+      if m.media_type == 'video' or m.media_type == 'external_video'
+        if m.preview_image != blank
+          assign src_media = m.preview_image
+          break
+        endif
+      endif
+    endfor
+  endif
+
+  if src_media == blank and product.images.size > 0
+    assign src_media = product.images.first
+  endif
+
+  assign out = ''
+  if src_media != blank
+    assign out = src_media | image_url: width: w
+  endif
+
+  assign am_json = product.metafields.custom.mozarf_album_data.value
+  if out == blank and am_json != blank and am_json.featured_image != blank
+    assign jf = am_json.featured_image
+    if jf.url != blank
+      assign out = jf.url | strip
+    else
+      assign jstr = jf | strip
+      if jstr contains '://' or jstr contains 'cdn.shopify.com'
+        assign out = jstr
+      endif
+    endif
+  endif
+-%}
+{{- out | strip -}}

@@ -1,0 +1,215 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap');
+  .mozarf-production-page {
+    background: #0a0a0a;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    color: #ffffff;
+  }
+  .mozarf-production-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 60px 20px;
+  }
+  .mozarf-pro-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #333;
+  }
+  .mozarf-pro-tab {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.35rem;
+    letter-spacing: 0.08em;
+    padding: 14px 28px;
+    margin-bottom: -1px;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: #888;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .mozarf-pro-tab:hover {
+    color: #ccc;
+  }
+  .mozarf-pro-tab.is-active {
+    color: #e8ff4a;
+    border-bottom-color: #e8ff4a;
+  }
+  .mozarf-pro-panel {
+    display: none;
+  }
+  .mozarf-pro-panel.is-active {
+    display: block;
+  }
+  .mozarf-production-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 4rem;
+    color: #e8ff4a;
+    letter-spacing: 0.05em;
+    margin: 0 0 2rem;
+  }
+  .mozarf-production-content {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: #cccccc;
+  }
+  .mozarf-production-content h1,
+  .mozarf-production-content h2,
+  .mozarf-production-content h3 {
+    color: #e8ff4a;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.05em;
+  }
+  .mozarf-production-content a {
+    color: #e8ff4a;
+  }
+  .mozarf-production-work {
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid #333;
+  }
+  .mozarf-production-work h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    color: #e8ff4a;
+    letter-spacing: 0.05em;
+    margin: 0 0 1rem;
+  }
+  .mozarf-production-work ul {
+    margin: 0;
+    padding-left: 1.25rem;
+  }
+  .mozarf-production-work li {
+    margin-bottom: 0.5rem;
+  }
+  .mozarf-production-contact {
+    padding: 2rem;
+    background: #1a1a1a;
+    border-radius: 12px;
+    border: 1px solid #333;
+  }
+  .mozarf-production-contact h2 {
+    color: #e8ff4a;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 0.06em;
+    margin: 0 0 1.25rem;
+  }
+</style>
+
+<div class="mozarf-production-page" id="mozarf-production-root">
+  <div class="mozarf-production-inner">
+    <div class="mozarf-pro-tabs" role="tablist" aria-label="Mozarf">
+      <button type="button" class="mozarf-pro-tab is-active" role="tab" aria-selected="true" aria-controls="mozarf-panel-mozarf" id="mozarf-tab-mozarf" data-mozarf-tab="mozarf">
+        MOZARF
+      </button>
+      <button type="button" class="mozarf-pro-tab" role="tab" aria-selected="false" aria-controls="mozarf-panel-contact" id="mozarf-tab-contact" data-mozarf-tab="contact">
+        CONTACT
+      </button>
+    </div>
+
+    <div id="mozarf-panel-mozarf" class="mozarf-pro-panel is-active" role="tabpanel" aria-labelledby="mozarf-tab-mozarf">
+      <h1 class="mozarf-production-title">WHO IS MOZARF</h1>
+      <div class="mozarf-production-content">
+        {% if page.content != blank %}
+          {{ page.content }}
+        {% else %}
+          <p>
+            MOZARF est un producteur de musique indépendant spécialisé
+            dans la création de beats, albums et drum kits.
+            Son univers sonore mêle influences orchestrales,
+            trap et musique expérimentale.
+          </p>
+        {% endif %}
+      </div>
+      <div class="mozarf-production-work">
+        <h2>Mon travail</h2>
+        <p style="margin-top:0;color:#aaa;font-size:0.95rem;">Liens vers les sorties et la boutique.</p>
+        <ul>
+          <li><a href="/collections/frontpage">Albums</a></li>
+          <li><a href="/collections/mozarf-albums">Catalogue albums</a></li>
+          <li><a href="/collections/drum-kit">Drum Kits</a></li>
+          <li><a href="https://www.beatstars.com/mozarf" target="_blank" rel="noopener noreferrer">BeatStars</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div id="mozarf-panel-contact" class="mozarf-pro-panel" role="tabpanel" aria-labelledby="mozarf-tab-contact" hidden>
+      <div class="mozarf-production-contact">
+        <h2>CONTACT</h2>
+        {% form 'contact' %}
+          <div style="display:grid;gap:1rem;">
+            <input type="text" name="contact[name]"
+              placeholder="Ton nom"
+              style="background:#0a0a0a;border:1px solid #333;color:#fff;
+                     padding:12px;border-radius:8px;
+                     font-family:'Inter',sans-serif;font-size:1rem;width:100%">
+            <input type="email" name="contact[email]"
+              placeholder="Ton email"
+              style="background:#0a0a0a;border:1px solid #333;color:#fff;
+                     padding:12px;border-radius:8px;
+                     font-family:'Inter',sans-serif;font-size:1rem;width:100%">
+            <input type="text" name="contact[phone]"
+              placeholder="Type de projet"
+              style="background:#0a0a0a;border:1px solid #333;color:#fff;
+                     padding:12px;border-radius:8px;
+                     font-family:'Inter',sans-serif;font-size:1rem;width:100%">
+            <textarea name="contact[body]" rows="5"
+              placeholder="Décris ton projet..."
+              style="background:#0a0a0a;border:1px solid #333;color:#fff;
+                     padding:12px;border-radius:8px;
+                     font-family:'Inter',sans-serif;font-size:1rem;
+                     resize:vertical;width:100%"></textarea>
+            <button type="submit"
+              style="background:#e8ff4a;color:#000;border:none;
+                     padding:14px;border-radius:8px;font-weight:700;
+                     font-size:1rem;cursor:pointer;
+                     font-family:'Inter',sans-serif;
+                     text-transform:uppercase;letter-spacing:0.06em;">
+              Envoyer
+            </button>
+          </div>
+        {% endform %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var root = document.getElementById('mozarf-production-root');
+    if (!root) return;
+    var tabs = root.querySelectorAll('[data-mozarf-tab]');
+    var pMoz = document.getElementById('mozarf-panel-mozarf');
+    var pCon = document.getElementById('mozarf-panel-contact');
+    function show(which) {
+      tabs.forEach(function (t) {
+        var on = t.getAttribute('data-mozarf-tab') === which;
+        t.classList.toggle('is-active', on);
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      if (pMoz) {
+        pMoz.classList.toggle('is-active', which === 'mozarf');
+        pMoz.hidden = which !== 'mozarf';
+      }
+      if (pCon) {
+        pCon.classList.toggle('is-active', which === 'contact');
+        pCon.hidden = which !== 'contact';
+      }
+    }
+    tabs.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        show(btn.getAttribute('data-mozarf-tab'));
+      });
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Mozarf Production",
+  "settings": []
+}
+{% endschema %}

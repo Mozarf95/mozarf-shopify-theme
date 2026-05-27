@@ -1,0 +1,79 @@
+{{ 'mozarf-kit-samples.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign samples = product.metafields.custom.mozarf_kit_samples.value
+  assign cover_u = ''
+  if product.featured_image != blank
+    assign cover_u = product.featured_image | image_url: width: 400
+  endif
+-%}
+
+{% if samples != blank and samples.size > 0 %}
+  <div
+    class="mozarf-kit-samples page-width"
+    data-mozarf-kit-samples
+    data-kit-json-id="mozarf-kit-samples-data-{{ section.id }}"
+  >
+    <h2 class="mozarf-kit-samples__h">{{ section.settings.heading | escape }}</h2>
+    <ul class="mozarf-kit-samples__list" role="list">
+      {% for s in samples %}
+        {%- assign stitle = s.title | default: s.name | default: forloop.index -%}
+        {%- assign surl = s.preview_url | default: s.url | default: s.src -%}
+        <li class="mozarf-kit-samples__row">
+          <span class="mozarf-kit-samples__name">{{ stitle | escape }}</span>
+          {% if surl != blank %}
+            <button
+              type="button"
+              class="mozarf-kit-samples__play"
+              data-mozarf-kit-play="{{ forloop.index0 }}"
+              aria-label="Pré-écouter {{ stitle | escape }}"
+            >
+              ▶
+            </button>
+          {% else %}
+            <span class="mozarf-kit-samples__na">—</span>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <script type="application/json" id="mozarf-kit-samples-data-{{ section.id }}">
+    {
+      "title": {{ product.title | json }},
+      "artist": {{ product.vendor | json }},
+      "cover": {{ cover_u | json }},
+      "tracks": [
+        {% for s in samples %}
+          {% assign stitle = s.title | default: s.name | default: forloop.index %}
+          {% assign surl = s.preview_url | default: s.url | default: s.src %}
+          {
+            "title": {{ stitle | json }},
+            "preview_url": {{ surl | json }},
+            "src": {{ surl | json }},
+            "productUrl": {{ product.url | json }}
+          }{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+      ]
+    }
+  </script>
+
+  <script src="{{ 'mozarf-kit-samples.js' | asset_url }}" defer></script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "MOZARF kit samples",
+  "tag": "section",
+  "class": "section-mozarf-kit-samples",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Titre",
+      "default": "Samples"
+    }
+  ],
+  "presets": [{ "name": "MOZARF kit samples" }]
+}
+{% endschema %}

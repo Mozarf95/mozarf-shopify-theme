@@ -1,0 +1,75 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap');
+  .mozarf-contact-page {
+    background: #0a0a0a;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    color: #ffffff;
+  }
+  .mozarf-contact-inner {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 60px 20px;
+  }
+  .mozarf-contact-box {
+    padding: 2rem;
+    background: #1a1a1a;
+    border-radius: 12px;
+    border: 1px solid #333;
+  }
+  .mozarf-contact-box h1 {
+    color: #e8ff4a;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.75rem;
+    letter-spacing: 0.06em;
+    margin: 0 0 1.25rem;
+  }
+</style>
+
+<div class="mozarf-contact-page">
+  <div class="mozarf-contact-inner">
+    <div class="mozarf-contact-box">
+      <h1>CONTACT</h1>
+      {% form 'contact' %}
+        <div style="display:grid;gap:1rem;">
+          <input type="text" name="contact[name]"
+            placeholder="Ton nom"
+            style="background:#0a0a0a;border:1px solid #333;color:#fff;
+                   padding:12px;border-radius:8px;
+                   font-family:'Inter',sans-serif;font-size:1rem;width:100%">
+          <input type="email" name="contact[email]"
+            placeholder="Ton email"
+            style="background:#0a0a0a;border:1px solid #333;color:#fff;
+                   padding:12px;border-radius:8px;
+                   font-family:'Inter',sans-serif;font-size:1rem;width:100%">
+          <input type="text" name="contact[phone]"
+            placeholder="Type de projet"
+            style="background:#0a0a0a;border:1px solid #333;color:#fff;
+                   padding:12px;border-radius:8px;
+                   font-family:'Inter',sans-serif;font-size:1rem;width:100%">
+          <textarea name="contact[body]" rows="5"
+            placeholder="Décris ton projet..."
+            style="background:#0a0a0a;border:1px solid #333;color:#fff;
+                   padding:12px;border-radius:8px;
+                   font-family:'Inter',sans-serif;font-size:1rem;
+                   resize:vertical;width:100%"></textarea>
+          <button type="submit"
+            style="background:#e8ff4a;color:#000;border:none;
+                   padding:14px;border-radius:8px;font-weight:700;
+                   font-size:1rem;cursor:pointer;
+                   font-family:'Inter',sans-serif;
+                   text-transform:uppercase;letter-spacing:0.06em;">
+            Envoyer
+          </button>
+        </div>
+      {% endform %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Mozarf — page CONTACT",
+  "settings": []
+}
+{% endschema %}

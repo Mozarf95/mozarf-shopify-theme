@@ -1,0 +1,61 @@
+<div id="mozarf-tracklist">
+  <ul id="mozarf-tracklist__list"></ul>
+</div>
+
+<div
+  id="mozarf-sticky-player"
+  class="mozarf-sticky-player"
+  aria-hidden="true"
+>
+  <div id="mozarf-bar" class="mozarf-bar" role="region" aria-label="Lecteur audio">
+    <img id="mozarf-bar__cover" src="" alt="" width="50" height="50" loading="lazy">
+    <div id="mozarf-bar__info">
+      <span id="mozarf-bar__title">—</span>
+      <span id="mozarf-bar__artist">Sélectionnez une piste</span>
+    </div>
+    <div id="mozarf-bar__progress-area">
+      <div
+        id="mozarf-bar__progress"
+        role="slider"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-valuenow="0"
+        aria-disabled="true"
+        tabindex="0"
+      >
+        <div id="mozarf-bar__progress-fill"></div>
+      </div>
+      <div id="mozarf-bar__time">
+        <span id="mozarf-bar__time-cur">0:00</span>
+        <span id="mozarf-bar__time-sep">/</span>
+        <span id="mozarf-bar__time-dur">0:00</span>
+      </div>
+    </div>
+    <div id="mozarf-bar__controls">
+      <button type="button" id="mozarf-bar__prev" aria-label="Piste précédente" disabled>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6V6zm11 12l-8-6 8-6v12z"/></svg>
+      </button>
+      <button type="button" id="mozarf-bar__play" aria-label="Lecture / Pause" disabled>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg>
+      </button>
+      <button type="button" id="mozarf-bar__next" aria-label="Piste suivante" disabled>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+      </button>
+    </div>
+    <div id="mozarf-bar__volume-wrap">
+      <span class="mozarf-bar__vol-icon" aria-hidden="true">🔊</span>
+      <label class="visually-hidden" for="mozarf-bar__volume">Volume</label>
+      <input type="range" id="mozarf-bar__volume" min="0" max="1" step="0.05" value="1" aria-label="Volume">
+    </div>
+    <button type="button" id="mozarf-bar__tracklist" aria-label="Liste des pistes">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+    </button>
+    <button type="button" id="mozarf-bar__close" aria-label="Masquer le lecteur">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+    </button>
+    <audio id="mozarf-bar__audio" preload="metadata"></audio>
+  </div>
+</div>
+
+{{ 'mozarf-player.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'mozarf-player.js' | asset_url }}" defer></script>

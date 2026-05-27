@@ -1,0 +1,80 @@
+.multicolumn .map-section{
+   overflow: hidden;
+   margin-right: 0px;
+}
+.multicolumn .multicolumn-card .multicolumn-card_icon .fa{
+    font-size: 20px;
+    background: rgb(var(--color-base-outline-button-labels));
+    color: var(--gradient-background);
+    height: 50px;
+    width: 50px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    transition: 0.3s linear;
+}
+.multicolumn .multicolumn-card{
+    display: flex;
+    align-items: flex-start;
+    padding: 25px;
+    flex-direction: column;
+}
+ .map-contact-information .multicolumn-card__info{
+   padding: 0;
+}
+.map-contact-information slider-component.slider-mobile-gutter{ width: 100%; }
+.multicolumn-card__info h3{
+   font-weight: 600;
+   font-size: 2rem;
+   margin-top: 3rem !important;
+   margin-bottom: 0.5rem !important;
+}
+.multicolumn .multicolumn-card{
+   background: transparent !important;
+   border: 1px solid rgba(var(--color-base-accent-1), 0.1);
+  transition: 0.3s linear;
+}
+.multicolumn .multicolumn-list .multicolumn-list__item:hover .multicolumn-card{
+  border: 1px solid rgb(var(--color-base-outline-button-labels));
+}
+.multicolumn .multicolumn-list .multicolumn-list__item:hover .multicolumn-card_icon .fa{
+    background: var(--color-icon);
+    color: var(--gradient-base-accent-3);
+}
+.map-contact-information{
+    display: flex;
+    flex-direction: row;
+}
+.map-contact-information .grid--3-col-desktop .grid__item{
+  width: 100%;
+  max-width: 100%;
+}
+@media screen and (max-width: 991px){
+.map-contact-information{flex-direction: column;}
+.multicolumn .map-section{margin-right: 0;margin-bottom: 30px;}
+}
+@media screen and (max-width: 749px){
+  .map-contact-information{padding: 0 20px;}
+}
+
+/******** custom css **********/
+.multicolumn-list{ display: grid; grid-template-columns: repeat(3,1fr); }
+
+@media screen and (min-width:1200px) and (max-width:1540px){
+  
+}
+@media screen and (min-width:1024px) and (max-width:1199px){
+  
+}
+@media screen and (min-width:750px) and (max-width:1023px){
+  .multicolumn-list{     grid-template-columns: repeat(1,1fr); }
+}
+@media screen and (min-width:567px) and (max-width:749px){
+  .multicolumn-list{     grid-template-columns: repeat(1,1fr); }
+}
+@media screen and (min-width:320px) and (max-width:566px){
+  .multicolumn-list{     grid-template-columns: repeat(1,1fr); }
+}
+
+.map-contact-information .multicolumn-card__info a:hover{ color: rgba(var(--color-base-outline-button-labels),1); }
+

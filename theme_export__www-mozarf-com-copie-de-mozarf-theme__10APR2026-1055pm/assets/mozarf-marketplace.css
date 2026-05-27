@@ -1,0 +1,845 @@
+/* MOZARF marketplace — BeatStars (#0f0f0f / #f5c518) */
+:root {
+  --mozarf-mp-bg: #0f0f0f;
+  --mozarf-mp-surface: #1a1a1a;
+  --mozarf-mp-border: rgba(255, 255, 255, 0.08);
+  --mozarf-accent: #f5c518;
+  --mozarf-accent-dim: #d4a80e;
+  --mozarf-text: #ffffff;
+  --mozarf-muted: #a0a0a0;
+}
+
+.mozarf-mp {
+  background: var(--mozarf-mp-bg);
+  color: var(--mozarf-text);
+}
+
+.mozarf-mp__header {
+  padding: 1.5rem 0 1rem;
+  border-bottom: 1px solid var(--mozarf-mp-border);
+  margin-bottom: 1.5rem;
+}
+
+.mozarf-mp__title {
+  margin: 0;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.mozarf-mp__sub {
+  margin: 0.35rem 0 0;
+  color: var(--mozarf-muted);
+  font-size: 0.95rem;
+  max-width: 42rem;
+}
+
+.mozarf-mp__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  list-style: none;
+  margin: 0;
+  padding: 0 0 1rem;
+}
+
+@media (min-width: 750px) {
+  .mozarf-mp__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 990px) {
+  .mozarf-mp__grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.mozarf-mp__grid--more-3 {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 750px) {
+  .mozarf-mp__grid--more-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 990px) {
+  .mozarf-mp__grid--more-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.mozarf-mp__card {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0;
+  border: 1px solid var(--mozarf-mp-border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--mozarf-mp-surface);
+  cursor: pointer;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+  color: inherit;
+  font: inherit;
+}
+
+.mozarf-mp__card:hover {
+  border-color: rgba(245, 197, 24, 0.45);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+  transform: translateY(-2px);
+}
+
+/* Carte album = lien natif (navigation produit) */
+a.mozarf-mp__card--link.mozarf-mp__card {
+  text-decoration: none;
+  color: inherit;
+  -webkit-tap-highlight-color: transparent;
+  pointer-events: auto;
+}
+
+a.mozarf-mp__card--link.mozarf-mp__card:hover {
+  color: inherit;
+}
+
+.mozarf-mp-album-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mozarf-mp-album-card__box {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.mozarf-mp__card-media--zoom {
+  position: relative;
+  overflow: hidden;
+}
+
+.mozarf-mp__card-media--zoom .mozarf-mp__card-img {
+  transition: transform 0.35s ease;
+}
+
+.mozarf-mp__card-media--zoom:hover .mozarf-mp__card-img {
+  transform: scale(1.05);
+}
+
+.mozarf-mp-album-card__cover-link {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.mozarf-mp__card-play-fab {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  z-index: 2;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: var(--mozarf-accent);
+  color: #111;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.mozarf-mp__card-play-fab:hover {
+  transform: scale(1.08);
+  filter: brightness(1.05);
+}
+
+a.mozarf-mp__card-body.mozarf-mp__card--link {
+  text-decoration: none;
+  color: inherit;
+  flex: 1;
+}
+
+.mozarf-mp__card-tracks {
+  margin: 0.25rem 0 0;
+  font-size: 0.72rem;
+  color: var(--mozarf-muted);
+  font-weight: 500;
+}
+
+.mozarf-mp__voir-album {
+  display: block;
+  text-align: center;
+  padding: 0.5rem 0.75rem;
+  margin: 0 0.75rem 0.75rem;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid var(--mozarf-mp-border);
+  color: var(--mozarf-accent);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.mozarf-mp__voir-album:hover {
+  background: rgba(245, 197, 24, 0.1);
+  border-color: var(--mozarf-accent);
+}
+
+/* Barre filtres collection */
+.mozarf-cf {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  margin-bottom: 1.25rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--mozarf-mp-border);
+}
+
+.mozarf-cf__scroll {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  flex: 1 1 200px;
+  max-height: 140px;
+  overflow-y: auto;
+}
+
+.mozarf-cf__pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--mozarf-text);
+  background: #1a1a1a;
+  border: 1px solid var(--mozarf-mp-border);
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+  white-space: nowrap;
+}
+
+.mozarf-cf__pill:hover {
+  border-color: var(--mozarf-accent);
+  color: var(--mozarf-accent);
+}
+
+.mozarf-cf__pill--active {
+  border-color: var(--mozarf-accent);
+  color: #111;
+  background: var(--mozarf-accent);
+}
+
+.mozarf-cf__pill--reset {
+  border-style: dashed;
+  opacity: 0.85;
+}
+
+.mozarf-cf__search {
+  flex: 0 1 200px;
+}
+
+.mozarf-cf__search-input {
+  width: 100%;
+  padding: 0.45rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--mozarf-mp-border);
+  background: #1a1a1a;
+  color: var(--mozarf-text);
+  font-size: 0.85rem;
+  transition: border-color 0.2s ease;
+}
+
+.mozarf-cf__search-input:focus {
+  outline: none;
+  border-color: var(--mozarf-accent);
+}
+
+.mozarf-cf__sort {
+  flex: 0 0 auto;
+}
+
+.mozarf-cf__select {
+  padding: 0.45rem 2rem 0.45rem 0.65rem;
+  border-radius: 8px;
+  border: 1px solid var(--mozarf-mp-border);
+  background: #1a1a1a;
+  color: var(--mozarf-text);
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+/* Drum-kit / collections : les facettes « Couleur » appliquent .bg-color-* (ex. orange)
+   sur un span flex-grow — sans taille max le carré colore toute la grille. */
+.mozarf-mp .mozarf-mp-filters label.facet-checkbox,
+.mozarf-mp-filters label.facet-checkbox {
+  flex-grow: 0 !important;
+  flex-basis: auto !important;
+  align-items: center !important;
+}
+
+.mozarf-mp-filters .facets__list-color .facet-checkbox span[class*="bg-color-"],
+.mozarf-mp .facets__list-color .facet-checkbox span[class*="bg-color-"],
+.mozarf-mp-filters .facets__list-color-swatch .facet-checkbox span[class*="bg-color-"],
+.mozarf-mp .facets__list-color-swatch .facet-checkbox span[class*="bg-color-"] {
+  display: inline-block !important;
+  flex: 0 0 auto !important;
+  flex-shrink: 0 !important;
+  flex-grow: 0 !important;
+  width: 1.75rem !important;
+  height: 1.75rem !important;
+  min-width: 1.75rem !important;
+  min-height: 1.75rem !important;
+  max-width: 1.75rem !important;
+  max-height: 1.75rem !important;
+  border-radius: 50% !important;
+  margin-right: 0.5rem !important;
+  box-sizing: border-box !important;
+  align-self: center !important;
+}
+
+/* Pseudo :before (pastilles couleur uniquement — class Filter-* existe sur tous les filtres) */
+.mozarf-mp-filters .facets__list-color .list-menu__item label[class*="Filter-"]:before,
+.mozarf-mp .facets__list-color .list-menu__item label[class*="Filter-"]:before,
+.mozarf-mp-filters .facets__list-color-swatch .list-menu__item label[class*="Filter-"]:before,
+.mozarf-mp .facets__list-color-swatch .list-menu__item label[class*="Filter-"]:before {
+  content: '' !important;
+  display: inline-block !important;
+  width: 1.75rem !important;
+  height: 1.75rem !important;
+  min-width: 1.75rem !important;
+  min-height: 1.75rem !important;
+  max-width: 1.75rem !important;
+  max-height: 1.75rem !important;
+  border-radius: 50% !important;
+  flex-shrink: 0 !important;
+  flex-grow: 0 !important;
+  background-size: cover !important;
+  background-position: center !important;
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  margin-right: 0.5rem !important;
+  vertical-align: middle !important;
+}
+
+.mozarf-mp__card-preview-btn {
+  width: 100%;
+  padding: 0.5rem 0.65rem;
+  border-radius: 8px;
+  border: 1px solid var(--mozarf-mp-border);
+  background: var(--mozarf-mp-surface);
+  color: var(--mozarf-accent);
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  pointer-events: auto;
+  position: relative;
+  z-index: 1;
+}
+
+.mozarf-mp__card-preview-btn:hover {
+  border-color: var(--mozarf-accent);
+  background: rgba(59, 130, 246, 0.12);
+}
+
+.mozarf-mp__card-media {
+  aspect-ratio: 1;
+  background: #111;
+}
+
+.mozarf-mp__card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.mozarf-mp__card-body {
+  padding: 0.75rem 0.85rem 1rem;
+}
+
+.mozarf-mp__card-title {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.mozarf-mp__card-blurb {
+  margin: 0.35rem 0 0;
+  font-size: 0.72rem;
+  color: var(--mozarf-muted);
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Modale plein écran */
+.mozarf-mp-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  padding: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s, visibility 0.25s;
+}
+
+.mozarf-mp-modal.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.mozarf-mp-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 5, 8, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.mozarf-mp-modal__panel {
+  position: relative;
+  width: 100%;
+  max-width: 1100px;
+  max-height: 100vh;
+  margin: auto;
+  background: linear-gradient(145deg, #0a0c14 0%, #050508 100%);
+  border: 1px solid var(--mozarf-mp-border);
+  border-radius: 0;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.65);
+  display: grid;
+  grid-template-columns: 1fr;
+  overflow: hidden;
+}
+
+@media (min-width: 900px) {
+  .mozarf-mp-modal__panel {
+    grid-template-columns: minmax(280px, 380px) 1fr;
+    border-radius: 12px;
+    max-height: min(92vh, 880px);
+  }
+}
+
+.mozarf-mp-modal__close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 2;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--mozarf-text);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.mozarf-mp-modal__close:hover {
+  background: rgba(59, 130, 246, 0.35);
+}
+
+.mozarf-mp-modal__art {
+  position: relative;
+  background: #08080c;
+}
+
+.mozarf-mp-modal__art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  min-height: 220px;
+}
+
+@media (min-width: 900px) {
+  .mozarf-mp-modal__art img {
+    min-height: 100%;
+  }
+}
+
+.mozarf-mp-modal__main {
+  padding: 1.25rem 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow: auto;
+}
+
+.mozarf-mp-modal__h {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding-right: 2.5rem;
+}
+
+.mozarf-mp-player {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.mozarf-mp-player__btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: none;
+  background: var(--mozarf-accent);
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mozarf-mp-player__btn:hover {
+  background: var(--mozarf-accent-dim);
+}
+
+.mozarf-mp-player__bar {
+  flex: 1;
+  min-width: 140px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 2px;
+  cursor: pointer;
+  position: relative;
+}
+
+.mozarf-mp-player__bar-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--mozarf-accent);
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+.mozarf-mp-player__time {
+  font-size: 0.75rem;
+  color: var(--mozarf-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.mozarf-mp-tracks {
+  border: 1px solid var(--mozarf-mp-border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.mozarf-mp-tracks__head {
+  padding: 0.65rem 0.85rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--mozarf-muted);
+  border-bottom: 1px solid var(--mozarf-mp-border);
+}
+
+.mozarf-mp-track {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.5rem 0.75rem;
+  padding: 0.75rem 0.85rem;
+  border-bottom: 1px solid var(--mozarf-mp-border);
+  align-items: start;
+}
+
+.mozarf-mp-track:last-child {
+  border-bottom: none;
+}
+
+.mozarf-mp-track__play {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--mozarf-mp-border);
+  background: transparent;
+  color: var(--mozarf-text);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mozarf-mp-track__play.is-active {
+  border-color: var(--mozarf-accent);
+  color: var(--mozarf-accent);
+}
+
+.mozarf-mp-track__title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0.1rem 0 0.35rem;
+}
+
+.mozarf-mp-track__actions {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+@media (min-width: 600px) {
+  .mozarf-mp-track {
+    grid-template-columns: auto 1fr auto;
+  }
+  .mozarf-mp-track__actions {
+    grid-column: auto;
+    justify-content: flex-end;
+    max-width: 340px;
+  }
+}
+
+.mozarf-mp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem 0.65rem;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 6px;
+  border: 1px solid var(--mozarf-mp-border);
+  background: transparent;
+  color: var(--mozarf-text);
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.mozarf-mp-btn:hover {
+  border-color: var(--mozarf-accent);
+  background: rgba(59, 130, 246, 0.12);
+}
+
+.mozarf-mp-btn--primary {
+  background: var(--mozarf-accent);
+  border-color: var(--mozarf-accent);
+  color: #fff;
+}
+
+.mozarf-mp-btn--primary:hover {
+  background: var(--mozarf-accent-dim);
+  border-color: var(--mozarf-accent-dim);
+}
+
+.mozarf-mp-modal__full {
+  margin-top: 0.25rem;
+}
+
+.mozarf-mp-modal__hint {
+  font-size: 0.72rem;
+  color: var(--mozarf-muted);
+  margin: 0;
+}
+
+.mozarf-mp-pagination {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+/* Kits grid (explore) */
+.mozarf-mp-kits .mozarf-mp__card {
+  text-decoration: none;
+}
+
+.mozarf-mp-kits .mozarf-mp__card--link:hover {
+  color: inherit;
+}
+
+.mozarf-mp__kit-type {
+  margin: 0.35rem 0 0;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mozarf-muted);
+}
+
+.mozarf-mp__kit-price {
+  margin: 0.5rem 0 0;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--mozarf-accent);
+}
+
+.mozarf-mp__kit-cta {
+  display: inline-block;
+  margin-top: 0.65rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 8px;
+  background: var(--mozarf-accent);
+  color: #111;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Showcase home */
+.mozarf-mp-showcase {
+  background: var(--mozarf-mp-bg);
+  color: var(--mozarf-text);
+  padding: 2rem 0 3rem;
+  border-bottom: 1px solid var(--mozarf-mp-border);
+}
+
+.mozarf-mp-showcase__inner {
+  display: grid;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+@media (min-width: 900px) {
+  .mozarf-mp-showcase__inner {
+    grid-template-columns: minmax(240px, 380px) 1fr;
+    gap: 2.5rem;
+  }
+}
+
+.mozarf-mp-showcase__cover {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--mozarf-mp-border);
+  aspect-ratio: 1;
+}
+
+.mozarf-mp-showcase__cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.mozarf-mp-showcase__eyebrow {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--mozarf-accent);
+  margin: 0 0 0.5rem;
+}
+
+.mozarf-mp-showcase__title {
+  margin: 0;
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.mozarf-mp-showcase__desc {
+  margin: 1rem 0 0;
+  color: var(--mozarf-muted);
+  line-height: 1.6;
+  max-width: 36rem;
+}
+
+.mozarf-mp-showcase__desc.rte a {
+  color: var(--mozarf-accent);
+}
+
+.mozarf-mp-showcase__actions {
+  margin-top: 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+/* Page produit album (template mozarf-album) : même UI que la modale, en flux */
+.mozarf-mp-modal--inline {
+  position: relative !important;
+  inset: auto !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+  z-index: 1;
+  padding: 0;
+}
+
+.mozarf-mp-modal--inline .mozarf-mp-modal__backdrop {
+  display: none !important;
+}
+
+.mozarf-mp-modal--inline .mozarf-mp-modal__panel {
+  max-height: none;
+  border-radius: 12px;
+  margin: 0 auto;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.45);
+}
+
+.mozarf-mp--album-product {
+  padding-top: 1.5rem;
+  padding-bottom: 3rem;
+}
+
+.mozarf-mp-empty-collection {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--mozarf-muted);
+  border: 1px dashed var(--mozarf-mp-border);
+  border-radius: 8px;
+  margin: 1rem 0;
+}
+
+.mozarf-mp__card-page-link {
+  display: block;
+  margin-top: 0.4rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--mozarf-accent);
+  text-decoration: none;
+}
+
+.mozarf-mp__card-page-link:hover {
+  text-decoration: underline;
+}

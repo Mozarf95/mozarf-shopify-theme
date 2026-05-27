@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "contact-main": {
+      "type": "mozarf-contact-page",
+      "settings": {}
+    }
+  },
+  "order": ["contact-main"]
+}

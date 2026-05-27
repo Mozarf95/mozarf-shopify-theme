@@ -1,0 +1,26 @@
+.list-social {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+   margin-top: 3.5rem;
+}
+
+@media only screen and (max-width: 749px) {
+  .list-social {
+    justify-content: center;
+  }
+}
+
+.list-social__item .icon {
+  height: 1.6rem;
+  width: 1.6rem;
+  transition: all var(--duration-default) linear;
+}
+
+.list-social__link {
+  align-items: center;
+  display: flex;
+  padding: 1rem;
+  color: var(--gradient-base-accent-1);
+  text-decoration: none;
+}

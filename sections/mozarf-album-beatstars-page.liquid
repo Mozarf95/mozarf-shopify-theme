@@ -1,0 +1,440 @@
+{{ 'mozarf-album-page-beatstars.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign tracks = blank
+  assign tracks_are_products = false
+  assign tracks_are_json = false
+  assign fallback_preview_url = ''
+  if product.metafields.custom.audio_preview != blank and product.metafields.custom.audio_preview.value != blank
+    assign _apv = product.metafields.custom.audio_preview.value
+    if _apv.url != blank
+      assign fallback_preview_url = _apv.url
+    endif
+  endif
+  assign tracklist_mf = product.metafields.custom.tracklist
+  if tracklist_mf != blank and tracklist_mf.value != blank
+    assign tracks = tracklist_mf.value
+  endif
+  if tracks == blank
+    assign tracklist_json_mf = product.metafields.custom.tracklist_json
+    if tracklist_json_mf != blank and tracklist_json_mf.value != blank
+      assign tracks = tracklist_json_mf.value
+      assign tracks_are_json = true
+    endif
+  endif
+  if tracks == blank
+    assign tracklist_mf = product.metafields.custom.tracklist_mozarf
+    if tracklist_mf != blank and tracklist_mf.value != blank
+      assign tracks = tracklist_mf.value
+    endif
+  endif
+  if tracks == blank
+    assign tracklist_mf = product.metafields.album.tracklist_mozarf
+    if tracklist_mf != blank and tracklist_mf.value != blank
+      assign tracks = tracklist_mf.value
+    endif
+  endif
+  if tracks == blank
+    assign tracklist_mf = product.metafields.mozarf.tracklist
+    if tracklist_mf != blank and tracklist_mf.value != blank
+      assign tracks = tracklist_mf.value
+    endif
+  endif
+  if tracks == blank
+    assign album_data_mf = product.metafields.custom.mozarf_album_data
+    if album_data_mf != blank and album_data_mf.value != blank
+      assign album_data_val = album_data_mf.value
+      if album_data_val.tracks != blank
+        assign tracks = album_data_val.tracks
+        assign tracks_are_json = true
+      endif
+    endif
+  endif
+  assign track_collection_handle = product.metafields.album.collection_handle.value | default: product.metafields.album.collection_handle
+  if tracks == blank and track_collection_handle != blank and collections[track_collection_handle] != blank
+    assign tracks = collections[track_collection_handle].products
+    assign tracks_are_products = true
+  endif
+  assign back_url = routes.root_url | append: 'collections/frontpage'
+  if section.settings.back_collection != blank
+    assign back_url = section.settings.back_collection.url
+  endif
+  assign artist_name = section.settings.artist_fallback
+  if product.vendor != blank
+    assign artist_name = product.vendor
+  endif
+-%}
+
+<div class="mozarf-album-bs page-width" data-mozarf-album-beatstars-page>
+  {% if section.settings.show_back_link %}
+    <p class="mozarf-album-bs__back">
+      <a href="{{ back_url }}">{{ section.settings.back_label | escape }}</a>
+    </p>
+  {% endif %}
+
+  <div class="mozarf-album-bs__cover-wrap">
+    {% capture album_cover_markup %}
+      {% render 'mozarf-product-card-cover-img',
+        product: product,
+        width: 800,
+        widths: '300,400,600,800',
+        sizes: '(max-width: 420px) 100vw, 400px',
+        class: 'mozarf-album-bs__cover',
+        loading: 'eager'
+      %}
+    {% endcapture %}
+    {% assign album_cover_markup = album_cover_markup | strip %}
+    {% if album_cover_markup != blank %}
+      {{ album_cover_markup }}
+    {% else %}
+      <div
+        class="mozarf-album-bs__cover mozarf-album-bs__cover--placeholder"
+        style="min-height:280px;background:#1a1a1a;border-radius:16px;"
+        role="img"
+        aria-label="{{ product.title | escape }}"
+      ></div>
+    {% endif %}
+  </div>
+
+  <h1 class="mozarf-album-bs__title">{{ product.title | escape }}</h1>
+  <p class="mozarf-album-bs__artist">{{ artist_name | escape }}</p>
+
+  {% if product.tags.size > 0 %}
+    <div class="mozarf-album-bs__tags">
+      {% for tag in product.tags limit: 8 %}
+        <span class="mozarf-album-bs__tag">{{ tag | escape }}</span>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <h2 class="mozarf-album-bs__tracks-head">{{ section.settings.tracklist_heading | escape }}</h2>
+
+  <div id="mozarf-bs-tracklist-container">
+    <p class="mozarf-album-bs__hint" id="mozarf-bs-loading-hint">{{ section.settings.empty_tracks_hint | escape }}</p>
+  </div>
+  <div id="mozarf-bs-liquid-tracks">
+  {% if tracks != blank and tracks.size > 0 %}
+    {% assign play_idx = -1 %}
+    {% for track in tracks %}
+      {%- liquid
+        if tracks_are_products
+          assign pv = track.metafields.track.preview_link.value | default: track.metafields.track.preview_link | default: track.metafields.track.audio_url.value | default: track.metafields.track.audio_url | default: ''
+          if pv != blank and pv.url != blank
+            assign pv = pv.url
+          endif
+          assign track_title_disp = track.title
+          assign dur = track.metafields.track.track_time.value | default: track.metafields.track.track_time | default: '—'
+          assign track_buy_url = track.url
+        elsif tracks_are_json
+          assign pv = track.src.value | default: track.src | default: track.audio.value | default: track.audio | default: track.preview_url.value | default: track.preview_url | default: ''
+          if pv != blank and pv.url != blank
+            assign pv = pv.url
+          endif
+          assign track_title_disp = track.title.value | default: track.title | default: 'Piste'
+          assign dur = track.duration.value | default: track.duration | default: '—'
+          assign track_buy_url = track.product_url.value | default: track.product_url | default: ''
+        else
+          assign pv = track.fields.src.value | default: track.src.value | default: track.src | default: track.fields.preview_url.value | default: track.preview_url | default: ''
+          if pv != blank and pv.url != blank
+            assign pv = pv.url
+          endif
+          assign track_title_disp = track.fields.title.value | default: track.title.value | default: track.title | default: 'Piste'
+          assign dur = track.fields.duration.value | default: track.duration | default: '—'
+          assign track_buy_url = track.fields.product_url.value | default: track.product_url.value | default: track.product_url | default: ''
+        endif
+      -%}
+      {% if tracks_are_products == false or track.id != product.id %}
+        {% assign play_idx = play_idx | plus: 1 %}
+        {%- assign v_id = '' -%}
+        {%- if track.purchase != blank -%}
+          {%- assign v_id = track.purchase.mp3_variant_id | default: track.purchase.wav_variant_id -%}
+        {%- endif -%}
+        {%- assign buy_url = product.url -%}
+        {%- if v_id != blank -%}
+          {%- assign buy_url = product.url | append: '?variant=' | append: v_id -%}
+        {%- endif -%}
+        {% if track_buy_url == blank %}
+          {% assign track_buy_url = buy_url %}
+        {% endif %}
+        <div class="mozarf-album-bs__track">
+          <span class="mozarf-album-bs__track-num">{{ play_idx | plus: 1 }}</span>
+          <span class="mozarf-album-bs__track-title">{{ track_title_disp | escape }}</span>
+          <span class="mozarf-album-bs__track-dur">{{ dur }}</span>
+          {% if pv != blank %}
+            <button
+              type="button"
+              class="mozarf-album-bs__track-play"
+              data-mozarf-bs-play="{{ play_idx }}"
+              aria-label="Lecture {{ track_title_disp | escape }}"
+            >
+              ▶
+            </button>
+          {% else %}
+            <button type="button" class="mozarf-album-bs__track-play" disabled aria-label="Pas d'aperçu">—</button>
+          {% endif %}
+          <a class="mozarf-album-bs__track-buy" href="{{ track_buy_url }}" aria-label="Acheter {{ track_title_disp | escape }}">🛒</a>
+        </div>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  </div>
+  {% if section.settings.preview_legal_hint != blank %}
+    <p class="mozarf-album-bs__legal">{{ section.settings.preview_legal_hint | escape }}</p>
+  {% endif %}
+</div>
+
+{% capture cover_src %}
+  {% render 'mozarf-cover-image-url', product: product, width: 400 %}
+{% endcapture %}
+{% assign cover_src = cover_src | strip %}
+{% capture _mozarf_inline_json %}{% render 'mozarf-album-json-inline', product: product %}{% endcapture %}
+{% assign _mozarf_inline_json = _mozarf_inline_json | strip %}
+<script type="application/json" id="mozarf-album-page-playlist">
+  {% if _mozarf_inline_json != blank %}
+    {{ _mozarf_inline_json }}
+  {% else %}
+  {
+    "title": {{ product.title | json }},
+    "artist": {{ artist_name | json }},
+    "product_url": {{ product.url | prepend: request.origin | json }},
+    "cover": {{ cover_src | strip | json }},
+    "featured_image": {{ cover_src | strip | json }},
+    "fallback_preview_url": {{ fallback_preview_url | json }},
+    "tracks": [
+      {% if tracks != blank %}
+        {% assign _sep = false %}
+        {% for track in tracks %}
+          {% if tracks_are_products == false or track.id != product.id %}
+            {% liquid
+              if tracks_are_products
+                assign pv_json = track.metafields.track.preview_link.value | default: track.metafields.track.preview_link | default: track.metafields.track.audio_url.value | default: track.metafields.track.audio_url | default: ''
+                if pv_json != blank and pv_json.url != blank
+                  assign pv_json = pv_json.url
+                endif
+                assign title_json = track.title
+                assign buy_url_json = track.url
+              elsif tracks_are_json
+                assign pv_json = track.src.value | default: track.src | default: track.audio.value | default: track.audio | default: track.preview_url.value | default: track.preview_url | default: ''
+                if pv_json != blank and pv_json.url != blank
+                  assign pv_json = pv_json.url
+                endif
+                assign title_json = track.title.value | default: track.title
+                assign buy_url_json = track.product_url.value | default: track.product_url
+              else
+                assign pv_json = track.fields.src.value | default: track.src.value | default: track.src | default: track.fields.preview_url.value | default: track.preview_url | default: ''
+                if pv_json != blank and pv_json.url != blank
+                  assign pv_json = pv_json.url
+                endif
+                assign title_json = track.fields.title.value | default: track.title.value | default: track.title
+                assign buy_url_json = track.fields.product_url.value | default: track.product_url.value | default: track.product_url
+              endif
+              if buy_url_json == blank
+                assign buy_url_json = product.url
+              endif
+            %}
+            {% if _sep %},{% endif %}
+            {% assign _sep = true %}
+            {
+              "title": {{ title_json | json }},
+              "src": {{ pv_json | json }},
+              "preview_url": {{ pv_json | json }},
+              "productUrl": {{ buy_url_json | json }}
+            }
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    ]
+  }
+  {% endif %}
+</script>
+<script>
+  document.addEventListener('click', function (event) {
+    var btn = event.target.closest('.mozarf-album-bs__track-play[data-mozarf-bs-play]');
+    if (!btn || btn.disabled) return;
+    var playlistEl = document.getElementById('mozarf-album-page-playlist');
+    if (!playlistEl || !playlistEl.textContent) return;
+    var idx = parseInt(btn.getAttribute('data-mozarf-bs-play'), 10);
+    if (isNaN(idx)) idx = 0;
+    try {
+      var payload = JSON.parse(playlistEl.textContent.trim());
+      if (!payload.featured_image && !payload.cover) {
+        var imgEl = document.querySelector('.mozarf-album-bs__cover');
+        if (imgEl && imgEl.tagName === 'IMG') payload.featured_image = imgEl.currentSrc || imgEl.src || '';
+      }
+      if (!payload.product_url) payload.product_url = window.location.href;
+      if (typeof window.mozarfLoadAlbumAndPlay === 'function') {
+        event.preventDefault();
+        window.mozarfLoadAlbumAndPlay(payload, idx);
+      }
+    } catch (e) {}
+  });
+</script>
+<script>
+  (function () {
+    var playlistEl = document.getElementById('mozarf-album-page-playlist');
+    var container = document.getElementById('mozarf-bs-tracklist-container');
+    var liquidDiv = document.getElementById('mozarf-bs-liquid-tracks');
+    if (!playlistEl) return;
+    try {
+      var data = JSON.parse(playlistEl.textContent.trim());
+      var core = (data.album && typeof data.album === 'object') ? data.album : data;
+      var tracks = (Array.isArray(core.tracks) ? core.tracks : null) || (Array.isArray(data.tracks) ? data.tracks : []);
+      var hasSrc = tracks.filter(function(t){ return t.src || t.audio || t.preview_url; }).length;
+      if (tracks.length > 0 && hasSrc > 0) {
+        var productUrl = data.product_url || core.product_url || window.location.href;
+        var html = '';
+        for (var i = 0; i < tracks.length; i++) {
+          var tr = tracks[i];
+          var title = (tr.title || tr.name || ('Piste ' + (i + 1))).replace(/</g, '&lt;').replace(/>/g, '&gt;');
+          var esc = title.replace(/"/g, '&quot;');
+          html += '<div class="mozarf-album-bs__track">'
+            + '<span class="mozarf-album-bs__track-num">' + (i + 1) + '</span>'
+            + '<span class="mozarf-album-bs__track-title">' + title + '</span>'
+            + '<span class="mozarf-album-bs__track-dur">&#8212;</span>'
+            + '<button type="button" class="mozarf-album-bs__track-play" data-mozarf-bs-play="' + i + '" aria-label="Lecture ' + esc + '">&#9654;</button>'
+            + '<a class="mozarf-album-bs__track-buy" href="' + productUrl + '" aria-label="Acheter ' + esc + '">&#x1F6D2;</a>'
+            + '</div>';
+        }
+        if (container) container.innerHTML = html;
+        if (liquidDiv) liquidDiv.style.display = 'none';
+      } else {
+        if (container) container.style.display = 'none';
+      }
+    } catch (e) {
+      if (container) container.style.display = 'none';
+    }
+  })();
+</script>
+
+<div class="page-width mozarf-album-bs__buy" style="margin-top: 2.25rem; padding-bottom: 5rem;">
+  <div style="max-width: 980px; margin: 0 auto; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px 28px;">
+
+    {% assign blurb = product.description | strip_html | strip %}
+    {% if blurb == blank %}{% assign blurb = section.settings.bottom_blurb %}{% endif %}
+    {% if blurb != blank %}
+      <p style="margin: 0 0 1.1rem; color: rgba(255,255,255,0.65); font-size: 0.92rem; line-height: 1.5;">{{ blurb | escape }}</p>
+    {% endif %}
+
+    <div style="display:flex; align-items:baseline; gap:12px; margin-bottom:1.4rem; flex-wrap:wrap;">
+      <span style="font-family:'Bebas Neue',Impact,sans-serif; font-size:2.2rem; color:#fff; letter-spacing:0.04em; line-height:1;">{{ product.price | money }}</span>
+      {% if product.compare_at_price > product.price %}
+        <span style="color:rgba(255,255,255,0.35); text-decoration:line-through; font-size:1.1rem;">{{ product.compare_at_price | money }}</span>
+      {% endif %}
+      <span style="font-size:0.72rem; color:rgba(255,255,255,0.35); text-transform:uppercase; letter-spacing:0.07em;">TVA incluse</span>
+    </div>
+
+    {% form 'product', product, id: 'MozarfAlbumBuyForm', class: 'mozarf-album-bs__form' %}
+      <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+      <input type="hidden" name="quantity" value="1">
+
+      <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:1rem;">
+        <button
+          type="submit"
+          name="add"
+          id="MozarfAlbumBuyBtn"
+          style="height:48px; padding:0 32px; border-radius:999px; border:0; background:#C0272D; color:#fff; font-family:'Bebas Neue',Impact,sans-serif; font-size:1.2rem; letter-spacing:0.1em; cursor:pointer;"
+        >AJOUTER AU PANIER</button>
+      </div>
+
+      <div>{{ form | payment_button }}</div>
+    {% endform %}
+
+  </div>
+</div>
+
+<script>
+  (function(){
+    var form = document.getElementById('MozarfAlbumBuyForm');
+    var btn = document.getElementById('MozarfAlbumBuyBtn');
+    if (!form) return;
+
+    form.addEventListener('submit', function(evt) {
+      evt.preventDefault();
+      var cartDrawer = document.querySelector('cart-drawer');
+      if (!cartDrawer) { form.submit(); return; }
+
+      if (btn) { btn.disabled = true; btn.textContent = '...'; }
+
+      var data = new FormData(form);
+      var sections = cartDrawer.getSectionsToRender().map(function(s){ return s.id; });
+      data.append('sections', sections.join(','));
+      data.append('sections_url', window.location.pathname);
+      cartDrawer.setActiveElement(btn || form);
+
+      fetch('/cart/add.js', {
+        method: 'POST',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        body: data
+      })
+      .then(function(r){ return r.json(); })
+      .then(function(response){
+        if (response.status) {
+          alert(response.description || 'Erreur');
+          return;
+        }
+        cartDrawer.renderContents(response);
+      })
+      .catch(function(e){ console.error(e); })
+      .finally(function(){
+        if (btn) { btn.disabled = false; btn.textContent = 'AJOUTER AU PANIER'; }
+      });
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "MOZARF page album BS",
+  "tag": "section",
+  "class": "section-mozarf-album-beatstars",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_back_link",
+      "default": true,
+      "label": "Lien retour"
+    },
+    {
+      "type": "text",
+      "id": "back_label",
+      "default": "← Albums",
+      "label": "Texte retour"
+    },
+    {
+      "type": "collection",
+      "id": "back_collection",
+      "label": "Collection retour"
+    },
+    {
+      "type": "text",
+      "id": "artist_fallback",
+      "default": "MOZARF",
+      "label": "Artiste si vendor vide"
+    },
+    {
+      "type": "text",
+      "id": "tracklist_heading",
+      "default": "Titres",
+      "label": "Titre liste"
+    },
+    {
+      "type": "textarea",
+      "id": "empty_tracks_hint",
+      "label": "Message sans pistes",
+      "default": "Ajoutez la liste custom.tracklist (métaobjets : src, title, product_url) sur ce produit."
+    },
+    {
+      "type": "textarea",
+      "id": "preview_legal_hint",
+      "label": "Mention légale",
+      "default": "Aperçu limité. Achat pour téléchargement complet et licence."
+    },
+    {
+      "type": "textarea",
+      "id": "bottom_blurb",
+      "label": "Texte bas de page (si description vide)",
+      "default": "Téléchargement WAV/MP3 · Licence incluse."
+    }
+  ]
+}
+{% endschema %}

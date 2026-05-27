@@ -1,0 +1,23 @@
+{
+  "name": "mozarf-shopify-theme",
+  "private": true,
+  "description": "Thème de dev MOZARF + Shopify CLI (push / pull sans copier-coller)",
+  "scripts": {
+    "login": "shopify auth login",
+    "sync": "shopify theme push --path theme_export__www-mozarf-com-copie-de-mozarf-theme__10APR2026-1055pm --theme 158862278986 --force",
+    "sync:sandbox": "shopify theme push --path theme_export__www-mozarf-com-copie-de-mozarf-theme__10APR2026-1055pm --theme 199313129802 --force",
+    "dev": "shopify theme dev --path theme_export__www-mozarf-com-copie-de-mozarf-theme__10APR2026-1055pm",
+    "push": "shopify theme push",
+    "push:export": "npm run sync",
+    "pull": "shopify theme pull",
+    "check": "shopify theme check",
+    "share": "shopify theme share",
+    "package": "shopify theme package"
+  },
+  "devDependencies": {
+    "@shopify/cli": "^3.88.0"
+  },
+  "engines": {
+    "node": ">=20.10.0"
+  }
+}

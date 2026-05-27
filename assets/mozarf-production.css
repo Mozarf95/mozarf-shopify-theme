@@ -1,0 +1,101 @@
+/* Formulaire production — BeatStars */
+.mozarf-prod {
+  max-width: 520px;
+  margin: 0 auto;
+  text-align: center;
+  color: #fff;
+  padding-bottom: 2rem;
+}
+
+.mozarf-prod__title {
+  margin: 0 0 0.75rem;
+  font-size: clamp(1.6rem, 4vw, 2.1rem);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.mozarf-prod__sub {
+  margin: 0 0 2rem;
+  color: #a0a0a0;
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.mozarf-prod__form-wrap {
+  text-align: left;
+}
+
+.mozarf-prod__label {
+  display: block;
+  margin: 1rem 0 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #a0a0a0;
+}
+
+.mozarf-prod__label:first-of-type {
+  margin-top: 0;
+}
+
+.mozarf-prod__input,
+.mozarf-prod__textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.65rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #1a1a1a;
+  color: #fff;
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mozarf-prod__input:focus,
+.mozarf-prod__textarea:focus {
+  outline: none;
+  border-color: #f5c518;
+  box-shadow: 0 0 0 1px rgba(245, 197, 24, 0.25);
+}
+
+.mozarf-prod__textarea {
+  resize: vertical;
+  min-height: 140px;
+}
+
+.mozarf-prod__submit {
+  display: block;
+  width: 100%;
+  margin-top: 1.5rem;
+  padding: 0.85rem 1.25rem;
+  border: none;
+  border-radius: 10px;
+  background: #f5c518;
+  color: #111;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: filter 0.2s ease, transform 0.15s ease;
+}
+
+.mozarf-prod__submit:hover {
+  filter: brightness(1.05);
+}
+
+.mozarf-prod__ok {
+  padding: 0.85rem;
+  border-radius: 10px;
+  background: rgba(245, 197, 24, 0.15);
+  color: #f5c518;
+  margin-bottom: 1rem;
+}
+
+.mozarf-prod__err {
+  color: #f87171;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}

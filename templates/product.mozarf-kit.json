@@ -1,0 +1,36 @@
+{
+  "sections": {
+    "mozarf_kit_page": {
+      "type": "mozarf-kit-product-page",
+      "settings": {
+        "story_heading": "L'architecture du son MOZARF",
+        "add_to_cart_label": "Ajouter au panier",
+        "trust_line": "Téléchargement — livraison immédiate",
+        "player_meter_label": "Sortie master",
+        "feat_1_title": "Impact & présence",
+        "feat_1_text": "Textures et transitoires pensés pour trancher dans le mix — de la battle au mastering.",
+        "feat_2_title": "Qualité studio",
+        "feat_2_text": "Livrés dans les formats du produit (WAV / packs selon fiche) — prêts pour toute chaîne pro.",
+        "feat_3_title": "Ligne MOZARF",
+        "feat_3_text": "Cohérence esthétique avec les sorties et kits du label : même exigence, même signature.",
+        "feat_4_title": "Danse & mouvement",
+        "feat_4_text": "Pensé pour le mouvement — krump, drill, électronique — quand le son doit pousser le corps.",
+        "specs_heading": "Spécifications",
+        "spec_format_label": "Format",
+        "spec_format": "WAV / ZIP (selon variant)",
+        "spec_daw_label": "DAW",
+        "spec_daw": "Toutes DAW majeures",
+        "spec_license_label": "Licence",
+        "spec_license": "Voir fiche produit & conditions",
+        "spec_footer_note": "Contenu & droits — conformément à la fiche produit Shopify",
+        "related_heading": "ÉTENDRE LE CATALOGUE",
+        "related_cta_label": "Voir le kit",
+        "bundle_title": "TOUTE LA SÉRIE",
+        "bundle_text": "Parcourir tous les kits MOZARF sur la collection Drum Kit.",
+        "bundle_btn": "Voir la collection",
+        "footer_tagline": "MOZARF — SONIC ARCHITECTURE"
+      }
+    }
+  },
+  "order": ["mozarf_kit_page"]
+}

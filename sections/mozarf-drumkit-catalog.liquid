@@ -1,0 +1,586 @@
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+<style>
+  .drumkit-root {
+    background-color: #131313;
+    color: #e5e2e1;
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+  }
+  .drumkit-hero {
+    position: relative;
+    padding: 6rem 2rem 8rem;
+    max-width: 1920px;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+  .drumkit-hero-noise {
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.02;
+    pointer-events: none;
+  }
+  .drumkit-hero-inner {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+  @media (min-width: 768px) {
+    .drumkit-hero-inner {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+  }
+  .drumkit-hero-eyebrow {
+    font-family: 'Inter', sans-serif;
+    color: #f2ca50;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-size: 0.625rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+  .drumkit-hero-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(4rem, 10vw, 7rem);
+    font-weight: 700;
+    letter-spacing: -0.05em;
+    line-height: 1;
+    margin: 0 0 2rem;
+    color: #e5e2e1;
+  }
+  .drumkit-hero-desc {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.1rem;
+    color: #f5f5f5;
+    line-height: 1.7;
+    max-width: 42ch;
+  }
+  .drumkit-filter-badge {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: #2a2a2a;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    flex-shrink: 0;
+  }
+  .drumkit-filter-icon {
+    width: 3rem;
+    height: 3rem;
+    background: linear-gradient(135deg, #f2ca50 0%, #d4af37 100%);
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+  }
+  .drumkit-filter-label {
+    font-size: 0.625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #f0f0f0;
+  }
+  .drumkit-filter-value {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #e5e2e1;
+  }
+  .drumkit-filters-bar {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    max-width: 1920px;
+    margin: 0 auto;
+    padding: 0 2rem 2rem;
+  }
+  .drumkit-chip {
+    padding: 8px 18px;
+    border-radius: 9999px;
+    border: 1px solid #333;
+    background: #1c1b1b;
+    color: #e5e2e1;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+  }
+  .drumkit-chip.active,
+  .drumkit-chip:hover {
+    background: #f2ca50;
+    color: #000000;
+    border-color: #f2ca50;
+  }
+  .drumkit-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 2rem;
+    max-width: 1920px;
+    margin: 0 auto;
+    padding: 0 2rem 8rem;
+  }
+  @media (min-width: 768px) {
+    .drumkit-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 1024px) {
+    .drumkit-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  .drumkit-card {
+    position: relative;
+    background: #1c1b1b;
+    overflow: hidden;
+    border-radius: 0.5rem;
+    transition: background 0.2s;
+    text-decoration: none;
+    color: #e5e2e1;
+    display: block;
+  }
+  .drumkit-card:hover { background: #2a2a2a; }
+  .drumkit-card-media {
+    aspect-ratio: 4/5;
+    overflow: hidden;
+    position: relative;
+  }
+  .drumkit-card-photo-link {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+  }
+  .drumkit-card-media img,
+  .drumkit-card-media-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s ease;
+    display: block;
+  }
+  .drumkit-card:hover .drumkit-card-media img,
+  .drumkit-card:hover .drumkit-card-media-img {
+    transform: scale(1.05);
+  }
+  .drumkit-card-media-gradient {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+  }
+  .drumkit-card-badge {
+    position: absolute;
+    top: 1.5rem;
+    left: 1.5rem;
+    z-index: 3;
+    background: #f2ca50;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.625rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #000;
+  }
+  .drumkit-card-play {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 1.5rem;
+    z-index: 4;
+    width: 3rem;
+    height: 3rem;
+    background: rgba(53,53,52,0.6);
+    backdrop-filter: blur(20px);
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #f2ca50;
+    border: 1px solid rgba(242,202,80,0.2);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .drumkit-card-play:hover {
+    background: #f2ca50;
+    color: #000;
+  }
+  .drumkit-card-body {
+    padding: 2rem;
+  }
+  .drumkit-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+  }
+  .drumkit-card-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin: 0 0 0.5rem;
+    color: #e5e2e1;
+  }
+  .drumkit-card-meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.7rem;
+    font-family: 'Inter', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #f0f0f0;
+  }
+  .drumkit-card-price {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #f2ca50;
+    flex-shrink: 0;
+  }
+  .drumkit-card-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: stretch;
+  }
+  .drumkit-card-actions form {
+    flex: 1;
+    display: flex;
+    margin: 0;
+  }
+  .drumkit-card-actions form .drumkit-btn-primary {
+    width: 100%;
+  }
+  .drumkit-btn-primary {
+    flex: 1;
+    background: linear-gradient(135deg, #f2ca50 0%, #d4af37 100%);
+    color: #000;
+    padding: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.7rem;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+    transition: filter 0.2s;
+    font-family: 'Inter', sans-serif;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .drumkit-btn-primary:hover { filter: brightness(1.1); }
+  .drumkit-btn-secondary {
+    padding: 1rem 1.5rem;
+    background: rgba(53,53,52,0.6);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(77,70,53,0.15);
+    color: #e5e2e1;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.7rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-family: 'Inter', sans-serif;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .drumkit-btn-secondary:hover { background: #353534; }
+  .drumkit-footer {
+    background: #09090b;
+    width: 100%;
+    padding: 3rem 2rem;
+    border-top: 1px solid #18181b;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  @media (min-width: 768px) {
+    .drumkit-footer {
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+  .drumkit-footer-brand {
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: #f4f4f5;
+    font-family: 'Space Grotesk', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: -0.05em;
+    text-decoration: none;
+  }
+  .drumkit-footer-copy {
+    font-size: 0.625rem;
+    font-family: 'Inter', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #f0f0f0;
+  }
+  .drumkit-footer-links {
+    display: flex;
+    gap: 2rem;
+  }
+  .drumkit-footer-links a {
+    font-size: 0.625rem;
+    font-family: 'Inter', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #52525b;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .drumkit-footer-links a:hover { color: #f59e0b; }
+  .drumkit-pagination {
+    max-width: 1920px;
+    margin: 0 auto;
+    padding: 0 2rem 4rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .drumkit-pagination a,
+  .drumkit-pagination span {
+    color: #f5f5f5;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+  }
+  .drumkit-pagination a:hover { color: #f2ca50; }
+  .drumkit-pagination .current { color: #f2ca50; font-weight: 700; }
+</style>
+
+<div class="drumkit-root" {{ section.shopify_attributes }}>
+  <header class="drumkit-hero">
+    <div class="drumkit-hero-noise"></div>
+    <div class="drumkit-hero-inner">
+      <div>
+        <span class="drumkit-hero-eyebrow">Archive Repository // Sound Kits</span>
+        <h1 class="drumkit-hero-title">THE<br>REPOSITORY</h1>
+        <p class="drumkit-hero-desc">
+          High-density sonic artifacts pour le producteur moderne.
+          Chaque kit est conçu pour une précision maximale
+          et une résonance architecturale dans vos productions.
+        </p>
+      </div>
+      <div class="drumkit-filter-badge">
+        <div class="drumkit-filter-icon">
+          <span class="material-symbols-outlined" style="font-size:1.2rem;">filter_list</span>
+        </div>
+        <div>
+          <div class="drumkit-filter-label">Filtré par</div>
+          <div class="drumkit-filter-value" id="active-filter-label-{{ section.id }}">All Sound Packs</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="drumkit-filters-bar">
+    <button type="button" class="drumkit-chip active" data-filter="all">Tout</button>
+    <button type="button" class="drumkit-chip" data-filter="808">808s</button>
+    <button type="button" class="drumkit-chip" data-filter="hi-hat">Hi-Hats</button>
+    <button type="button" class="drumkit-chip" data-filter="snare">Snares</button>
+    <button type="button" class="drumkit-chip" data-filter="loop">Loops</button>
+    <button type="button" class="drumkit-chip" data-filter="one shot">One Shots</button>
+    <button type="button" class="drumkit-chip" data-filter="full kit">Full Kit</button>
+  </div>
+
+  <main class="drumkit-grid" id="drumkit-grid-{{ section.id }}">
+    {% paginate collection.products by 24 %}
+      {% for product in collection.products %}
+        {%- liquid
+          assign is_new = false
+          assign created_day = product.created_at | date: '%Y-%m-%d'
+          if created_day > '2025-01-01'
+            assign is_new = true
+          endif
+          assign pv = product.metafields.track.preview_link.value | default: product.metafields.album.preview_link.value
+          if pv == blank
+            assign pv = product.metafields.custom.preview_link.value | default: product.metafields.custom.audio_preview.value
+          endif
+          assign preview_url = ''
+          if pv != blank
+            if pv.url != blank
+              assign preview_url = pv.url
+            else
+              assign preview_url = pv | file_url
+              if preview_url == blank
+                assign preview_url = pv
+              endif
+            endif
+          endif
+        -%}
+        <div
+          class="drumkit-card"
+          data-tags="{{ product.tags | join: ',' | downcase | escape }}"
+        >
+          <div class="drumkit-card-media">
+            <a
+              href="{{ product.url }}"
+              class="drumkit-card-photo-link"
+              aria-label="Voir {{ product.title | escape }}"
+            ></a>
+            {% capture dk_cover_u %}
+              {% render 'mozarf-cover-image-url', product: product, width: 900 %}
+            {% endcapture %}
+            {% assign dk_cover_u = dk_cover_u | strip %}
+            {% if dk_cover_u != blank %}
+              {% if dk_cover_u contains 'cdn.shopify.com' or dk_cover_u contains 'shopifycdn.net' %}
+                {{
+                  dk_cover_u
+                  | image_tag: loading: 'lazy', widths: '400,600,900', sizes: '(min-width: 1024px) 30vw, (min-width: 768px) 45vw, 90vw', alt: product.title, class: 'drumkit-card-media-img'
+                }}
+              {% else %}
+                <img
+                  src="{{ dk_cover_u | escape }}"
+                  class="drumkit-card-media-img"
+                  loading="lazy"
+                  decoding="async"
+                  width="900"
+                  height="900"
+                  alt="{{ product.title | escape }}"
+                >
+              {% endif %}
+            {% else %}
+              <div style="width:100%;height:100%;background:#2a2a2a;display:flex;align-items:center;justify-content:center;font-size:4rem;">🥁</div>
+            {% endif %}
+            <div class="drumkit-card-media-gradient"></div>
+            {% if is_new %}
+              <span class="drumkit-card-badge">New Release</span>
+            {% endif %}
+            <button
+              type="button"
+              class="drumkit-card-play"
+              data-preview="{{ preview_url | escape }}"
+              data-title="{{ product.title | escape }}"
+              aria-label="Preview {{ product.title | escape }}"
+            >
+              <span class="material-symbols-outlined" style="font-size:1.4rem;">play_arrow</span>
+            </button>
+          </div>
+          <div class="drumkit-card-body">
+            <div class="drumkit-card-header">
+              <div>
+                <h3 class="drumkit-card-title">{{ product.title | upcase }}</h3>
+                <div class="drumkit-card-meta">
+                  <span>{{ product.type | default: 'Drum Kit' | upcase }}</span>
+                  {% if product.metafields.kit.sample_count != blank %}
+                    <span>•</span>
+                    <span>{{ product.metafields.kit.sample_count }} SAMPLES</span>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="drumkit-card-price">{{ product.price | money }}</div>
+            </div>
+            <div class="drumkit-card-actions">
+              {% assign form_id = 'drumkit-form-' | append: section.id | append: '-' | append: product.id %}
+              {% form 'product', product, id: form_id %}
+                <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                <button type="submit" name="add" class="drumkit-btn-primary">Add to Cart</button>
+              {% endform %}
+              <a href="{{ product.url }}" class="drumkit-btn-secondary">Explore</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+
+      {% if paginate.pages > 1 %}
+        <div class="drumkit-pagination" style="grid-column: 1 / -1;">
+          {{ paginate | default_pagination }}
+        </div>
+      {% endif %}
+    {% endpaginate %}
+  </main>
+
+  <footer class="drumkit-footer">
+    <a href="{{ routes.root_url }}" class="drumkit-footer-brand">MOZARF</a>
+    <div class="drumkit-footer-copy">© {{ 'now' | date: '%Y' }} MOZARF. THE SONIC MONOLITH.</div>
+    <div class="drumkit-footer-links">
+      {% if pages.production != blank %}
+        <a href="{{ pages.production.url }}">Production</a>
+      {% else %}
+        <a href="/pages/production">Production</a>
+      {% endif %}
+      {% if pages.contact != blank %}
+        <a href="{{ pages.contact.url }}">Contact</a>
+      {% else %}
+        <a href="/pages/contact">Contact</a>
+      {% endif %}
+      <a href="https://www.beatstars.com/mozarf" target="_blank" rel="noopener noreferrer">BeatStars</a>
+    </div>
+  </footer>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var sid = {{ section.id | json }};
+    var chips = document.querySelectorAll('.drumkit-chip');
+    var grid = document.getElementById('drumkit-grid-' + sid);
+    if (!grid) return;
+    var cards = grid.querySelectorAll('.drumkit-card');
+    var filterLabel = document.getElementById('active-filter-label-' + sid);
+
+    function tagMatch(tagsStr, filter) {
+      if (!filter || filter === 'all') return true;
+      var t = (tagsStr || '').toLowerCase();
+      var f = filter.toLowerCase().trim();
+      if (f === 'hi-hat') return t.indexOf('hi-hat') !== -1 || t.indexOf('hihat') !== -1 || t.indexOf('hi hat') !== -1;
+      if (f === 'one shot') return t.indexOf('one shot') !== -1 || t.indexOf('oneshot') !== -1 || t.indexOf('one-shot') !== -1;
+      if (f === 'full kit') return t.indexOf('full kit') !== -1 || t.indexOf('fullkit') !== -1 || t.indexOf('full-kit') !== -1;
+      return t.indexOf(f) !== -1;
+    }
+
+    chips.forEach(function (chip) {
+      chip.addEventListener('click', function () {
+        chips.forEach(function (c) {
+          c.classList.remove('active');
+        });
+        this.classList.add('active');
+        var filter = this.getAttribute('data-filter') || 'all';
+        var label = this.textContent.trim();
+        if (filterLabel) filterLabel.textContent = label + ' Sound Packs';
+
+        cards.forEach(function (card) {
+          var tags = card.getAttribute('data-tags') || '';
+          if (tagMatch(tags, filter)) card.style.display = '';
+          else card.style.display = 'none';
+        });
+      });
+    });
+
+    var currentAudio = null;
+    grid.querySelectorAll('.drumkit-card-play').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var src = this.getAttribute('data-preview');
+        if (!src) return;
+        if (currentAudio) {
+          currentAudio.pause();
+          currentAudio = null;
+        }
+        var audio = new Audio(src);
+        audio.play().catch(function () {});
+        currentAudio = audio;
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Mozarf Drumkit Catalog",
+  "settings": []
+}
+{% endschema %}

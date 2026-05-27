@@ -1,0 +1,542 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap');
+  .mozarf-drop-hero {
+    position: relative;
+    min-height: 80vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    background: #0a0a0a;
+  }
+  .mozarf-drop-hero-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: brightness(0.35);
+    transform: scale(1.05);
+    transition: transform 8s ease;
+  }
+  .mozarf-drop-hero:hover .mozarf-drop-hero-bg {
+    transform: scale(1.08);
+  }
+  .mozarf-drop-hero-scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(0,0,0,0.2) 0%,
+      rgba(0,0,0,0.6) 60%,
+      rgba(10,10,10,0.95) 100%
+    );
+  }
+  .mozarf-drop-hero-inner {
+    position: relative;
+    z-index: 2;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+    width: 100%;
+  }
+  .mozarf-drop-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: rgba(232,230,227,0.85);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    background: rgba(0,0,0,0.35);
+    margin-bottom: 1rem;
+    font-family: 'Inter', sans-serif;
+  }
+  .mozarf-drop-badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #ff3d5c;
+    box-shadow: 0 0 12px #ff3d5c;
+  }
+  .mozarf-drop-title-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 1rem 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .mozarf-drop-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 8vw, 5.5rem);
+    line-height: 1;
+    color: #ffffff;
+    margin: 0;
+    letter-spacing: 0.02em;
+  }
+  .mozarf-drop-announce {
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(0.65rem, 1.5vw, 0.8rem);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: #e8ff4a;
+    border: 1px solid rgba(232,255,74,0.45);
+    padding: 0.45rem 0.85rem;
+    border-radius: 4px;
+    background: rgba(232,255,74,0.08);
+    margin: 0;
+    line-height: 1.3;
+    max-width: 22rem;
+  }
+  .mozarf-drop-tagline {
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    color: rgba(232,230,227,0.65);
+    max-width: 38ch;
+    line-height: 1.6;
+    margin: 0 0 1.5rem;
+  }
+  .mozarf-drop-cta {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+  .mozarf-drop-btn-primary {
+    background: #e8ff4a;
+    color: #000000;
+    border: none;
+    padding: 0.75rem 1.75rem;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+    transition: background 0.2s;
+    display: inline-block;
+  }
+  .mozarf-drop-btn-primary:hover { background: #c4d63a; color: #000; }
+  button.mozarf-drop-btn-primary { cursor: pointer; font-family: inherit; }
+  .mozarf-drop-btn-secondary {
+    background: transparent;
+    color: rgba(255,255,255,0.85);
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 0.75rem 1.75rem;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+    transition: border-color 0.2s, color 0.2s;
+    display: inline-block;
+  }
+  .mozarf-drop-btn-secondary:hover {
+    border-color: #fff;
+    color: #fff;
+  }
+  .mozarf-drop-cover {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.7);
+    aspect-ratio: 1;
+  }
+  .mozarf-drop-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  @media (max-width: 768px) {
+    .mozarf-drop-hero-inner {
+      grid-template-columns: 1fr;
+      padding: 3rem 1.25rem;
+    }
+    .mozarf-drop-cover {
+      max-width: 280px;
+      margin: 0 auto;
+    }
+    .mozarf-drop-title-row {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>
+
+{% assign show_surprise = section.settings.show_surprise %}
+{% assign dirty_bagz_handle = 'dirty-bagz-of-buck-muzik' %}
+{% assign featured = all_products['maelstrom'] %}
+{% if featured == blank %}
+  {% for product in collections['frontpage'].products %}
+    {% assign t = product.title | downcase %}
+    {% assign h = product.handle | downcase %}
+    {% if h contains 'maelstrom' or h contains 'maelstro' or t contains 'maelstrom' or t contains 'maelström' or t contains 'maelstro' %}
+      {% assign featured = product %}
+      {% break %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+{% if featured == blank %}
+  {% assign featured = collections['frontpage'].products.first %}
+{% endif %}
+
+{% if show_surprise %}
+
+<style>
+  .mozarf-surprise-hero {
+    position: relative;
+    min-height: 80vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    background: #0a0a0a;
+  }
+  .mozarf-surprise-hero-noise {
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox=’0 0 200 200’ xmlns=’http://www.w3.org/2000/svg’%3E%3Cfilter id=’n’%3E%3CfeTurbulence type=’fractalNoise’ baseFrequency=’0.75’ numOctaves=’4’ stitchTiles=’stitch’/%3E%3C/filter%3E%3Crect width=’100%25’ height=’100%25’ filter=’url(%23n)’ opacity=’0.08’/%3E%3C/svg%3E");
+    opacity: 0.4;
+  }
+  .mozarf-surprise-hero-scrim {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 60% 50%, rgba(245,197,24,0.06) 0%, transparent 60%),
+      linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(10,10,10,0.95) 100%);
+  }
+  .mozarf-surprise-inner {
+    position: relative;
+    z-index: 2;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+    width: 100%;
+  }
+  .mozarf-surprise-mystery-cover {
+    aspect-ratio: 1;
+    border-radius: 16px;
+    background: #111;
+    border: 1px solid #222;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.8), 0 0 0 1px rgba(245,197,24,0.08);
+    overflow: hidden;
+    position: relative;
+  }
+  .mozarf-surprise-mystery-cover::before {
+    content: ‘’;
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 10px,
+      rgba(245,197,24,0.03) 10px,
+      rgba(245,197,24,0.03) 20px
+    );
+  }
+  .mozarf-surprise-mystery-qmark {
+    font-family: ‘Bebas Neue’, sans-serif;
+    font-size: 8rem;
+    color: rgba(245,197,24,0.25);
+    line-height: 1;
+    position: relative;
+    z-index: 1;
+  }
+  .mozarf-surprise-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: #f5c518;
+    border: 1px solid rgba(245,197,24,0.4);
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    background: rgba(245,197,24,0.08);
+    margin-bottom: 1rem;
+    font-family: ‘Inter’, sans-serif;
+    animation: mozarf-pulse-badge 2s infinite;
+  }
+  @keyframes mozarf-pulse-badge {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(245,197,24,0.3); }
+    50% { box-shadow: 0 0 0 6px rgba(245,197,24,0); }
+  }
+  .mozarf-surprise-badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #f5c518;
+    box-shadow: 0 0 8px #f5c518;
+    animation: mozarf-blink 1s infinite;
+  }
+  @keyframes mozarf-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  .mozarf-surprise-title {
+    font-family: ‘Bebas Neue’, sans-serif;
+    font-size: clamp(3rem, 8vw, 5.5rem);
+    line-height: 1;
+    color: #ffffff;
+    margin: 0 0 1rem;
+    letter-spacing: 0.02em;
+  }
+  .mozarf-surprise-release {
+    font-family: ‘Inter’, sans-serif;
+    font-size: clamp(0.65rem, 1.5vw, 0.8rem);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: #f5c518;
+    border: 1px solid rgba(245,197,24,0.45);
+    padding: 0.45rem 0.85rem;
+    border-radius: 4px;
+    background: rgba(245,197,24,0.08);
+    display: inline-block;
+    margin-bottom: 1.5rem;
+  }
+  .mozarf-surprise-tagline {
+    font-family: ‘Inter’, sans-serif;
+    font-size: 1rem;
+    color: rgba(232,230,227,0.55);
+    max-width: 38ch;
+    line-height: 1.6;
+    margin: 0 0 2rem;
+  }
+  .mozarf-surprise-countdown {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .mozarf-surprise-countdown-unit {
+    text-align: center;
+  }
+  .mozarf-surprise-countdown-num {
+    font-family: ‘Bebas Neue’, sans-serif;
+    font-size: 2.5rem;
+    line-height: 1;
+    color: #f5c518;
+    display: block;
+    min-width: 3rem;
+  }
+  .mozarf-surprise-countdown-label {
+    font-family: ‘Inter’, sans-serif;
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.4);
+  }
+  .mozarf-surprise-cta {
+    display: flex;
+    gap: 0.75rem;
+  }
+  .mozarf-surprise-btn-notify {
+    background: #f5c518;
+    color: #111;
+    border: none;
+    padding: 0.75rem 1.75rem;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-family: ‘Inter’, sans-serif;
+    cursor: default;
+    display: inline-block;
+  }
+  @media (max-width: 768px) {
+    .mozarf-surprise-inner {
+      grid-template-columns: 1fr;
+      padding: 3rem 1.25rem;
+    }
+    .mozarf-surprise-mystery-cover {
+      max-width: 220px;
+      margin: 0 auto;
+    }
+    .mozarf-surprise-title {
+      font-size: clamp(2.5rem, 12vw, 4rem);
+    }
+  }
+</style>
+
+<section class="mozarf-surprise-hero" aria-label="Produit surprise">
+  <div class="mozarf-surprise-hero-noise"></div>
+  <div class="mozarf-surprise-hero-scrim"></div>
+  <div class="mozarf-surprise-inner">
+    <div>
+      <div class="mozarf-surprise-badge">
+        <span class="mozarf-surprise-badge-dot"></span>
+        DROP CE SOIR
+      </div>
+      <h2 class="mozarf-surprise-title">PRODUIT<br>SURPRISE</h2>
+      <div class="mozarf-surprise-release">DISPONIBLE CE SOIR À 20H</div>
+      <p class="mozarf-surprise-tagline">Un nouvel album s’apprête à débarquer. Revenez ce soir pour le découvrir.</p>
+      <div class="mozarf-surprise-countdown" id="mozarf-surprise-countdown" aria-live="polite"></div>
+      <div class="mozarf-surprise-cta">
+        <span class="mozarf-surprise-btn-notify">BIENTÔT DISPONIBLE</span>
+      </div>
+    </div>
+    <div class="mozarf-surprise-mystery-cover" aria-hidden="true">
+      <span class="mozarf-surprise-mystery-qmark">?</span>
+    </div>
+  </div>
+</section>
+
+<script>
+(function() {
+  var el = document.getElementById(‘mozarf-surprise-countdown’);
+  if (!el) return;
+  var releaseHour = 20;
+  function tick() {
+    var now = new Date();
+    var release = new Date(now.getFullYear(), now.getMonth(), now.getDate(), releaseHour, 0, 0, 0);
+    if (now >= release) {
+      el.innerHTML = ‘<span style="font-family:\’Inter\’,sans-serif;font-size:0.85rem;font-weight:700;color:#f5c518;letter-spacing:0.1em;text-transform:uppercase;">Disponible maintenant !</span>’;
+      return;
+    }
+    var diff = release - now;
+    var h = Math.floor(diff / 3600000);
+    var m = Math.floor((diff % 3600000) / 60000);
+    var s = Math.floor((diff % 60000) / 1000);
+    el.innerHTML =
+      unit(h, ‘H’) + sep() + unit(m, ‘MIN’) + sep() + unit(s, ‘SEC’);
+    setTimeout(tick, 1000);
+  }
+  function unit(n, l) {
+    return ‘<div class="mozarf-surprise-countdown-unit"><span class="mozarf-surprise-countdown-num">’ +
+      String(n).padStart(2,’0’) + ‘</span><span class="mozarf-surprise-countdown-label">’ + l + ‘</span></div>’;
+  }
+  function sep() {
+    return ‘<div class="mozarf-surprise-countdown-unit"><span class="mozarf-surprise-countdown-num" style="color:rgba(255,255,255,0.3)">:</span></div>’;
+  }
+  tick();
+})();
+</script>
+
+{% elsif featured == blank %}
+  <section class="mozarf-drop-hero" aria-label="Hero album">
+    <div class="mozarf-drop-hero-scrim"></div>
+    <div class="mozarf-drop-hero-inner">
+      <p class="mozarf-drop-tagline" style="margin:0;">
+        Aucun produit vedette disponible.
+      </p>
+    </div>
+  </section>
+{% else %}
+
+{% assign dirty_bagz_live = all_products[dirty_bagz_handle] %}
+{% if dirty_bagz_live != blank %}{% assign featured = dirty_bagz_live %}{% endif %}
+
+{% capture hero_bg_u %}
+  {% render ‘mozarf-cover-image-url’, product: featured, width: 2400 %}
+{% endcapture %}
+{% assign hero_bg_u = hero_bg_u | strip %}
+{% capture hero_cover_u %}
+  {% render ‘mozarf-cover-image-url’, product: featured, width: 1000 %}
+{% endcapture %}
+{% assign hero_cover_u = hero_cover_u | strip %}
+<section class="mozarf-drop-hero">
+  {% if hero_bg_u != blank %}
+    <div class="mozarf-drop-hero-bg" style="background-image: url('{{ hero_bg_u | escape }}');"></div>
+  {% endif %}
+  <div class="mozarf-drop-hero-scrim"></div>
+  <div class="mozarf-drop-hero-inner">
+    <div class="mozarf-drop-copy">
+      <div class="mozarf-drop-badge">
+        <span class="mozarf-drop-badge-dot"></span>
+        Nouveau
+      </div>
+      <div class="mozarf-drop-title-row">
+        <h2 class="mozarf-drop-title">{{ featured.title }}</h2>
+        <p class="mozarf-drop-announce">NOUVEL ALBUM DISPONIBLE MAINTENANT</p>
+      </div>
+      <p class="mozarf-drop-tagline">
+        {{ featured.description | strip_html | truncate: 120 }}
+      </p>
+      <script type="application/json" id="mozarf-hero-album-{{ section.id }}">
+        {% render 'mozarf-album-json-inline', product: featured %}
+      </script>
+      <div class="mozarf-drop-cta">
+        <button
+          type="button"
+          class="mozarf-drop-btn-primary"
+          id="mozarf-hero-buy-{{ section.id }}"
+        >
+          Acheter
+        </button>
+        <a href="{{ featured.url }}" class="mozarf-drop-btn-secondary">Voir l'album</a>
+      </div>
+    </div>
+    <div class="mozarf-drop-cover">
+      {% if hero_cover_u != blank %}
+        <img
+          src="{{ hero_cover_u | escape }}"
+          width="1000"
+          height="1000"
+          alt="{{ featured.title | escape }}"
+          loading="eager"
+          decoding="async"
+        >
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var btn = document.getElementById('mozarf-hero-buy-{{ section.id }}');
+    var el = document.getElementById('mozarf-hero-album-{{ section.id }}');
+    if (!btn || !el) return;
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (typeof window.mozarfOpenAlbumInStickyPlayer !== 'function') return;
+      try {
+        var raw = JSON.parse(el.textContent.trim());
+        var data =
+          typeof window.mozarfUnwrapAlbumInlinePayload === 'function'
+            ? window.mozarfUnwrapAlbumInlinePayload(raw)
+            : raw;
+        window.mozarfOpenAlbumInStickyPlayer(data, btn);
+      } catch (err) {
+        if (typeof console !== 'undefined' && console.warn) {
+          console.warn('Mozarf hero album', err);
+        }
+      }
+    });
+  });
+</script>
+
+{% endif %}
+
+{% schema %}
+{
+  "name": "Mozarf Drop Hero",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_surprise",
+      "label": "Afficher le teaser PRODUIT SURPRISE",
+      "default": true,
+      "info": "Désactiver à 20h pour afficher l'album Dirty Bagz normalement"
+    }
+  ]
+}
+{% endschema %}

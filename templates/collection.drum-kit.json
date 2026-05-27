@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "drumkit-catalog": {
+      "type": "mozarf-drumkit-catalog",
+      "settings": {}
+    }
+  },
+  "order": ["drumkit-catalog"]
+}

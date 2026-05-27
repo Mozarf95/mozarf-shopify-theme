@@ -1,0 +1,208 @@
+/* Page produit album — BeatStars (#f5c518) */
+.mozarf-album-bs {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 5.5rem;
+  text-align: center;
+  color: #fff;
+  background: transparent;
+}
+
+.mozarf-album-bs__back {
+  text-align: left;
+  margin-bottom: 1.25rem;
+}
+
+.mozarf-album-bs__back a {
+  color: #f5c518;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: opacity 0.2s ease;
+}
+
+.mozarf-album-bs__back a:hover {
+  opacity: 0.85;
+  text-decoration: underline;
+}
+
+.mozarf-album-bs__cover-wrap {
+  margin: 0 auto 1.5rem;
+  max-width: 400px;
+}
+
+.mozarf-album-bs__cover {
+  width: 100%;
+  max-width: 400px;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 16px;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  display: block;
+  margin: 0 auto;
+}
+
+.mozarf-album-bs__title {
+  margin: 0;
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  line-height: 1.15;
+  color: #fff;
+}
+
+.mozarf-album-bs__artist {
+  margin: 0.5rem 0 0;
+  font-size: 1rem;
+  color: #a0a0a0;
+  font-weight: 500;
+}
+
+.mozarf-album-bs__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin: 1.25rem 0 2rem;
+}
+
+.mozarf-album-bs__tag {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: #1a1a1a;
+  color: #f5c518;
+  border: 1px solid rgba(245, 197, 24, 0.3);
+}
+
+.mozarf-album-bs__tracks-head {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #666;
+  margin: 0 0 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 0.5rem;
+}
+
+.mozarf-album-bs__track {
+  display: grid;
+  grid-template-columns: 2rem 1fr auto auto auto;
+  gap: 0.5rem 0.75rem;
+  align-items: center;
+  padding: 0.65rem 0.5rem;
+  margin: 0 -0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  text-align: left;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.mozarf-album-bs__track:hover {
+  background: rgba(255, 255, 255, 0.062);
+}
+
+@media (max-width: 600px) {
+  .mozarf-album-bs__track {
+    grid-template-columns: 1.5rem 1fr auto;
+    grid-template-rows: auto auto;
+  }
+
+  .mozarf-album-bs__track-dur {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .mozarf-album-bs__track-play,
+  .mozarf-album-bs__track-buy {
+    grid-row: 2;
+  }
+}
+
+.mozarf-album-bs__track-num {
+  color: #555;
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.mozarf-album-bs__track-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #f5f5f5;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mozarf-album-bs__track-dur {
+  font-size: 0.8rem;
+  color: #666;
+  font-variant-numeric: tabular-nums;
+}
+
+.mozarf-album-bs__track-play {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: #f5c518;
+  color: #111;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.mozarf-album-bs__track-play:hover {
+  transform: scale(1.06);
+  filter: brightness(1.05);
+}
+
+.mozarf-album-bs__track-play:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.mozarf-album-bs__track-buy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  font-size: 1.1rem;
+  text-decoration: none;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.mozarf-album-bs__track-buy:hover {
+  background: rgba(245, 197, 24, 0.2);
+  transform: scale(1.05);
+}
+
+.mozarf-album-bs__hint {
+  color: #666;
+  font-size: 0.85rem;
+  margin-top: 1rem;
+  text-align: left;
+}
+
+.mozarf-album-bs__legal {
+  margin-top: 1.5rem;
+  font-size: 0.7rem;
+  color: #555;
+  line-height: 1.5;
+}

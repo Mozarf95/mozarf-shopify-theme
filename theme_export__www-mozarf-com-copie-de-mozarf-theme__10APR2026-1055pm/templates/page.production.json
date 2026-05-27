@@ -1,0 +1,14 @@
+{
+  "sections": {
+    "main": {
+      "type": "mozarf-production-contact",
+      "settings": {
+        "heading": "Production sur mesure",
+        "subheading": "Décrivez votre projet — nous revenons vers vous rapidement.",
+        "padding_top": 56,
+        "padding_bottom": 96
+      }
+    }
+  },
+  "order": ["main"]
+}

@@ -1,0 +1,43 @@
+{%- comment -%}
+  Sortie JSON pour la modale marketplace (échapper pour attribut HTML).
+  Metafield recommandé : namespace `custom`, clé `mozarf_album_data`, type JSON.
+  Schéma attendu :
+  {
+    "title": "…",
+    "featured_image": "https://…",
+    "tracks": [
+      {
+        "title": "…",
+        "preview_url": "https://…",
+        "purchase": {
+          "mp3_variant_id": 123,
+          "wav_variant_id": 456,
+          "stems_variant_id": null,
+          "license_variant_id": 789
+        }
+      }
+    ],
+    "full_album_variant_id": 999,
+    "full_album_label": "Full album"
+  }
+{%- endcomment -%}
+{%- liquid
+  assign mf = product.metafields.custom.mozarf_album_data
+  if mf != blank and mf.value != blank
+    echo mf.value | json
+  else
+    if product.featured_image != blank
+      assign img = product.featured_image | image_url: width: 1200
+    else
+      assign img = ''
+    endif
+    assign vid = product.selected_or_first_available_variant.id
+    echo '{"title":'
+    echo product.title | json
+    echo ',"featured_image":'
+    echo img | json
+    echo ',"tracks":[],"full_album_variant_id":'
+    echo vid
+    echo ',"full_album_label":"Full album"}'
+  endif
+-%}

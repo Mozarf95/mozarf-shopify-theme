@@ -1,0 +1,40 @@
+{% comment %}
+  Image de couverture produit : vedette (média image ou preview vidéo), puis médias, puis JSON mozarf_album_data.featured_image.
+  Paramètres : product, width, class, sizes, widths, loading (optionnel)
+{% endcomment %}
+{% liquid
+  assign load_attr = loading | default: 'lazy'
+  assign w = width | default: 600
+  assign widths_attr = widths | default: '200,400,600'
+  assign sizes_attr = sizes | default: '30vw'
+  assign class_attr = class | default: 'mozarf-mp__card-img'
+%}
+{% capture cover_url %}
+  {% render 'mozarf-cover-image-url', product: product, width: w %}
+{% endcapture %}
+{% assign cover_url = cover_url | strip %}
+{% if cover_url != blank %}
+  {% if cover_url contains 'cdn.shopify.com' or cover_url contains 'shopifycdn.net' %}
+    {% if class_attr != blank %}
+      {{
+        cover_url
+        | image_tag: loading: load_attr, widths: widths_attr, sizes: sizes_attr, class: class_attr, alt: product.title
+      }}
+    {% else %}
+      {{
+        cover_url
+        | image_tag: loading: load_attr, widths: widths_attr, sizes: sizes_attr, alt: product.title
+      }}
+    {% endif %}
+  {% else %}
+    <img
+      src="{{ cover_url | escape }}"
+      class="{{ class_attr | escape }}"
+      loading="{{ load_attr | escape }}"
+      decoding="async"
+      width="{{ w }}"
+      height="{{ w }}"
+      alt="{{ product.title | escape }}"
+    >
+  {% endif %}
+{% endif %}

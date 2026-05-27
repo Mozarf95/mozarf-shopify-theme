@@ -1,0 +1,206 @@
+{{ 'mozarf-album-page-beatstars.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign album_mf = product.metafields.custom.mozarf_album_data
+  assign tracks = blank
+  assign fallback_preview_url = ''
+  if product.metafields.custom.audio_preview != blank and product.metafields.custom.audio_preview.value != blank
+    assign _apv = product.metafields.custom.audio_preview.value
+    if _apv.url != blank
+      assign fallback_preview_url = _apv.url
+    endif
+  endif
+  if album_mf != blank and album_mf.value != blank
+    assign album = album_mf.value
+    if album.tracks != blank
+      assign tracks = album.tracks
+    endif
+  endif
+  assign back_url = routes.all_products_collection_url
+  if section.settings.back_collection != blank
+    assign back_url = section.settings.back_collection.url
+  endif
+  assign artist_name = section.settings.artist_fallback
+  if product.vendor != blank
+    assign artist_name = product.vendor
+  endif
+-%}
+
+<div class="mozarf-album-bs page-width" data-mozarf-album-beatstars-page>
+  {% if section.settings.show_back_link %}
+    <p class="mozarf-album-bs__back">
+      <a href="{{ back_url }}">{{ section.settings.back_label | escape }}</a>
+    </p>
+  {% endif %}
+
+  <div class="mozarf-album-bs__cover-wrap">
+    {% if product.featured_image %}
+      {{
+        product.featured_image
+        | image_url: width: 800
+        | image_tag:
+          class: 'mozarf-album-bs__cover',
+          loading: 'eager',
+          widths: '300,400,600,800',
+          sizes: '(max-width: 420px) 100vw, 400px'
+      }}
+    {% else %}
+      <div class="mozarf-album-bs__cover" style="background:#1a1a1a;"></div>
+    {% endif %}
+  </div>
+
+  <h1 class="mozarf-album-bs__title">{{ product.title | escape }}</h1>
+  <p class="mozarf-album-bs__artist">{{ artist_name | escape }}</p>
+
+  {% if product.tags.size > 0 %}
+    <div class="mozarf-album-bs__tags">
+      {% for tag in product.tags limit: 8 %}
+        <span class="mozarf-album-bs__tag">{{ tag | escape }}</span>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <h2 class="mozarf-album-bs__tracks-head">{{ section.settings.tracklist_heading | escape }}</h2>
+
+  {% if tracks != blank and tracks.size > 0 %}
+    {% for track in tracks %}
+      {%- liquid
+        assign pv = track.preview_url | default: track.src | default: track.audio_url | default: track.stream_url | default: track.mp3 | default: track.audio | default: track.preview_mp3 | default: track.file_url
+        if pv == blank and track.file != blank
+          if track.file.url != blank
+            assign pv = track.file.url
+          endif
+        endif
+      -%}
+      {%- assign dur = track.duration | default: '—' -%}
+      {%- assign v_id = '' -%}
+      {%- if track.purchase != blank -%}
+        {%- assign v_id = track.purchase.mp3_variant_id | default: track.purchase.wav_variant_id -%}
+      {%- endif -%}
+      {%- assign buy_url = product.url -%}
+      {%- if v_id != blank -%}
+        {%- assign buy_url = product.url | append: '?variant=' | append: v_id -%}
+      {%- endif -%}
+      <div class="mozarf-album-bs__track">
+        <span class="mozarf-album-bs__track-num">{{ forloop.index }}</span>
+        <span class="mozarf-album-bs__track-title">{{ track.title | escape }}</span>
+        <span class="mozarf-album-bs__track-dur">{{ dur }}</span>
+        {% if pv != blank %}
+          <button
+            type="button"
+            class="mozarf-album-bs__track-play"
+            data-mozarf-bs-play="{{ forloop.index0 }}"
+            aria-label="Lecture {{ track.title | escape }}"
+          >
+            ▶
+          </button>
+        {% else %}
+          <button type="button" class="mozarf-album-bs__track-play" disabled aria-label="Pas d’aperçu">—</button>
+        {% endif %}
+        <a class="mozarf-album-bs__track-buy" href="{{ buy_url }}" aria-label="Acheter {{ track.title | escape }}">🛒</a>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p class="mozarf-album-bs__hint">{{ section.settings.empty_tracks_hint | escape }}</p>
+  {% endif %}
+
+  {% if section.settings.preview_legal_hint != blank %}
+    <p class="mozarf-album-bs__legal">{{ section.settings.preview_legal_hint | escape }}</p>
+  {% endif %}
+</div>
+
+{% capture cover_src -%}
+  {%- if product.featured_image -%}
+    {{- product.featured_image | image_url: width: 400 -}}
+  {%- endif -%}
+{%- endcapture %}
+<script type="application/json" id="mozarf-album-page-playlist">
+  {
+    "title": {{ product.title | json }},
+    "artist": {{ artist_name | json }},
+    "cover": {{ cover_src | strip | json }},
+    "featured_image": {{ cover_src | strip | json }},
+    "fallback_preview_url": {{ fallback_preview_url | json }},
+    "tracks": [
+      {% if tracks != blank %}
+        {% for track in tracks %}
+          {% liquid
+            assign pv = track.preview_url | default: track.src | default: track.audio_url | default: track.stream_url | default: track.mp3 | default: track.audio | default: track.preview_mp3 | default: track.file_url
+            if pv == blank and track.file != blank
+              if track.file.url != blank
+                assign pv = track.file.url
+              endif
+            endif
+          %}
+          {% assign v_id = '' %}
+          {% if track.purchase != blank %}
+            {% assign v_id = track.purchase.mp3_variant_id | default: track.purchase.wav_variant_id %}
+          {% endif %}
+          {% assign buy_url = product.url %}
+          {% if v_id != blank %}
+            {% assign buy_url = product.url | append: '?variant=' | append: v_id %}
+          {% endif %}
+          {
+            "title": {{ track.title | json }},
+            "src": {{ pv | json }},
+            "preview_url": {{ pv | json }},
+            "productUrl": {{ buy_url | json }}
+          }{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+      {% endif %}
+    ]
+  }
+</script>
+
+{% comment %} Clic ▶ piste : géré par assets/mozarf-player.js (data-mozarf-bs-play) {% endcomment %}
+
+{% schema %}
+{
+  "name": "MOZARF page album BS",
+  "tag": "section",
+  "class": "section-mozarf-album-beatstars",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_back_link",
+      "default": true,
+      "label": "Lien retour"
+    },
+    {
+      "type": "text",
+      "id": "back_label",
+      "default": "← Albums",
+      "label": "Texte retour"
+    },
+    {
+      "type": "collection",
+      "id": "back_collection",
+      "label": "Collection retour"
+    },
+    {
+      "type": "text",
+      "id": "artist_fallback",
+      "default": "MOZARF",
+      "label": "Artiste si vendor vide"
+    },
+    {
+      "type": "text",
+      "id": "tracklist_heading",
+      "default": "Titres",
+      "label": "Titre liste"
+    },
+    {
+      "type": "textarea",
+      "id": "empty_tracks_hint",
+      "label": "Message sans pistes",
+      "default": "Ajoutez le metafield JSON custom.mozarf_album_data sur ce produit."
+    },
+    {
+      "type": "textarea",
+      "id": "preview_legal_hint",
+      "label": "Mention légale",
+      "default": "Aperçu limité. Achat pour téléchargement complet et licence."
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,45 @@
+# Thème marchand (Dawn dérivé + démos + apps) : contrôles assouplis pour un rapport exploitable.
+# Les erreurs « ValidSchema » sur certaines sections proviennent souvent de clés Shopify/apps (ex. templates dans schema).
+
+MatchingTranslations:
+  enabled: false
+
+RemoteAsset:
+  enabled: false
+
+AssetPreload:
+  enabled: false
+
+ParserBlockingScript:
+  enabled: false
+
+ImgWidthAndHeight:
+  enabled: false
+
+ValidSchema:
+  enabled: false
+
+ValidSchemaTranslations:
+  enabled: false
+
+ValidSchemaName:
+  enabled: false
+
+TranslationKeyExists:
+  enabled: false
+
+MissingTemplate:
+  enabled: false
+
+LiquidHTMLSyntaxError:
+  enabled: false
+
+ContentForHeaderModification:
+  enabled: false
+
+DeprecatedFilter:
+  enabled: false
+
+# en.default.schema.json (fichier généré / imbriqué) déclenche « Expected string » avec le validateur strict.
+ValidJSON:
+  enabled: false

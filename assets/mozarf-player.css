@@ -1,0 +1,416 @@
+:root {
+  --mozarf-sp-bg: #0b0b0d;
+  --mozarf-sp-panel: #121214;
+  --mozarf-sp-border: #2a2a2f;
+  --mozarf-sp-text: #ffffff;
+  --mozarf-sp-muted: #b7b7bb;
+  --mozarf-sp-accent: #f5c518;
+}
+
+body.mozarf-sp-active {
+  padding-bottom: 92px;
+}
+
+.mozarf-sp {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  transform: translateY(120%);
+  transition: transform 0.22s ease;
+  color: var(--mozarf-sp-text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  pointer-events: none;
+}
+
+.mozarf-sp.is-active {
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.mozarf-sp__bar {
+  display: grid;
+  grid-template-columns: 320px 1fr 260px;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 12px;
+  background: rgba(11, 11, 13, 0.92);
+  border-top: 1px solid var(--mozarf-sp-border);
+  backdrop-filter: blur(10px);
+}
+
+.mozarf-sp__left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.mozarf-sp__cover {
+  width: 56px;
+  height: 56px;
+  border-radius: 10px;
+  background: #1a1a1a;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.mozarf-sp__cover-link {
+  display: inline-flex;
+  border-radius: 10px;
+  overflow: hidden;
+  text-decoration: none;
+  outline: none;
+}
+
+.mozarf-sp__cover-link:focus-visible {
+  box-shadow: 0 0 0 2px rgba(245, 197, 24, 0.65);
+}
+
+.mozarf-sp__meta {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.mozarf-sp__meta-title {
+  font-weight: 800;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mozarf-sp__meta-artist {
+  font-size: 12px;
+  color: var(--mozarf-sp-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mozarf-sp__center {
+  display: grid;
+  gap: 8px;
+}
+
+.mozarf-sp__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.mozarf-sp__btn {
+  border: 1px solid var(--mozarf-sp-border);
+  background: #17171b;
+  color: var(--mozarf-sp-text);
+  border-radius: 999px;
+  height: 36px;
+  padding: 0 12px;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.mozarf-sp__btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.mozarf-sp__btn--play {
+  background: var(--mozarf-sp-accent);
+  border-color: rgba(245, 197, 24, 0.6);
+  color: #111;
+  min-width: 86px;
+}
+
+.mozarf-sp__btn svg {
+  display: block;
+}
+
+.mozarf-sp__btn--play {
+  padding: 0 14px;
+}
+
+.mozarf-sp__progress {
+  display: grid;
+  grid-template-columns: 46px 1fr 46px;
+  align-items: center;
+  gap: 10px;
+}
+
+.mozarf-sp__time {
+  font-variant-numeric: tabular-nums;
+  font-size: 11px;
+  color: var(--mozarf-sp-muted);
+  text-align: center;
+}
+
+#mozarf-player-seek,
+#mozarf-player-volume {
+  width: 100%;
+  accent-color: var(--mozarf-sp-accent);
+}
+
+.mozarf-sp__right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.mozarf-sp__vol {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 150px;
+}
+
+.mozarf-sp__vol-label {
+  font-size: 11px;
+  color: var(--mozarf-sp-muted);
+  font-weight: 800;
+}
+
+.mozarf-sp__drawer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 92px;
+  max-height: min(60vh, 560px);
+  background: rgba(18, 18, 20, 0.98);
+  border-top: 1px solid var(--mozarf-sp-border);
+  border-bottom: 1px solid var(--mozarf-sp-border);
+  transform: translateY(16px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  overflow: hidden;
+}
+
+.mozarf-sp.is-expanded .mozarf-sp__drawer {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.mozarf-sp__drawer-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--mozarf-sp-border);
+}
+
+.mozarf-sp__eyebrow {
+  margin: 0 0 3px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--mozarf-sp-accent);
+  font-weight: 900;
+}
+
+.mozarf-sp__title {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+.mozarf-sp__artist {
+  margin: 3px 0 0;
+  color: var(--mozarf-sp-muted);
+  font-size: 12px;
+}
+
+.mozarf-sp__drawer-close {
+  border: 1px solid var(--mozarf-sp-border);
+  background: #17171b;
+  color: var(--mozarf-sp-text);
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.mozarf-sp__list-head {
+  display: grid;
+  grid-template-columns: 56px 1fr 112px;
+  gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--mozarf-sp-border);
+  color: #bdbdbd;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.mozarf-sp__tracklist {
+  list-style: none;
+  margin: 0;
+  padding: 8px 10px 14px;
+  overflow: auto;
+  max-height: calc(min(60vh, 560px) - 110px);
+}
+
+/* Track rows (override any theme button/input styling) */
+.mozarf-sp__drawer .mozarf-player-track {
+  display: grid;
+  grid-template-columns: 56px 1fr 112px;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 6px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+}
+
+.mozarf-sp__drawer .mozarf-player-track:hover {
+  background: #1b1b1b;
+}
+
+.mozarf-sp__drawer .mozarf-player-track.is-active {
+  background: rgba(245, 197, 24, 0.08);
+  border-color: rgba(245, 197, 24, 0.25);
+}
+
+.mozarf-sp__drawer .mozarf-player-track-index {
+  color: #9f9f9f;
+  font-size: 13px;
+}
+
+.mozarf-sp__drawer .mozarf-player-track-btn,
+.mozarf-sp__drawer .mozarf-player-track-btn:hover,
+.mozarf-sp__drawer .mozarf-player-track-btn:focus,
+.mozarf-sp__drawer .mozarf-player-track-btn:focus-visible {
+  border: 0 !important;
+  background: transparent !important;
+  color: #fff !important;
+  text-align: left !important;
+  cursor: pointer;
+  padding: 0 !important;
+  font-size: 13px;
+  line-height: 1.35;
+  appearance: none;
+  -webkit-appearance: none;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.mozarf-sp__drawer .mozarf-player-track-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.mozarf-sp__drawer .mozarf-player-track-buy {
+  justify-self: start;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #111 !important;
+  background: var(--mozarf-sp-accent);
+  padding: 5px 10px;
+  border-radius: 999px;
+  text-decoration: none;
+}
+
+.mozarf-sp__drawer .mozarf-player-track-buy.is-disabled {
+  background: #3a3a3a;
+  color: #9f9f9f !important;
+  pointer-events: none;
+}
+
+/* Preview gate — overlay sur la barre sticky */
+#mozarf-sp-preview-gate {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: rgba(11, 11, 13, 0.96);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-top: 1px solid var(--mozarf-sp-border);
+  padding: 0 16px;
+  color: var(--mozarf-sp-text);
+  flex-wrap: wrap;
+}
+
+#mozarf-sp-preview-gate[hidden] {
+  display: none;
+}
+
+.mozarf-sp-gate__label {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.mozarf-sp-gate__buy {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  background: var(--mozarf-sp-accent);
+  color: #111;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: filter 0.15s;
+}
+
+.mozarf-sp-gate__buy:hover {
+  filter: brightness(0.9);
+}
+
+.mozarf-sp-gate__replay {
+  background: none;
+  border: none;
+  color: var(--mozarf-sp-muted);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s;
+}
+
+.mozarf-sp-gate__replay:hover {
+  color: var(--mozarf-sp-text);
+}
+
+@media (max-width: 980px) {
+  body.mozarf-sp-active {
+    padding-bottom: 132px;
+  }
+  .mozarf-sp__bar {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .mozarf-sp__right {
+    justify-content: space-between;
+  }
+  .mozarf-sp__vol {
+    width: 160px;
+  }
+  .mozarf-sp__drawer {
+    bottom: 132px;
+  }
+}

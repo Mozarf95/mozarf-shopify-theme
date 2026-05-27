@@ -1,0 +1,250 @@
+{{ 'mozarf-production.css' | asset_url | stylesheet_tag }}
+
+<div class="mozarf-prod page-width section-{{ section.id }}-padding">
+  <h1 class="mozarf-prod__title">{{ section.settings.heading | escape }}</h1>
+  {% if section.settings.subheading != blank %}
+    <p class="mozarf-prod__sub">{{ section.settings.subheading | escape }}</p>
+  {% endif %}
+
+  <style>
+    .production-page {
+      background: #0a0a0a;
+      color: #ffffff;
+      font-family: 'Inter', sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 60px 20px;
+      line-height: 1.7;
+    }
+    .production-page h1,
+    .production-page h2 {
+      color: #e8ff4a;
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 0.05em;
+    }
+    .production-page p {
+      color: #cccccc;
+    }
+  </style>
+  <div class="production-page">
+    {{ page.content }}
+  </div>
+
+  <div class="mozarf-prod__form-wrap">
+    {% form 'contact', id: 'MozarfProductionForm', class: 'mozarf-prod__form' %}
+      {% if form.posted_successfully? %}
+        <p class="mozarf-prod__ok" role="status">{{ section.settings.success_message | escape }}</p>
+      {% endif %}
+      {% if form.errors %}
+        <p class="mozarf-prod__err">{{ form.errors | default_errors }}</p>
+      {% endif %}
+
+      <input type="hidden" name="contact[body]" id="mozarf-prod-body-{{ section.id }}" value="">
+
+      <label class="mozarf-prod__label" for="mozarf-name-{{ section.id }}">{{ section.settings.label_name | escape }}</label>
+      <input
+        class="mozarf-prod__input"
+        id="mozarf-name-{{ section.id }}"
+        type="text"
+        name="contact[name]"
+        required
+        autocomplete="name"
+        placeholder="{{ section.settings.ph_name | escape }}"
+      >
+
+      <label class="mozarf-prod__label" for="mozarf-email-{{ section.id }}">{{ section.settings.label_email | escape }}</label>
+      <input
+        class="mozarf-prod__input"
+        id="mozarf-email-{{ section.id }}"
+        type="email"
+        name="contact[email]"
+        required
+        autocomplete="email"
+        placeholder="{{ section.settings.ph_email | escape }}"
+      >
+
+      <label class="mozarf-prod__label" for="mozarf-type-{{ section.id }}">{{ section.settings.label_type | escape }}</label>
+      <select class="mozarf-prod__input" id="mozarf-type-{{ section.id }}" data-mozarf-prod-field="type">
+        {% assign opts = section.settings.type_options | split: '|' %}
+        {% for o in opts %}
+          {% assign ol = o | strip %}
+          {% if ol != blank %}
+            <option value="{{ ol | escape }}">{{ ol | escape }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+
+      <label class="mozarf-prod__label" for="mozarf-budget-{{ section.id }}">{{ section.settings.label_budget | escape }}</label>
+      <select class="mozarf-prod__input" id="mozarf-budget-{{ section.id }}" data-mozarf-prod-field="budget">
+        {% assign bopts = section.settings.budget_options | split: '|' %}
+        {% for o in bopts %}
+          {% assign ol = o | strip %}
+          {% if ol != blank %}
+            <option value="{{ ol | escape }}">{{ ol | escape }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+
+      <label class="mozarf-prod__label" for="mozarf-msg-{{ section.id }}">{{ section.settings.label_message | escape }}</label>
+      <textarea
+        class="mozarf-prod__textarea"
+        id="mozarf-msg-{{ section.id }}"
+        rows="6"
+        data-mozarf-prod-field="message"
+        required
+        placeholder="{{ section.settings.ph_message | escape }}"
+      ></textarea>
+
+      <button type="submit" class="mozarf-prod__submit">{{ section.settings.submit_label | escape }}</button>
+    {% endform %}
+  </div>
+</div>
+
+<script>
+  (function () {
+    var form = document.getElementById('MozarfProductionForm');
+    if (!form) return;
+    var bodyInput = document.getElementById('mozarf-prod-body-{{ section.id }}');
+    form.addEventListener('submit', function () {
+      var type = (document.querySelector('[data-mozarf-prod-field="type"]') || {}).value || '';
+      var budget = (document.querySelector('[data-mozarf-prod-field="budget"]') || {}).value || '';
+      var msg = (document.querySelector('[data-mozarf-prod-field="message"]') || {}).value || '';
+      var lines = [
+        'Type de projet: ' + type,
+        'Budget: ' + budget,
+        '',
+        'Message:',
+        msg
+      ];
+      if (bodyInput) bodyInput.value = lines.join('\n');
+    });
+  })();
+</script>
+
+{% style %}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "MOZARF production",
+  "tag": "section",
+  "class": "section-mozarf-production",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Titre",
+      "default": "Production sur mesure"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Sous-titre",
+      "default": "Décrivez votre projet — nous revenons vers vous rapidement."
+    },
+    {
+      "type": "text",
+      "id": "label_name",
+      "default": "Nom",
+      "label": "Label nom"
+    },
+    {
+      "type": "text",
+      "id": "ph_name",
+      "default": "Votre nom",
+      "label": "Placeholder nom"
+    },
+    {
+      "type": "text",
+      "id": "label_email",
+      "default": "Email",
+      "label": "Label email"
+    },
+    {
+      "type": "text",
+      "id": "ph_email",
+      "default": "vous@email.com",
+      "label": "Placeholder email"
+    },
+    {
+      "type": "text",
+      "id": "label_type",
+      "default": "Type de projet",
+      "label": "Label type"
+    },
+    {
+      "type": "textarea",
+      "id": "type_options",
+      "label": "Options type (séparées par |)",
+      "default": "Beat|Instrumental|Mix / Master|Autre"
+    },
+    {
+      "type": "text",
+      "id": "label_budget",
+      "default": "Budget",
+      "label": "Label budget"
+    },
+    {
+      "type": "textarea",
+      "id": "budget_options",
+      "label": "Options budget (séparées par |)",
+      "default": "Moins de 500 €|500 – 1500 €|1500 – 5000 €|5000 € et +|À discuter"
+    },
+    {
+      "type": "text",
+      "id": "label_message",
+      "default": "Message",
+      "label": "Label message"
+    },
+    {
+      "type": "text",
+      "id": "ph_message",
+      "default": "Références, délais, détails…",
+      "label": "Placeholder message"
+    },
+    {
+      "type": "text",
+      "id": "submit_label",
+      "default": "Envoyer",
+      "label": "Bouton envoi"
+    },
+    {
+      "type": "text",
+      "id": "success_message",
+      "default": "Merci — votre message a bien été envoyé.",
+      "label": "Message succès"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding haut",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bas",
+      "default": 96
+    }
+  ],
+  "presets": [{ "name": "MOZARF production" }]
+}
+{% endschema %}

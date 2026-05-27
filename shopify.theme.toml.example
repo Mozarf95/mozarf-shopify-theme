@@ -1,0 +1,9 @@
+# 1. Copie ce fichier :  shopify.theme.toml.example  →  shopify.theme.toml
+#    (ou lance SYNCHRONISER-MOZARF.ps1 : il le crée pour toi)
+#
+# 2. Remplace uniquement la ligne "store" par ton domaine exact, par ex. :
+#    mozarf-com.myshopify.com
+#    (Admin Shopify → Paramètres → Détails de la boutique → « Domaine de la boutique »)
+
+[environments.default]
+store = "ton-magasin.myshopify.com"

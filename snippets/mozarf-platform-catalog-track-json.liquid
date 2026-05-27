@@ -1,0 +1,51 @@
+{% comment %}
+  Une entrée tracklist_mozarf (métaobjet) → objet JSON pour window.__MOZARF_SHOPIFY_PRODUCTS__.
+  Champs : fields.title, fields.preview_url, fields.audio_url, fields.product_url, fields.duration, fields.bpm
+{% endcomment %}
+{% capture tpcov %}{% render 'mozarf-cover-image-url', product: product, width: 600 %}{% endcapture %}
+{% assign tpcov = tpcov | strip %}
+{% liquid
+  assign tr_title = mo.fields.title.value | default: mo.fields.titre.value | default: mo.fields.nom.value | default: mo.display_name | default: mo.title | default: ''
+
+  assign pv = mo.fields.preview_url.value | default: mo.fields.preview.value
+  assign av = mo.fields.audio_url.value | default: mo.fields.audio.value
+  assign pu = mo.fields.product_url.value | default: mo.fields.url.value | default: mo.fields.lien.value
+
+  assign preview_s = ''
+  if pv != blank
+    if pv.url != blank
+      assign preview_s = pv.url
+    else
+      assign preview_s = pv | file_url
+      if preview_s == blank
+        assign preview_s = pv
+      endif
+    endif
+  endif
+
+  assign audio_s = ''
+  if av != blank
+    if av.url != blank
+      assign audio_s = av.url
+    else
+      assign audio_s = av | file_url
+      if audio_s == blank
+        assign audio_s = av
+      endif
+    endif
+  endif
+
+  assign buy_s = ''
+  if pu != blank
+    if pu.url != blank
+      assign buy_s = pu.url
+    else
+      assign buy_s = pu
+    endif
+  endif
+
+  assign dur = mo.fields.duration.value | default: mo.fields.track_time.value | default: ''
+  assign bpm = mo.fields.bpm.value | default: ''
+  assign album_artist = product.metafields.album.artist_name.value | default: product.metafields.album.artist_name | default: product.vendor
+%}
+{"id":{{ mo.id | json }},"title":{{ tr_title | json }},"preview_link":{{ preview_s | json }},"audio_url":{{ audio_s | json }},"preview_url":{{ preview_s | json }},"product_url":{{ buy_s | json }},"productUrl":{{ buy_s | json }},"bpm":{{ bpm | json }},"duration":{{ dur | json }},"track_time":{{ dur | json }},"artist":{{ album_artist | json }},"cover":{{ tpcov | json }},"price":0}

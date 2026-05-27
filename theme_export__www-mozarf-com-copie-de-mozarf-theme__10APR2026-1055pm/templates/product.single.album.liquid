@@ -1,0 +1,689 @@
+{% comment %}
+  MOZARF — Page album native (sans app Single).
+  Metafields attendus :
+  - album.collection_handle, album.artist_name
+  - track.preview_link, track.bpm, track.track_time (optionnels)
+{% endcomment %}
+
+{%- liquid
+  assign collection_key = product.metafields.album.collection_handle.value | default: product.metafields.album.collection_handle | strip
+  assign artist_name = product.metafields.album.artist_name.value | default: product.metafields.album.artist_name | default: product.vendor | default: 'MOZARF'
+  assign tracks_collection = blank
+  if collection_key != blank
+    assign tracks_collection = collections[collection_key]
+  endif
+  assign cover_src = ''
+  if product.featured_image != blank
+    assign cover_src = product.featured_image | image_url: width: 600
+  endif
+  assign cover_thumb = ''
+  if product.featured_image != blank
+    assign cover_thumb = product.featured_image | image_url: width: 200
+  endif
+-%}
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+  .mozarf-album-page {
+    font-family: 'Inter', sans-serif;
+    background: #0a0a0a;
+    color: #ffffff;
+    min-height: 100vh;
+    padding: 40px 20px 100px;
+    box-sizing: border-box;
+  }
+  .mozarf-album-page *,
+  .mozarf-album-page *::before,
+  .mozarf-album-page *::after {
+    box-sizing: border-box;
+  }
+  .mozarf-album-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 900px;
+    margin: 0 auto 40px;
+    gap: 16px;
+  }
+  .mozarf-album-cover {
+    width: min(280px, 86vw);
+    height: min(280px, 86vw);
+    max-width: 300px;
+    max-height: 300px;
+    object-fit: cover;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  }
+  .mozarf-album-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+    line-height: 1.2;
+  }
+  .mozarf-album-artist {
+    font-size: 1rem;
+    color: #a0a0a0;
+    margin: 0;
+  }
+  .mozarf-album-price {
+    font-size: 1.5rem;
+    color: #f5c518;
+    font-weight: 600;
+    margin: 0;
+  }
+  .mozarf-buy-btn {
+    background: #f5c518;
+    color: #000000;
+    border: none;
+    padding: 12px 32px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .mozarf-buy-btn:hover {
+    filter: brightness(1.05);
+  }
+  .mozarf-tracklist {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .mozarf-tracklist-head {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    gap: 16px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #a0a0a0;
+    border-bottom: 1px solid #2a2a2a;
+    margin-bottom: 4px;
+  }
+  .mozarf-tracklist-head .mozarf-track-title {
+    flex: 1;
+  }
+  .mozarf-track-row {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border-radius: 8px;
+    gap: 16px;
+    transition: background 0.2s;
+  }
+  .mozarf-track-row:nth-child(odd) {
+    background: #1a1a1a;
+  }
+  .mozarf-track-row:nth-child(even) {
+    background: #111111;
+  }
+  .mozarf-track-row:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+  .mozarf-track-num {
+    color: #a0a0a0;
+    width: 28px;
+    text-align: center;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+  .mozarf-track-title {
+    flex: 1;
+    font-weight: 500;
+    min-width: 0;
+    text-align: left;
+  }
+  .mozarf-track-bpm,
+  .mozarf-track-dur {
+    color: #a0a0a0;
+    font-size: 0.85rem;
+    width: 56px;
+    flex-shrink: 0;
+    text-align: right;
+  }
+  .mozarf-track-dur {
+    width: 64px;
+  }
+  .mozarf-track-play {
+    background: none;
+    border: 2px solid #f5c518;
+    color: #f5c518;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 0;
+    line-height: 1;
+  }
+  .mozarf-track-play:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+  .mozarf-track-buy {
+    color: #f5c518;
+    text-decoration: none;
+    font-size: 1.1rem;
+    width: 40px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .mozarf-track-buy:hover {
+    opacity: 0.85;
+  }
+  .mozarf-track-empty {
+    padding: 24px 16px;
+    text-align: center;
+    color: #a0a0a0;
+    background: #111;
+    border-radius: 8px;
+  }
+
+  #mozarf-sticky-player {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 72px;
+    background: #1a1a1a;
+    border-top: 1px solid #333;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    gap: 16px;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+  }
+  #mozarf-sticky-player.is-active {
+    transform: translateY(0);
+  }
+  body.mozarf-native-album-player-open {
+    padding-bottom: 72px;
+  }
+  #player-cover {
+    width: 50px;
+    height: 50px;
+    border-radius: 6px;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: #222;
+  }
+  #player-info {
+    flex: 1;
+    min-width: 0;
+    text-align: left;
+  }
+  #player-track-title {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  #player-artist {
+    display: block;
+    color: #a0a0a0;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .player-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .player-controls button {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 4px;
+    line-height: 1;
+  }
+  .player-controls button:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+  #btn-play {
+    color: #f5c518;
+    font-size: 1.5rem;
+  }
+  .mozarf-player-progress-wrap {
+    flex: 1;
+    min-width: 80px;
+    max-width: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  #progress-bar {
+    width: 100%;
+    accent-color: #f5c518;
+  }
+  .mozarf-player-time {
+    font-size: 0.68rem;
+    color: #a0a0a0;
+    font-variant-numeric: tabular-nums;
+  }
+  #volume-bar {
+    width: 80px;
+    accent-color: #f5c518;
+    flex-shrink: 0;
+  }
+
+  .mozarf-other-albums {
+    max-width: 1100px;
+    margin: 60px auto 0;
+    padding: 0 8px;
+  }
+  .mozarf-other-albums h2 {
+    font-size: 1.5rem;
+    margin-bottom: 24px;
+    color: #ffffff;
+  }
+  .mozarf-albums-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .mozarf-album-card {
+    background: #1a1a1a;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.2s;
+    text-decoration: none;
+    color: #ffffff;
+    display: block;
+  }
+  .mozarf-album-card:hover {
+    transform: translateY(-4px);
+  }
+  .mozarf-album-card img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    display: block;
+  }
+  .mozarf-album-card-info {
+    padding: 12px;
+  }
+  .mozarf-album-card-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin: 0;
+  }
+
+  @media (max-width: 768px) {
+    .mozarf-albums-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .mozarf-album-cover {
+      width: 200px;
+      height: 200px;
+    }
+    #volume-bar {
+      display: none;
+    }
+    .mozarf-player-progress-wrap {
+      max-width: 120px;
+    }
+    .mozarf-tracklist-head {
+      display: none;
+    }
+    .mozarf-track-bpm,
+    .mozarf-track-dur {
+      display: none;
+    }
+  }
+</style>
+
+<div class="mozarf-album-page" data-mozarf-native-album>
+  <div class="mozarf-album-header">
+    {% if product.featured_image != blank %}
+      <img
+        class="mozarf-album-cover"
+        src="{{ cover_src }}"
+        alt="{{ product.featured_image.alt | default: product.title | escape }}"
+        width="300"
+        height="300"
+        loading="eager"
+      >
+    {% endif %}
+    <h1 class="mozarf-album-title">{{ product.title | escape }}</h1>
+    <p class="mozarf-album-artist">{{ artist_name | escape }}</p>
+    <p class="mozarf-album-price">{{ product.selected_or_first_available_variant.price | money }}</p>
+    {% form 'product', product, class: 'mozarf-album-atc-form', style: 'margin:0' %}
+      {% if product.variants.size > 1 %}
+        <label class="visually-hidden" for="mozarf-album-variant">Format</label>
+        <select name="id" id="mozarf-album-variant" class="mozarf-album-variant-select" style="margin-bottom:12px;padding:8px;border-radius:8px;border:1px solid #333;background:#111;color:#fff;font-family:Inter,sans-serif;max-width:280px;">
+          {% for variant in product.variants %}
+            {% if variant.available %}
+              <option value="{{ variant.id }}">{{ variant.title | escape }} — {{ variant.price | money }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      {% else %}
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+      {% endif %}
+      <button type="submit" name="add" class="mozarf-buy-btn">Acheter l'album</button>
+    {% endform %}
+  </div>
+
+  <div class="mozarf-tracklist">
+    {% if collection_key == blank %}
+      <p class="mozarf-track-empty">
+        Metafield <code>album.collection_handle</code> manquant : impossible de charger la tracklist.
+      </p>
+    {% elsif tracks_collection == empty or tracks_collection == blank or tracks_collection.products_count == 0 %}
+      <p class="mozarf-track-empty">
+        Collection « {{ collection_key | escape }} » introuvable ou vide.
+      </p>
+    {% else %}
+      <div class="mozarf-tracklist-head" aria-hidden="true">
+        <span class="mozarf-track-num">#</span>
+        <span class="mozarf-track-title">Titre</span>
+        <span class="mozarf-track-bpm">BPM</span>
+        <span class="mozarf-track-dur">Durée</span>
+        <span style="width:36px"></span>
+        <span style="width:40px"></span>
+      </div>
+      {%- assign track_idx = 0 -%}
+      {% for track in tracks_collection.products %}
+        {% if track.type == 'Digital Track' %}
+          {%- liquid
+            assign pl = track.metafields.track.preview_link
+            assign preview_url = ''
+            if pl != blank and pl.value != blank
+              if pl.value.url != blank
+                assign preview_url = pl.value.url
+              else
+                assign preview_url = pl.value
+              endif
+            endif
+            assign bpm_raw = track.metafields.track.bpm.value | default: track.metafields.track.bpm
+            assign dur_raw = track.metafields.track.track_time.value | default: track.metafields.track.track_time
+            assign track_idx = track_idx | plus: 1
+          -%}
+          <div class="mozarf-track-row">
+            <span class="mozarf-track-num">{{ track_idx }}</span>
+            <span class="mozarf-track-title">{{ track.title | escape }}</span>
+            <span class="mozarf-track-bpm">{{ bpm_raw | escape }}</span>
+            <span class="mozarf-track-dur">{{ dur_raw | escape }}</span>
+            <button
+              type="button"
+              class="mozarf-track-play"
+              data-preview="{{ preview_url | escape }}"
+              data-title="{{ track.title | escape }}"
+              data-artist="{{ artist_name | escape }}"
+              data-cover="{{ cover_thumb | escape }}"
+              {% if preview_url == blank %}
+                disabled
+                aria-label="Pas d’aperçu"
+              {% else %}
+                aria-label="Lecture : {{ track.title | escape }}"
+              {% endif %}
+            >
+              ▶
+            </button>
+            <a class="mozarf-track-buy" href="{{ track.url }}" aria-label="Acheter {{ track.title | escape }}">🛒</a>
+          </div>
+        {% endif %}
+      {% endfor %}
+      {% if track_idx == 0 %}
+        <p class="mozarf-track-empty">Aucun produit de type « Digital Track » dans cette collection.</p>
+      {% endif %}
+    {% endif %}
+  </div>
+
+  <div class="mozarf-other-albums">
+    <h2>Autres albums</h2>
+    {% if collections.frontpage != blank and collections.frontpage.products_count > 0 %}
+      <div class="mozarf-albums-grid">
+        {% for album in collections.frontpage.products limit: 8 %}
+          {% unless album.id == product.id %}
+            <a href="{{ album.url }}" class="mozarf-album-card">
+              {% if album.featured_image != blank %}
+                <img
+                  src="{{ album.featured_image | image_url: width: 400 }}"
+                  alt="{{ album.featured_image.alt | default: album.title | escape }}"
+                  width="400"
+                  height="400"
+                  loading="lazy"
+                >
+              {% else %}
+                <div style="aspect-ratio:1;background:#222"></div>
+              {% endif %}
+              <div class="mozarf-album-card-info">
+                <p class="mozarf-album-card-title">{{ album.title | escape }}</p>
+              </div>
+            </a>
+          {% endunless %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="mozarf-track-empty">Collection « frontpage » vide ou inexistante.</p>
+    {% endif %}
+  </div>
+</div>
+
+<div id="mozarf-sticky-player" aria-hidden="true">
+  <img id="player-cover" src="" alt="" width="50" height="50">
+  <div id="player-info">
+    <span id="player-track-title">Sélectionne un track</span>
+    <span id="player-artist">{{ artist_name | escape }}</span>
+  </div>
+  <div class="player-controls">
+    <button type="button" id="btn-prev" aria-label="Piste précédente">⏮</button>
+    <button type="button" id="btn-play" aria-label="Lecture / pause">▶</button>
+    <button type="button" id="btn-next" aria-label="Piste suivante">⏭</button>
+  </div>
+  <div class="mozarf-player-progress-wrap">
+    <input type="range" id="progress-bar" value="0" min="0" max="100" step="0.1" aria-label="Progression">
+    <span class="mozarf-player-time"><span id="player-time-cur">0:00</span> / <span id="player-time-dur">0:00</span></span>
+  </div>
+  <label class="visually-hidden" for="volume-bar">Volume</label>
+  <input type="range" id="volume-bar" value="80" min="0" max="100" aria-label="Volume">
+</div>
+<audio id="mozarf-native-audio" playsinline preload="metadata"></audio>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var audio = document.getElementById('mozarf-native-audio');
+    var player = document.getElementById('mozarf-sticky-player');
+    var btnPlay = document.getElementById('btn-play');
+    var btnPrev = document.getElementById('btn-prev');
+    var btnNext = document.getElementById('btn-next');
+    var progressBar = document.getElementById('progress-bar');
+    var volumeBar = document.getElementById('volume-bar');
+    var trackTitle = document.getElementById('player-track-title');
+    var artistName = document.getElementById('player-artist');
+    var playerCover = document.getElementById('player-cover');
+    var timeCur = document.getElementById('player-time-cur');
+    var timeDur = document.getElementById('player-time-dur');
+
+    if (!audio || !player || !btnPlay || !progressBar || !volumeBar) return;
+
+    var tracks = [];
+    var currentIndex = 0;
+    var isPlaying = false;
+    var seeking = false;
+
+    function formatTime(s) {
+      if (!isFinite(s) || s < 0) return '0:00';
+      var m = Math.floor(s / 60);
+      var sec = Math.floor(s % 60);
+      return m + ':' + (sec < 10 ? '0' : '') + sec;
+    }
+
+    function showPlayer() {
+      player.classList.add('is-active');
+      player.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('mozarf-native-album-player-open');
+    }
+
+    function hidePlayer() {
+      player.classList.remove('is-active');
+      player.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('mozarf-native-album-player-open');
+    }
+
+    function syncPlayLabel() {
+      btnPlay.textContent = isPlaying ? '⏸' : '▶';
+    }
+
+    function refreshNav() {
+      var n = tracks.length;
+      if (btnPrev) btnPrev.disabled = n <= 1;
+      if (btnNext) btnNext.disabled = n <= 1;
+    }
+
+    document.querySelectorAll('.mozarf-track-play').forEach(function (btn, index) {
+      var src = (btn.dataset.preview || '').trim();
+      tracks.push({
+        src: src,
+        title: btn.dataset.title || '',
+        artist: btn.dataset.artist || '',
+        cover: btn.dataset.cover || '',
+      });
+      btn.addEventListener('click', function () {
+        if (!src) return;
+        currentIndex = index;
+        loadTrack(index);
+        playTrack();
+      });
+    });
+
+    refreshNav();
+
+    function loadTrack(index) {
+      var t = tracks[index];
+      if (!t || !t.src) return;
+      audio.src = t.src;
+      if (trackTitle) trackTitle.textContent = t.title || 'Track ' + (index + 1);
+      if (artistName) artistName.textContent = t.artist || 'MOZARF';
+      if (playerCover) {
+        playerCover.src = t.cover || '';
+        playerCover.alt = t.title || '';
+      }
+      showPlayer();
+      progressBar.value = 0;
+      if (timeCur) timeCur.textContent = '0:00';
+      if (timeDur) timeDur.textContent = '0:00';
+    }
+
+    function playTrack() {
+      if (!audio.src) return;
+      audio.play().then(function () {
+        isPlaying = true;
+        syncPlayLabel();
+      }).catch(function () {});
+    }
+
+    function pauseTrack() {
+      audio.pause();
+      isPlaying = false;
+      syncPlayLabel();
+    }
+
+    btnPlay.addEventListener('click', function () {
+      if (!tracks.length || !tracks[currentIndex] || !tracks[currentIndex].src) return;
+      if (!audio.src) loadTrack(currentIndex);
+      if (isPlaying) pauseTrack();
+      else playTrack();
+    });
+
+    if (btnNext) {
+      btnNext.addEventListener('click', function () {
+        if (tracks.length <= 1) return;
+        currentIndex = (currentIndex + 1) % tracks.length;
+        while (tracks.length && !tracks[currentIndex].src) {
+          currentIndex = (currentIndex + 1) % tracks.length;
+        }
+        loadTrack(currentIndex);
+        playTrack();
+      });
+    }
+
+    if (btnPrev) {
+      btnPrev.addEventListener('click', function () {
+        if (tracks.length <= 1) return;
+        currentIndex = (currentIndex - 1 + tracks.length) % tracks.length;
+        var guard = 0;
+        while (!tracks[currentIndex].src && guard < tracks.length) {
+          currentIndex = (currentIndex - 1 + tracks.length) % tracks.length;
+          guard++;
+        }
+        loadTrack(currentIndex);
+        playTrack();
+      });
+    }
+
+    audio.addEventListener('timeupdate', function () {
+      if (seeking || !audio.duration || !isFinite(audio.duration)) return;
+      var p = (audio.currentTime / audio.duration) * 100;
+      progressBar.value = p;
+      if (timeCur) timeCur.textContent = formatTime(audio.currentTime);
+      if (timeDur) timeDur.textContent = formatTime(audio.duration);
+    });
+
+    audio.addEventListener('loadedmetadata', function () {
+      if (timeDur) timeDur.textContent = formatTime(audio.duration);
+    });
+
+    progressBar.addEventListener('pointerdown', function () {
+      seeking = true;
+    });
+    progressBar.addEventListener('input', function () {
+      if (!audio.duration || !isFinite(audio.duration)) return;
+      audio.currentTime = (progressBar.value / 100) * audio.duration;
+    });
+    progressBar.addEventListener('change', function () {
+      seeking = false;
+    });
+
+    volumeBar.addEventListener('input', function () {
+      audio.volume = parseFloat(volumeBar.value) / 100;
+    });
+    audio.volume = parseFloat(volumeBar.value) / 100;
+
+    audio.addEventListener('play', function () {
+      isPlaying = true;
+      syncPlayLabel();
+    });
+    audio.addEventListener('pause', function () {
+      isPlaying = false;
+      syncPlayLabel();
+    });
+
+    audio.addEventListener('ended', function () {
+      if (tracks.length <= 1) {
+        pauseTrack();
+        return;
+      }
+      currentIndex = (currentIndex + 1) % tracks.length;
+      var guard = 0;
+      while (!tracks[currentIndex].src && guard < tracks.length) {
+        currentIndex = (currentIndex + 1) % tracks.length;
+        guard++;
+      }
+      loadTrack(currentIndex);
+      playTrack();
+    });
+  });
+</script>

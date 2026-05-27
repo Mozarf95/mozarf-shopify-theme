@@ -1,0 +1,90 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap');
+  .mozarf-mozarf-page {
+    background: #0a0a0a;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    color: #ffffff;
+  }
+  .mozarf-mozarf-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 60px 20px;
+  }
+  .mozarf-mozarf-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 4rem;
+    color: #e8ff4a;
+    letter-spacing: 0.05em;
+    margin: 0 0 2rem;
+  }
+  .mozarf-mozarf-content {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: #cccccc;
+  }
+  .mozarf-mozarf-content h1,
+  .mozarf-mozarf-content h2,
+  .mozarf-mozarf-content h3 {
+    color: #e8ff4a;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.05em;
+  }
+  .mozarf-mozarf-content a {
+    color: #e8ff4a;
+  }
+  .mozarf-mozarf-work {
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid #333;
+  }
+  .mozarf-mozarf-work h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    color: #e8ff4a;
+    letter-spacing: 0.05em;
+    margin: 0 0 1rem;
+  }
+  .mozarf-mozarf-work ul {
+    margin: 0;
+    padding-left: 1.25rem;
+  }
+  .mozarf-mozarf-work li {
+    margin-bottom: 0.5rem;
+  }
+</style>
+
+<div class="mozarf-mozarf-page">
+  <div class="mozarf-mozarf-inner">
+    <h1 class="mozarf-mozarf-title">WHO IS MOZARF</h1>
+    <div class="mozarf-mozarf-content">
+      {% if page.content != blank %}
+        {{ page.content }}
+      {% else %}
+        <p>
+          MOZARF est un producteur de musique indépendant spécialisé
+          dans la création de beats, albums et drum kits.
+          Son univers sonore mêle influences orchestrales,
+          trap et musique expérimentale.
+        </p>
+      {% endif %}
+    </div>
+    <div class="mozarf-mozarf-work">
+      <h2>Mon travail</h2>
+      <p style="margin-top:0;color:#aaa;font-size:0.95rem;">Liens vers les sorties et la boutique.</p>
+      <ul>
+        <li><a href="/collections/frontpage">Albums</a></li>
+        <li><a href="/collections/mozarf-albums">Catalogue albums</a></li>
+        <li><a href="/collections/drum-kit">Drum Kits</a></li>
+        <li><a href="https://www.beatstars.com/mozarf" target="_blank" rel="noopener noreferrer">BeatStars</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Mozarf — page MOZARF",
+  "settings": []
+}
+{% endschema %}

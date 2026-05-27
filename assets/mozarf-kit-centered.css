@@ -1,0 +1,40 @@
+/* Fiche drum kit centrée (template product suffix mozarf-kit) */
+body.mozarf-kit-centered-template #MainContent {
+  background: #0f0f0f;
+  color: #fff;
+}
+
+body.mozarf-kit-centered-template #MainContent .main-product-template > .page-width {
+  max-width: 960px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+body.mozarf-kit-centered-template #MainContent .main-product-template .row {
+  justify-content: center !important;
+}
+
+body.mozarf-kit-centered-template #MainContent .main-product-template .product.grid {
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 920px;
+}
+
+body.mozarf-kit-centered-template .product__info-wrapper,
+body.mozarf-kit-centered-template .product__media-wrapper {
+  max-width: 100%;
+}
+
+@media screen and (min-width: 990px) {
+  body.mozarf-kit-centered-template .product__info-wrapper.grid__item,
+  body.mozarf-kit-centered-template .product__media-wrapper.grid__item {
+    flex: 0 1 auto;
+    max-width: min(480px, 48%);
+  }
+
+  body.mozarf-kit-centered-template .product.grid.grid--2-col-tablet {
+    justify-content: center;
+    column-gap: 2.5rem;
+  }
+}

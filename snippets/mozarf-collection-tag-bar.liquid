@@ -1,0 +1,91 @@
+{%- comment -%}
+  Filtres tags + tri + reset (BeatStars). Paramètres :
+  - collection (obligatoire)
+  - preset_tags : chaîne "tag1,tag2" (optionnel, ex. kits)
+{%- endcomment -%}
+{%- liquid
+  assign bar_id = 'mozarf-cf-' | append: collection.id
+  assign has_filter = false
+  if request.query_string contains 'filter.p.tag'
+    assign has_filter = true
+  endif
+-%}
+
+<div class="mozarf-cf page-width" id="{{ bar_id }}" data-mozarf-collection-filters>
+  <div class="mozarf-cf__scroll">
+    <a
+      href="{{ collection.url }}"
+      class="mozarf-cf__pill{% unless has_filter %} mozarf-cf__pill--active{% endunless %}"
+    >
+      {{ 'Tous' }}
+    </a>
+
+    {% if preset_tags != blank %}
+      {% assign kits_tags = preset_tags | split: ',' %}
+      {% for t in kits_tags %}
+        {% assign tag_label = t | strip %}
+        {% if tag_label != blank and collection.all_tags contains tag_label %}
+          <a
+            href="{{ collection.url }}?filter.p.tag={{ tag_label | url_param_escape }}"
+            class="mozarf-cf__pill{% if current_tags contains tag_label %} mozarf-cf__pill--active{% endif %}"
+          >
+            {{ tag_label | escape }}
+          </a>
+        {% endif %}
+      {% endfor %}
+    {% else %}
+      {% for tag in collection.all_tags limit: 48 %}
+        <a
+          href="{{ collection.url }}?filter.p.tag={{ tag | url_param_escape }}"
+          class="mozarf-cf__pill{% if current_tags contains tag %} mozarf-cf__pill--active{% endif %}"
+        >
+          {{ tag | escape }}
+        </a>
+      {% endfor %}
+    {% endif %}
+
+    <a href="{{ collection.url }}" class="mozarf-cf__pill mozarf-cf__pill--reset">{{ 'Réinitialiser' }}</a>
+  </div>
+
+  <form class="mozarf-cf__search" action="{{ routes.search_url }}" method="get" role="search">
+    <input type="hidden" name="type" value="product">
+    <label class="visually-hidden" for="mozarf-cf-q-{{ collection.id }}">Recherche</label>
+    <input
+      id="mozarf-cf-q-{{ collection.id }}"
+      type="search"
+      name="q"
+      class="mozarf-cf__search-input"
+      placeholder="{{ 'Rechercher…' | escape }}"
+      autocomplete="off"
+    >
+  </form>
+
+  {% if section.settings.enable_sorting %}
+    <div class="mozarf-cf__sort">
+      <label class="visually-hidden" for="mozarf-sort-{{ collection.id }}">Tri</label>
+      <select
+        id="mozarf-sort-{{ collection.id }}"
+        class="mozarf-cf__select"
+        data-mozarf-sort-select
+      >
+        <option value="{{ collection.url }}?sort_by=manual" {% if collection.sort_by == 'manual' %}selected{% endif %}>Mis en avant</option>
+        <option value="{{ collection.url }}?sort_by=best-selling" {% if collection.sort_by == 'best-selling' %}selected{% endif %}>Meilleures ventes</option>
+        <option value="{{ collection.url }}?sort_by=title-ascending" {% if collection.sort_by == 'title-ascending' %}selected{% endif %}>Titre A–Z</option>
+        <option value="{{ collection.url }}?sort_by=title-descending" {% if collection.sort_by == 'title-descending' %}selected{% endif %}>Titre Z–A</option>
+        <option value="{{ collection.url }}?sort_by=price-ascending" {% if collection.sort_by == 'price-ascending' %}selected{% endif %}>Prix croissant</option>
+        <option value="{{ collection.url }}?sort_by=price-descending" {% if collection.sort_by == 'price-descending' %}selected{% endif %}>Prix décroissant</option>
+        <option value="{{ collection.url }}?sort_by=created-descending" {% if collection.sort_by == 'created-descending' %}selected{% endif %}>Plus récent</option>
+      </select>
+    </div>
+  {% endif %}
+</div>
+
+<script>
+  (function () {
+    var sel = document.querySelector('#{{ bar_id }} [data-mozarf-sort-select]');
+    if (!sel) return;
+    sel.addEventListener('change', function () {
+      if (sel.value) window.location.href = sel.value;
+    });
+  })();
+</script>

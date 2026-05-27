@@ -1,0 +1,498 @@
+{{ 'section-contact.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+ .section.contact .layout-type .phone-form .contacts .icon-space{    display: flex;align-items: center;}
+   .section.contact .contact__fields .field{margin-bottom:3rem}
+  .section.contact textarea{margin-top:3rem}
+  .section.contact .dt-contact-icon-image{    background: var(--gradient-base-background-3);width:80px;height:80px;display: flex;justify-content: center;}
+.section.contact .dt-contact-icon-content p a{color: var(--gradient-base-accent-1); }
+  .section.contact .dt-contact-iconblock-section .dt-contact-icon-block{list-style:none;border: 1px solid var(--gradient-base-accent-1);
+    padding:25px;background: var(--gradient-base-background-2);    transition: var(--duration-long);}
+.section.contact .dt-contact-iconblock-section .dt-contact-icon-block:hover{border: 1px solid var(--gradient-base-background-3);}
+   .section.contact .dt-contact-icon-content{padding-left:50px;}
+
+    .section.contact .layout-type.left_iconblock_form_inline .phone-form{ display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;}
+   .section.contact .layout-type.left_iconblock_form_inline .phone-form .contacts{width:36%}
+  .section.contact .layout-type.left_iconblock_form_inline .phone-form .contact-form-section{width:62%}
+  .section.contact .layout-type.left_iconblock_form_inline .phone-form .contacts .dt-sc-column.three-column{    display: grid;
+    grid-template-columns: repeat(1,1fr);}
+  .section.contact .layout-type.left_iconblock_form_inline .map{display:none;}
+     .section.contact .dt-contact-icon-image i{  font-size: 3rem;display: flex;align-items: center;}
+.section.contact .dt-contact-icon-content h5{margin:0;margin-bottom:15px;font-size:2.4rem}
+.section.contact .dt-contact-icon-content p{margin:0;opacity:0.8}
+
+/*Left Form and map  */
+
+  .section.contact .layout-type.left_map_form_inline .contacts{ display:none}
+  .section.contact .layout-type.left_map_form_inline {display:flex;align-items: flex-start;justify-content: space-between;}
+  .section.contact .layout-type.left_map_form_inline .map{width: calc(50% - 15px)}
+  .section.contact .layout-type.left_map_form_inline .phone-form{width: calc(50% - 15px);}
+/*  ______________________________  */
+
+
+/*   left map and icon */
+ .section.contact .layout-type.left_map_iconblock_inline .contact.contact-form-section{display:none;}
+ .section.contact .layout-type.left_map_iconblock_inline{    display: flex;align-items: center;justify-content: space-between;}
+  .section.contact .layout-type.left_map_iconblock_inline .map{width:50%}
+  .section.contact .layout-type.left_map_iconblock_inline .phone-form{width:45%}
+  .section.contact .layout-type.left_map_iconblock_inline .contacts .dt-sc-column.three-column{    grid-template-columns:1fr;}
+/*   ----------------------------- */
+  
+  @media(max-width:1440px){
+    .section.contact .layout-type.left_map_iconblock_inline .phone-form {width:48%}
+     .section.contact .page-width{padding:0 3rem}
+    .section.contact .dt-contact-icon-content {padding-left:30px;}
+  }
+   @media(max-width:1199px){
+     .section.contact .layout-type.block_layout .dt-sc-column.three-column{gap:20px;}
+     .section.contact .layout-type.block_layout .phone-form .contacts .icon-space{display: flex;
+    align-items: flex-start;
+    flex-direction: column;}
+     
+     .section.contact .layout-type.block_layout .dt-contact-icon-content {padding:0;}
+    
+   }
+    @media(max-width:991px){
+      .section.contact .dt-contact-icon-image {margin-bottom:20px;}
+      .section.contact .layout-type.left_iconblock_form_inline .phone-form .contacts .dt-sc-column.three-column {row-gap:20px;}
+       .section.contact .contact__fields{    display: grid; grid-template-columns: repeat(1,1fr); grid-column-gap: 2rem;}
+      .section.contact .layout-type .phone-form .contacts .icon-space{    display: flex;
+    align-items: flex-start;
+    flex-direction: column;}
+      .section.contact .layout-type.left_map_iconblock_inline .map {width:52%;}
+      .section.contact .layout-type.left_map_iconblock_inline .phone-form{width:46%}
+       .section.contact .layout-type.left_map_form_inline .contact.contact-form-section .title{margin-bottom:2.5rem}
+      .section.contact .layout-type.left_map_form_inline .contact.contact-form-section{margin-top:50px;}
+      .section.contact .layout-type.left_map_form_inline{flex-wrap:wrap}
+      .section.contact .layout-type.left_map_form_inline .phone-form,
+      .section.contact .layout-type.left_map_form_inline .map{width:100%}
+      .section.contact .page-width{padding:0 2rem}
+      .section.contact .dt-contact-iconblock-section .dt-contact-icon-block {padding:10px;}
+      .section.contact .dt-contact-icon-content p{font-size:1.6rem}
+      .section.contact .layout-type.left_iconblock_form_inline .layout-type .phone-form .contacts .icon-space{flex-wrap:wrap;align-items: flex-start;flex-direction: column;}
+      .section.contact .layout-type.left_iconblock_form_inline .dt-contact-icon-content{padding:0}
+      .section.contact .layout-type.left_iconblock_form_inline .layout-type.left_iconblock_form_inline .phone-form .contacts .dt-sc-column.three-column {    display: grid;
+    grid-template-columns: repeat(3,1fr);gap:20px}
+      
+      }
+  @media(max-width:780px){
+    
+    .section.contact .layout-type.left_map_iconblock_inline .map,
+      .section.contact .layout-type.left_map_iconblock_inline .phone-form{width:100%}
+    .section.contact .layout-type.left_map_iconblock_inline{flex-wrap: wrap;}
+    .section.contact .layout-type.block_layout .dt-sc-column.three-column {
+    gap: 20px;grid-template-columns: 1fr;}
+      .section.contact .layout-type.left_iconblock_form_inline .phone-form .contacts .dt-sc-column.three-column {    display: grid;
+    grid-template-columns: repeat(1,1fr);gap:20px}
+  }
+    @media(max-width:780px){
+        .section.contact .layout-type.left_iconblock_form_inline .phone-form .contacts,
+  .section.contact .layout-type.left_iconblock_form_inline .phone-form .contact-form-section {width:100%}
+  }
+{%- endstyle -%}
+
+  <div class="color-{{ section.settings.color_scheme }} gradient ">
+  <div class="{% if section.settings.page_full_width %} page-full-width {% else %} page-width {% endif %} {% if section.settings.page_full_width_spacing %} page-full-width_spacing {% endif %}">
+    <div class="section-{{ section.id }}-padding isolate">
+<div class="row">  
+  <div class="layout-type {{section.settings.contact_layout}}">
+  {% if section.settings.enable_gmap %}
+  <div class="map">
+    {{ section.settings.contact_iframe_code }} 
+  </div>
+    {% endif %}
+    <div class="phone-form">
+            {% if section.settings.enable_contact_info %}
+              <div class="contacts">
+        <ul class="dt-contact-iconblock-section dt-sc-column {% if section.settings.contact_phone != blank and section.settings.contact_module_email == blank and section.settings.contact_module_address == blank %}one-column{% endif %}{% if section.settings.contact_phone != blank and section.settings.contact_module_email != blank and section.settings.contact_module_address == blank %}two-column{% endif %}{% if section.settings.contact_phone != blank and section.settings.contact_module_email != blank and section.settings.contact_module_address != blank %}three-column{% endif %} wow {% if  section.settings.animation_effect == true %} {{ section.settings.animation_effect_iconblock_section }} {% endif %} ">
+          {% if section.settings.contact_phone %}         
+          <li class="dt-contact-icon-block">
+            <div class="icon-space">
+            {% if section.settings.contact_icon_1 != blank  %}
+            <div class="dt-contact-icon-image">
+              <i class="{{section.settings.contact_icon_1}}"></i> 
+            </div>
+            {% endif %}
+            <div class="dt-contact-icon-content">
+              <h5>{{ section.settings.contact_module_contact_phonetitle }}</h5>
+              <p>  {{ section.settings.contact_phone1 }} <br>{{ section.settings.contact_phone2 }}</p><mark></mark>
+            </div>
+            </div>
+          </li>
+          {% endif %}        
+          {% if section.settings.contact_module_email %}        
+          <li class="dt-contact-icon-block">
+            <div class="icon-space">
+            {% if section.settings.contact_icon_2 != blank  %}
+            <div class="dt-contact-icon-image">
+              <i class="{{section.settings.contact_icon_2}}"></i>
+            </div>
+            {% endif %}
+            <div class="dt-contact-icon-content">
+              <h5>{{ section.settings.contact_module_contact_title }}</h5>
+              <p> 
+                <a title="{{ section.settings.contact_module_email1 }}" href="mailto:{{ section.settings.contact_module_email1 }}">{{ section.settings.contact_module_email1 }}</a><br>
+                <a title="{{ section.settings.contact_module_email2 }}" href="mailto:{{ section.settings.contact_module_email2 }}">{{ section.settings.contact_module_email2 }}</a>
+              </p> 
+            </div>
+            </div>
+          </li>
+          {% endif %}        
+          {% if section.settings.contact_module_address %} 
+          <li class="dt-contact-icon-block"> 
+            <div class="icon-space">
+            {% if section.settings.contact_icon_3 != blank  %}
+            <div class="dt-contact-icon-image">
+              <i class="{{section.settings.contact_icon_3}}"></i>
+            </div> 
+            {% endif %}
+            <div class="dt-contact-icon-content">
+              <h5>{{ section.settings.contact_module_address_title }}</h5>
+              <p> {{ section.settings.contact_module_address1 }}<br /> {{ section.settings.contact_module_address2 }}<br />{{ section.settings.postcode }}</p><mark></mark> 
+            </div>
+            </div>
+          </li>
+          {% endif %}
+        </ul>
+              </div>
+        {% endif %}
+  <div class="contact contact-form-section">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="title title-wrapper--no-top-margin {{ section.settings.heading_size }}">{{ section.settings.heading  }}</h2>
+    {%- else -%}
+      <h2 class="visually-hidden">{{ 'templates.contact.form.title' | t }}</h2>
+    {%- endif -%}
+    {%- form 'contact', id: 'ContactForm', class: 'isolate' -%}
+      {%- if form.posted_successfully? -%}
+        <div class="form-status form-status-list form__message" tabindex="-1" autofocus>{% render 'icon-success' %} {{ 'templates.contact.form.post_success' | t }}</div>
+      {%- elsif form.errors -%}
+        <div class="form__message">
+          <h2 class="form-status caption-large text-body" role="alert" tabindex="-1" autofocus>{% render 'icon-error' %} {{ 'templates.contact.form.error_heading' | t }}</h2>
+        </div>
+        <ul class="form-status-list caption-large" role="list">
+          <li>
+            <a href="#ContactForm-email" class="link">
+              {{ form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] }}
+            </a>
+          </li>
+        </ul>
+      {%- endif -%}
+      <div class="contact__fields">
+        <div class="field">
+          <input class="field__input input-animation" autocomplete="name" type="text" id="ContactForm-name" name="contact[{{ 'templates.contact.form.name' | t }}]" value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}" placeholder="{{ 'templates.contact.form.name' | t }}">
+          <span class="focus-border"></span>
+          <label class="field__label" for="ContactForm-name">{{ 'templates.contact.form.name' | t }}</label>
+        </div>
+        <div class="field field--with-error">
+          <input
+            autocomplete="email"
+            type="email"
+            id="ContactForm-email"
+            class="field__input input-animation"
+            name="contact[email]"
+            spellcheck="false"
+            autocapitalize="off"
+            value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+            aria-required="true"
+            {% if form.errors contains 'email' %}
+              aria-invalid="true"
+              aria-describedby="ContactForm-email-error"
+            {% endif %}
+            placeholder="{{ 'templates.contact.form.email' | t }}"
+          >
+          <span class="focus-border"></span>
+          <label class="field__label" for="ContactForm-email">{{ 'templates.contact.form.email' | t }} <span aria-hidden="true">*</span></label>
+          {%- if form.errors contains 'email' -%}
+            <small class="contact__field-error" id="ContactForm-email-error">
+              <span class="visually-hidden">{{ 'accessibility.error' | t }}</span>
+              <span class="form__message">{% render 'icon-error' %}{{ form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] }}</span>
+            </small>
+          {%- endif -%}
+        </div>
+      </div>
+      <div class="field">
+        <input type="tel" id="ContactForm-phone" class="field__input input-animation" autocomplete="tel" name="contact[{{ 'templates.contact.form.phone' | t }}]" pattern="[0-9\-]*" value="{% if form.phone %}{{ form.phone }}{% elsif customer %}{{ customer.phone }}{% endif %}" placeholder="{{ 'templates.contact.form.phone' | t }}">
+        <span class="focus-border"></span>
+        <label class="field__label" for="ContactForm-phone">{{ 'templates.contact.form.phone' | t }}</label>
+      </div>
+      <div class="field">
+        <textarea
+          rows="10"
+          id="ContactForm-body"
+          class="text-area field__input input-animation"
+          name="contact[{{ 'templates.contact.form.comment' | t }}]"
+          placeholder="{{ 'templates.contact.form.comment' | t }}"
+        >
+          {{- form.body -}}
+        </textarea>
+       <span class="focus-border"></span>
+      </div>
+      <div class="contact__button">
+        <button type="submit" class="button">
+          {{ 'templates.contact.form.send' | t }}
+        </button>
+      </div>
+    {%- endform -%}
+  </div>
+  </div>
+  </div>
+</div>
+    </div>
+</div>
+</div>
+{% schema %}
+{
+  "name": "t:sections.contact.name",
+  "tag": "section",
+  "class": "section contact",
+  "settings": [
+    {
+      "type":"checkbox",
+      "id":"page_full_width",
+       "default": false,
+      "label": "t:sections.all.page_full_width.label"
+    },
+    {
+      "type":"checkbox",
+      "id":"page_full_width_spacing",
+       "default": false,
+      "label": "t:sections.all.page_full_width_spacing.label"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "default": "Contact form",
+      "label": "Heading",
+      "info":"only for form"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        {
+          "value": "h4",
+          "label": "t:sections.all.heading_size.options__1.label"
+        },
+        {
+          "value": "h3",
+          "label": "t:sections.all.heading_size.options__2.label"
+        },
+        {
+          "value": "h2",
+          "label": "t:sections.all.heading_size.options__3.label"
+        }
+      ],
+      "default": "h2",
+      "label": "t:sections.all.heading_size.label"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "options": [
+        {
+          "value": "accent-1",
+          "label": "t:sections.all.colors.accent_1.label"
+        },
+        {
+          "value": "accent-2",
+          "label": "t:sections.all.colors.accent_2.label"
+        },
+        {
+          "value": "background-1",
+          "label": "t:sections.all.colors.background_1.label"
+        },
+        {
+          "value": "background-2",
+          "label": "t:sections.all.colors.background_2.label"
+        },
+        {
+          "value": "inverse",
+          "label": "t:sections.all.colors.inverse.label"
+        }
+      ],
+      "default": "background-1",
+      "label": "t:sections.all.colors.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    },
+    {
+    "type": "select",
+    "id": "contact_layout",
+    "label":"t:sections.contact.settings.contact_layout.heading",
+    "default": "block_layout",
+    "info":"t:sections.contact.settings.contact_layout.info", 
+    "options": [
+    {
+    "value": "block_layout",
+    "label": "t:sections.contact.settings.contact_layout.options__1.label"
+    }, 
+    {
+    "value": "left_map_form_inline",
+    "label": "t:sections.contact.settings.contact_layout.options__2.label"
+    }, 
+    {
+    "value": "left_map_iconblock_inline",
+    "label": "t:sections.contact.settings.contact_layout.options__3.label"
+    },        
+    {
+    "value": "left_iconblock_form_inline",
+    "label": "t:sections.contact.settings.contact_layout.options__4.label"
+    }               
+    ]
+    },
+{
+    "type": "header",
+    "content": "t:sections.contact.blocks.map-section.heading"            
+    },
+    {
+    "type": "checkbox",
+    "id": "enable_gmap",
+    "label": "t:sections.contact.blocks.map-section.settings.enable_gmap.label"
+    },
+    {
+    "type": "textarea",
+    "id": "contact_iframe_code",
+    "label": "t:sections.contact.blocks.map-section.settings.contact_iframe_code.label",
+    "info": "t:sections.contact.blocks.map-section.settings.contact_iframe_code.info"
+    },
+    {
+    "type": "header",
+    "content": "t:sections.contact.blocks.contact-info.heading"            
+    },
+    {
+    "type": "checkbox",
+    "id": "enable_contact_info",
+    "label": "t:sections.contact.blocks.contact-info.settings.enable_contact_info.label"
+    },  
+    {
+    "type": "checkbox",
+    "id": "contact_phone",
+    "label": "t:sections.contact.blocks.contact-info.settings.contact_phone.label"
+    },
+    {
+    "type": "text",
+    "id": "contact_module_contact_phonetitle",
+    "label": "t:sections.contact.blocks.contact-info.settings.contact_module_contact_phonetitle.label",
+    "default": "Phone"
+    },
+    {
+    "type": "text",
+    "id": "contact_icon_1",
+    "label": "t:sections.contact.blocks.contact-info.settings.contact_icon_1.label",
+    "default": "fa fa-phone"
+    },
+    {
+    "type": "text",
+    "id": "contact_phone1",
+    "label": "t:sections.contact.blocks.contact-info.settings.contact_phone1.label",
+    "default": "<b>Toll-Free: </b> 0803 - 080 - 3081"
+    },
+    {
+    "type": "text",
+    "id": "contact_phone2",
+    "label": "t:sections.contact.blocks.contact-info.settings.contact_phone2.label",
+    "default": "<b>Fax: </b> 0803 - 080 - 3082"
+    },
+    
+    {
+    "type": "checkbox",
+    "id": "contact_module_email",
+    "label": "t:sections.contact.blocks.contact-info.settings.contact_module_email.label"
+    },
+    {
+    "type": "text",
+    "id": "contact_module_contact_title",
+    "label": "t:sections.contact.blocks.contact-info.settings.contact_module_contact_title.label",
+    "default": "Email"
+    },
+    {
+    "type": "text",
+    "id": "contact_icon_2",
+    "label": "t:sections.contact.blocks.contact-info.settings.contact_icon_2.label",
+    "default": "fa fa-envelope"
+    },
+    {
+    "type": "text",
+    "id": "contact_module_email1",
+    "label": "t:sections.contact.blocks.contact-info.settings.contact_module_email1.label",
+    "default": "mail@example.com"
+    },
+    {
+    "type": "text",
+    "id": "contact_module_email2",
+    "label": "t:sections.contact.blocks.contact-info.settings.contact_module_email2.label",
+    "default": "support@example.com"
+    },
+    {
+    "type": "checkbox",
+    "id": "contact_module_address",
+    "label": "t:sections.contact.blocks.contact-info.settings.contact_module_address.label"
+    },
+    {
+    "type": "text",
+    "id": "contact_module_address_title",
+    "label": "t:sections.contact.blocks.contact-info.settings.contact_module_address_title.label",
+    "default": "Address"
+    },
+    {
+    "type": "text",
+    "id": "contact_icon_3",
+    "label": "t:sections.contact.blocks.contact-info.settings.contact_icon_3.label",
+    "default": "fa fa-location-arrow"
+    },
+    {
+    "type": "textarea",
+    "id": "contact_module_address1",
+    "label": "t:sections.contact.blocks.contact-info.settings.contact_module_address1.label",
+    "default": "No: 58 A, East Madison Street,"
+    },
+    {
+    "type": "textarea",
+    "id": "contact_module_address2",
+    "label": "t:sections.contact.blocks.contact-info.settings.contact_module_address2.label",
+    "default": "Baltimore, MD, USA 4508"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.contact.name"
+    }
+  ]
+}
+{% endschema %}

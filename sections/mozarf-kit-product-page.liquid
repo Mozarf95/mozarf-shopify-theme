@@ -1,0 +1,745 @@
+{%- unless product == blank -%}
+{%- liquid
+  assign preview_url = ''
+  assign pv = product.metafields.track.preview_link.value | default: product.metafields.album.preview_link.value
+  if pv == blank
+    assign pv = product.metafields.custom.preview_link.value | default: product.metafields.custom.audio_preview.value
+  endif
+  if pv != blank
+    if pv.url != blank
+      assign preview_url = pv.url
+    else
+      assign preview_url = pv | file_url
+      if preview_url == blank
+        assign preview_url = pv
+      endif
+    endif
+  endif
+
+  assign samples = product.metafields.custom.mozarf_kit_samples.value
+  assign demo_label = product.title | truncate: 48
+  if samples != blank and samples.size > 0
+    assign s0 = samples.first
+    assign demo_label = s0.title | default: s0.name | default: demo_label
+  endif
+
+  assign hero_img = product.featured_image
+  if hero_img == blank and product.images.size > 0
+    assign hero_img = product.images.first
+  endif
+
+  assign rel_col = section.settings.related_collection
+  if rel_col == blank
+    assign rel_col = collections['drum-kit']
+  endif
+
+  assign is_new = false
+  assign created_day = product.created_at | date: '%Y-%m-%d'
+  if created_day > '2025-01-01'
+    assign is_new = true
+  endif
+  for t in product.tags
+    assign tl = t | downcase
+    if tl == 'new' or tl == 'nouveau'
+      assign is_new = true
+      break
+    endif
+  endfor
+-%}
+{%- endunless -%}
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+<style>
+  .mkp { --bg:#131313; --surface:#1c1b1b; --high:#2a2a2a; --highest:#353534; --on:#ffffff; --muted:#f0f0f0; --dim:#e4e4e7; --primary:#f2ca50; --primary-dim:#d4af37; --on-pri:#3c2f00; --line:rgba(77,70,53,0.15);
+    background:var(--bg); color:var(--on); font-family:Inter,system-ui,sans-serif; min-height:100vh; }
+  .mkp .material-symbols-outlined { font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; line-height:1; vertical-align:middle; }
+  .mkp-header { position:fixed; top:0; left:0; right:0; z-index:50; background:linear-gradient(180deg,#131313 0%,rgba(19,19,19,0.92) 70%,transparent); border-bottom:1px solid rgba(255,255,255,0.04); }
+  .mkp-nav { max-width:1920px; margin:0 auto; padding:1.25rem 2rem; display:flex; justify-content:space-between; align-items:center; font-family:'Space Grotesk',sans-serif; }
+  .mkp-logo { font-size:1.35rem; font-weight:800; letter-spacing:-0.04em; color:var(--primary); text-decoration:none; text-transform:uppercase; }
+  .mkp-logo span { color:var(--on); }
+  .mkp-nav-mid { display:none; gap:2.5rem; }
+  @media(min-width:768px){ .mkp-nav-mid { display:flex; } }
+  .mkp-nav-mid a { color:var(--muted); text-decoration:none; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; transition:color .2s; }
+  .mkp-nav-mid a:hover, .mkp-nav-mid a.is-active { color:var(--primary); }
+  .mkp-nav-icons { display:flex; gap:1.25rem; color:var(--primary); }
+  .mkp-nav-icons a { color:inherit; }
+  .mkp-aside { display:none; position:fixed; left:0; top:0; width:5rem; height:100vh; border-right:1px solid var(--line); background:rgba(14,14,14,0.65); backdrop-filter:blur(20px); flex-direction:column; align-items:center; padding-top:6rem; z-index:40; box-shadow:12px 0 32px rgba(0,0,0,0.35); }
+  @media(min-width:768px){ .mkp-aside { display:flex; } }
+  .mkp-aside a { display:flex; flex-direction:column; align-items:center; gap:0.35rem; margin-bottom:2rem; text-decoration:none; color:rgba(229,226,225,0.35); font-size:0.65rem; text-transform:uppercase; letter-spacing:0.06em; transition:color .2s; }
+  .mkp-aside a:hover, .mkp-aside a.is-active { color:var(--primary); }
+  .mkp-main { padding-top:5.5rem; padding-bottom:4rem; }
+  @media(min-width:768px){ .mkp-main { padding-left:5rem; } }
+  .mkp-hero { position:relative; min-height:min(85vh,920px); display:flex; align-items:center; padding:3rem 2rem 5rem; overflow:hidden; }
+  .mkp-hero-bg { position:absolute; inset:0; z-index:0; }
+  .mkp-hero-bg img { width:100%; height:100%; object-fit:cover; object-position:center right; }
+  .mkp-hero-bg::after { content:''; position:absolute; inset:0; background:linear-gradient(90deg,var(--bg) 0%,rgba(19,19,19,0.88) 45%,transparent 100%); z-index:1; }
+  .mkp-hero-inner { position:relative; z-index:2; max-width:44rem; }
+  .mkp-badge { display:inline-block; padding:0.35rem 0.75rem; background:var(--high); color:var(--primary); font-size:0.65rem; letter-spacing:0.12em; text-transform:uppercase; border-radius:2px; margin-bottom:1.25rem; }
+  .mkp-visually-hidden { position:absolute !important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+  .mkp-h1 { font-family:'Space Grotesk',sans-serif; font-size:clamp(2.5rem,8vw,5.5rem); font-weight:700; letter-spacing:-0.04em; line-height:0.95; margin:0 0 1.25rem; text-transform:uppercase; }
+  .mkp-h1 .accent { color:var(--primary); }
+  .mkp-lead { font-size:1.05rem; color:var(--muted); line-height:1.65; max-width:36rem; margin-bottom:2rem; }
+  .mkp-hero-cta { display:flex; flex-wrap:wrap; align-items:center; gap:1.25rem; }
+  .mkp-btn-gold { appearance:none; border:none; cursor:pointer; background:linear-gradient(135deg,var(--primary),var(--primary-dim)); color:var(--on-pri); padding:1rem 2rem; border-radius:0.5rem; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:0.95rem; text-transform:uppercase; letter-spacing:0.04em; box-shadow:0 12px 32px rgba(0,0,0,0.35); transition:filter .2s, transform .15s; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; }
+  .mkp-btn-gold:hover { filter:brightness(1.08); }
+  .mkp-btn-gold:active { transform:scale(0.98); }
+  .mkp-trust { display:flex; align-items:center; gap:0.5rem; color:rgba(229,226,225,0.45); font-size:0.65rem; text-transform:uppercase; letter-spacing:0.1em; }
+  .mkp-player { margin:-3rem 2rem 0; position:relative; z-index:10; max-width:calc(1920px - 4rem); margin-left:auto; margin-right:auto; }
+  @media(min-width:768px){ .mkp-player { margin-left:calc(5rem + 2rem); margin-right:2rem; max-width:calc(100% - 5rem - 4rem); } }
+  .mkp-player-in { background:rgba(14,14,14,0.82); backdrop-filter:blur(20px); border:1px solid var(--line); border-radius:0.75rem; padding:1.75rem; display:flex; flex-direction:column; gap:1.25rem; box-shadow:0 24px 48px rgba(0,0,0,0.45); }
+  @media(min-width:768px){ .mkp-player-in { flex-direction:row; align-items:center; } }
+  .mkp-play-btn { width:4rem; height:4rem; border-radius:9999px; border:none; background:var(--primary); color:var(--on-pri); display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; transition:transform .2s; }
+  .mkp-play-btn:hover { transform:scale(1.05); }
+  .mkp-play-btn:disabled { opacity:0.35; cursor:not-allowed; transform:none; }
+  .mkp-wave-wrap { flex:1; min-width:0; }
+  .mkp-wave-head { display:flex; justify-content:space-between; margin-bottom:0.65rem; font-size:0.8rem; }
+  .mkp-wave-name { font-family:'Space Grotesk',sans-serif; font-weight:700; color:var(--primary); letter-spacing:-0.02em; word-break:break-word; }
+  .mkp-wave-time { font-size:0.7rem; color:rgba(229,226,225,0.35); }
+  .mkp-bars { height:3.5rem; display:flex; align-items:flex-end; gap:2px; }
+  .mkp-bars span { flex:1; min-width:3px; background:rgba(173,199,255,0.35); border-radius:1px; }
+  .mkp-bars span:nth-child(5n){ background:rgba(173,199,255,0.55); }
+  .mkp-bars span:nth-child(7n){ background:rgba(242,202,80,0.45); }
+  .mkp-grid { max-width:1400px; margin:0 auto; padding:4rem 2rem; display:grid; gap:3rem; }
+  @media(min-width:1024px){ .mkp-grid { grid-template-columns:1fr minmax(260px,320px); gap:4rem; } }
+  .mkp-h2 { font-family:'Space Grotesk',sans-serif; font-size:1.75rem; font-weight:700; letter-spacing:-0.03em; margin:0 0 1.25rem; color:var(--primary); }
+  .mkp-prose { color:var(--muted); font-size:1rem; line-height:1.75; }
+  .mkp-prose p { margin:0 0 1rem; }
+  .mkp-prose strong { color:var(--primary); font-weight:600; }
+  .mkp-bento { display:grid; gap:1rem; margin-top:2.5rem; }
+  @media(min-width:640px){ .mkp-bento { grid-template-columns:1fr 1fr; } }
+  .mkp-bento-card { padding:1.75rem; background:var(--surface); border-radius:0.5rem; border-left:4px solid var(--primary); }
+  .mkp-bento-card h3 { font-family:'Space Grotesk',sans-serif; font-size:1.1rem; margin:0.5rem 0 0.35rem; }
+  .mkp-bento-card p { margin:0; font-size:0.85rem; color:rgba(229,226,225,0.5); line-height:1.5; }
+  .mkp-quote { position:relative; margin-top:3rem; padding:2.5rem; background:var(--highest); border-radius:1rem; overflow:hidden; }
+  .mkp-quote::before { content:''; position:absolute; inset:0; opacity:0.03; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); pointer-events:none; }
+  .mkp-quote blockquote { position:relative; z-index:1; margin:0; font-family:'Space Grotesk',sans-serif; font-size:1.2rem; font-style:italic; line-height:1.45; }
+  .mkp-quote cite { display:block; margin-top:1.25rem; font-style:normal; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--dim); }
+  .mkp-side { display:flex; flex-direction:column; gap:1.25rem; }
+  .mkp-spec { background:var(--surface); border:1px solid var(--line); border-radius:0.5rem; padding:1.75rem; }
+  .mkp-spec h3 { font-family:'Space Grotesk',sans-serif; font-size:1.05rem; margin:0 0 1.25rem; display:flex; align-items:center; gap:0.5rem; }
+  .mkp-spec ul { list-style:none; margin:0; padding:0; }
+  .mkp-spec li { display:flex; justify-content:space-between; gap:1rem; padding:0.65rem 0; border-bottom:1px solid rgba(255,255,255,0.04); font-size:0.85rem; }
+  .mkp-spec li span:first-child { color:var(--dim); text-transform:uppercase; letter-spacing:0.06em; font-size:0.7rem; }
+  .mkp-spec li span:last-child { font-family:'Space Grotesk',sans-serif; font-weight:700; text-align:right; }
+  .mkp-spec-note { margin-top:1.25rem; padding:0.85rem; background:rgba(242,202,80,0.06); border:1px solid rgba(242,202,80,0.2); border-radius:0.35rem; text-align:center; font-size:0.62rem; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; color:var(--primary); }
+  .mkp-side-img { border-radius:0.5rem; overflow:hidden; height:16rem; }
+  .mkp-side-img img { width:100%; height:100%; object-fit:cover; filter:grayscale(0.4); transition:filter .6s; }
+  .mkp-side-img:hover img { filter:grayscale(0); }
+  .mkp-related { background:#0e0e0e; padding:4rem 2rem; border-top:1px solid var(--line); }
+  .mkp-related h2 { font-family:'Space Grotesk',sans-serif; font-size:1.35rem; margin:0 0 2rem; max-width:1400px; margin-left:auto; margin-right:auto; letter-spacing:-0.02em; }
+  .mkp-rel-grid { max-width:1400px; margin:0 auto; display:grid; gap:1.5rem; grid-template-columns:1fr; }
+  @media(min-width:640px){ .mkp-rel-grid { grid-template-columns:repeat(2,1fr); } }
+  @media(min-width:1024px){ .mkp-rel-grid { grid-template-columns:repeat(3,1fr); } }
+  .mkp-rel-card { text-decoration:none; color:inherit; display:block; }
+  .mkp-rel-card .thumb { aspect-ratio:1; border-radius:0.5rem; overflow:hidden; background:var(--high); margin-bottom:1rem; position:relative; }
+  .mkp-rel-card .thumb img { width:100%; height:100%; object-fit:cover; transition:transform .5s; }
+  .mkp-rel-card:hover .thumb img { transform:scale(1.06); }
+  .mkp-rel-card h3 { font-family:'Space Grotesk',sans-serif; font-size:1rem; margin:0 0 0.25rem; transition:color .2s; }
+  .mkp-rel-card:hover h3 { color:var(--primary); }
+  .mkp-rel-card .price { font-size:0.85rem; color:var(--dim); }
+  .mkp-rel-cta { aspect-ratio:1; border-radius:0.5rem; background:linear-gradient(135deg,var(--primary),var(--primary-dim)); color:var(--on-pri); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:1.5rem; }
+  .mkp-rel-cta h3 { margin:0 0 0.5rem; font-size:1.25rem; }
+  .mkp-rel-cta p { margin:0 0 1rem; font-size:0.8rem; opacity:0.85; }
+  .mkp-rel-cta a { background:var(--on-pri); color:var(--primary); padding:0.65rem 1.25rem; border-radius:0.35rem; font-weight:700; font-size:0.65rem; letter-spacing:0.12em; text-transform:uppercase; text-decoration:none; }
+  .mkp-footer { background:#0e0e0e; padding:2.5rem 2rem; border-top:1px solid var(--line); }
+  .mkp-footer-in { max-width:1200px; margin:0 auto; display:flex; flex-direction:column; gap:1.5rem; align-items:center; text-align:center; }
+  @media(min-width:768px){ .mkp-footer-in { flex-direction:row; justify-content:space-between; text-align:left; } }
+  .mkp-footer-brand { font-family:'Space Grotesk',sans-serif; font-weight:800; color:var(--primary); font-size:1.1rem; text-decoration:none; text-transform:uppercase; }
+  .mkp-footer-copy { font-size:0.7rem; color:var(--dim); text-transform:uppercase; letter-spacing:0.08em; margin-top:0.35rem; }
+  .mkp-footer-links { display:flex; flex-wrap:wrap; gap:1.25rem; justify-content:center; }
+  @media(min-width:768px){ .mkp-footer-links { justify-content:flex-end; } }
+  .mkp-footer-links a { font-size:0.7rem; color:var(--dim); text-transform:uppercase; letter-spacing:0.06em; text-decoration:none; }
+  .mkp-footer-links a:hover { color:var(--primary); }
+  .mkp-form { margin:0; display:inline; }
+  .mkp-hidden-variant { display:none; }
+  .mkp-variant-row { margin-bottom:1rem; max-width:36rem; }
+  .mkp-variant-row label { display:block; font-size:0.65rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--dim); margin-bottom:0.35rem; }
+  .mkp-variant-row select { width:100%; padding:0.65rem 0.75rem; border-radius:0.35rem; border:1px solid var(--line); background:var(--surface); color:var(--on); font-family:inherit; }
+</style>
+
+{% if product == blank %}
+  <div class="mkp" style="padding:4rem 2rem;text-align:center;color:#a1a1aa;font-family:Inter,sans-serif;">
+    Assignez un produit à l’aperçu de section (template produit « mozarf-kit »).
+  </div>
+{% else %}
+<div class="mkp" data-mozarf-kit-product {{ section.shopify_attributes }}>
+  <header class="mkp-header">
+    <nav class="mkp-nav">
+      <a class="mkp-logo" href="{{ routes.root_url }}">MOZ<span>ARF</span></a>
+      <div class="mkp-nav-mid">
+        {% if collections['drum-kit'] != blank %}
+          <a href="{{ collections['drum-kit'].url }}" class="is-active">Kits</a>
+        {% else %}
+          <a href="{{ routes.collections_url }}">Kits</a>
+        {% endif %}
+        {% if collections['frontpage'] != blank %}
+          <a href="{{ collections['frontpage'].url }}">Albums</a>
+        {% endif %}
+        {% if pages.mozarf != blank %}
+          <a href="{{ pages.mozarf.url }}">Mozarf</a>
+        {% endif %}
+        {% if pages.contact != blank %}
+          <a href="{{ pages.contact.url }}">Contact</a>
+        {% endif %}
+      </div>
+      <div class="mkp-nav-icons">
+        <a href="{{ routes.cart_url }}" aria-label="Panier"><span class="material-symbols-outlined">shopping_cart</span></a>
+        <a href="{{ routes.account_url }}" aria-label="Compte"><span class="material-symbols-outlined">account_circle</span></a>
+      </div>
+    </nav>
+  </header>
+
+  <aside class="mkp-aside" aria-label="Sommaire">
+    <a href="#mkp-overview" class="is-active"><span class="material-symbols-outlined">info</span>Aperçu</a>
+    <a href="#mkp-story"><span class="material-symbols-outlined">library_music</span>Manifeste</a>
+    <a href="#mkp-specs"><span class="material-symbols-outlined">settings_input_component</span>Specs</a>
+    {% if section.settings.testimonial_quote != blank %}
+      <a href="#mkp-voice"><span class="material-symbols-outlined">format_quote</span>Voix</a>
+    {% endif %}
+  </aside>
+
+  <main class="mkp-main">
+    <section class="mkp-hero" id="mkp-overview">
+      <div class="mkp-hero-bg" aria-hidden="true">
+        {% if hero_img != blank %}
+          {{ hero_img | image_url: width: 2000 | image_tag: loading: 'eager', sizes: '100vw', widths: '800,1200,1600,2000', alt: product.title }}
+        {% endif %}
+      </div>
+      <div class="mkp-hero-inner">
+        <h1 class="mkp-visually-hidden">{{ product.title | escape }}</h1>
+        <div class="mkp-hero-cta">
+          <div id="mkp-product-wrap-{{ section.id }}">
+          {% form 'product', product %}
+            <select class="mkp-hidden-variant" name="id" id="mkp-variant-{{ section.id }}">
+              {% for v in product.variants %}
+                <option value="{{ v.id }}" {% if v == product.selected_or_first_available_variant %}selected{% endif %} {% unless v.available %}disabled{% endunless %}>
+                  {{ v.title | escape }} — {{ v.price | money }}
+                </option>
+              {% endfor %}
+            </select>
+            {% unless product.has_only_default_variant %}
+              <div class="mkp-variant-row">
+                <label for="mkp-variant-select-{{ section.id }}">Format / variant</label>
+                <select id="mkp-variant-select-{{ section.id }}" data-mkp-variant-sync>
+                  {% for v in product.variants %}
+                    <option value="{{ v.id }}" {% if v == product.selected_or_first_available_variant %}selected{% endif %} {% unless v.available %}disabled{% endunless %}>
+                      {{ v.title | escape }} — {{ v.price | money }}{% unless v.available %} (indisponible){% endunless %}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+            {% endunless %}
+            <button type="submit" name="add" class="mkp-btn-gold">
+              {{ section.settings.add_to_cart_label | escape }} — {{ product.selected_or_first_available_variant.price | money }}
+            </button>
+          {% endform %}
+          </div>
+          <div class="mkp-trust">
+            <span class="material-symbols-outlined" style="font-size:1.1rem;">verified</span>
+            <span>{{ section.settings.trust_line | escape }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="mkp-player">
+      <div class="mkp-player-in">
+        <button type="button" class="mkp-play-btn" id="mkp-audio-play-{{ section.id }}" {% if preview_url == blank %}disabled{% endif %} aria-label="Lecture pré-écoute">
+          <span class="material-symbols-outlined" style="font-size:2rem;">play_arrow</span>
+        </button>
+        <div class="mkp-wave-wrap">
+          <div class="mkp-wave-head">
+            <span class="mkp-wave-name">{{ demo_label | escape }}</span>
+            <span class="mkp-wave-time" id="mkp-audio-time-{{ section.id }}">—</span>
+          </div>
+          <div class="mkp-bars" aria-hidden="true">
+            <span style="height:28%"></span><span style="height:52%"></span><span style="height:40%"></span><span style="height:88%"></span><span style="height:68%"></span><span style="height:100%"></span><span style="height:82%"></span><span style="height:36%"></span><span style="height:22%"></span><span style="height:30%"></span><span style="height:54%"></span><span style="height:42%"></span><span style="height:20%"></span><span style="height:16%"></span><span style="height:32%"></span><span style="height:48%"></span>
+          </div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:0.62rem; text-transform:uppercase; letter-spacing:0.12em; color:rgba(229,226,225,0.35); margin-bottom:0.35rem;">{{ section.settings.player_meter_label | escape }}</div>
+          <div style="width:8rem; height:0.35rem; background:var(--highest); border-radius:9999px; overflow:hidden; margin-left:auto;">
+            <div style="height:100%; width:72%; background:linear-gradient(90deg,#adc7ff,var(--primary));"></div>
+          </div>
+        </div>
+      </div>
+      <audio id="mkp-audio-el-{{ section.id }}" preload="none" {% if preview_url != blank %}src="{{ preview_url | escape }}"{% endif %}></audio>
+    </div>
+
+    <section class="mkp-grid" id="mkp-story">
+      <div>
+        <h2 class="mkp-h2">{{ section.settings.story_heading | escape }}</h2>
+        <div class="mkp-prose">
+          {% if section.settings.story_richtext != blank %}
+            {{ section.settings.story_richtext }}
+          {% else %}
+            <p>
+              MOZARF incarne une approche <strong>architecturale</strong> de la musique : des couches sonores pensées comme des volumes, des impacts qui portent la danse — en particulier le <strong>krump</strong> — et une esthétique frontale, sans fioritures.
+            </p>
+            <p>
+              Ce kit prolonge cette vision : des sons sculptés pour la puissance scénique et le studio, avec une identité claire, cohérente avec le reste du catalogue MOZARF.
+            </p>
+          {% endif %}
+        </div>
+
+        <div class="mkp-bento">
+          {% if section.settings.feat_1_title != blank %}
+            <div class="mkp-bento-card">
+              <span class="material-symbols-outlined" style="color:var(--primary);">graphic_eq</span>
+              <h3>{{ section.settings.feat_1_title | escape }}</h3>
+              <p>{{ section.settings.feat_1_text | escape }}</p>
+            </div>
+          {% endif %}
+          {% if section.settings.feat_2_title != blank %}
+            <div class="mkp-bento-card">
+              <span class="material-symbols-outlined" style="color:var(--primary);">high_quality</span>
+              <h3>{{ section.settings.feat_2_title | escape }}</h3>
+              <p>{{ section.settings.feat_2_text | escape }}</p>
+            </div>
+          {% endif %}
+          {% if section.settings.feat_3_title != blank %}
+            <div class="mkp-bento-card">
+              <span class="material-symbols-outlined" style="color:var(--primary);">architecture</span>
+              <h3>{{ section.settings.feat_3_title | escape }}</h3>
+              <p>{{ section.settings.feat_3_text | escape }}</p>
+            </div>
+          {% endif %}
+          {% if section.settings.feat_4_title != blank %}
+            <div class="mkp-bento-card">
+              <span class="material-symbols-outlined" style="color:var(--primary);">nightlife</span>
+              <h3>{{ section.settings.feat_4_title | escape }}</h3>
+              <p>{{ section.settings.feat_4_text | escape }}</p>
+            </div>
+          {% endif %}
+        </div>
+
+        {% if section.settings.testimonial_quote != blank %}
+          <div class="mkp-quote" id="mkp-voice">
+            <blockquote>“{{ section.settings.testimonial_quote | escape }}”</blockquote>
+            {% if section.settings.testimonial_author != blank %}
+              <cite>— {{ section.settings.testimonial_author | escape }}</cite>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="mkp-side" id="mkp-specs">
+        <div class="mkp-spec">
+          <h3><span class="material-symbols-outlined" style="color:var(--primary);">settings</span> {{ section.settings.specs_heading | escape }}</h3>
+          <ul>
+            {% if section.settings.spec_size != blank %}
+              <li><span>{{ section.settings.spec_size_label | escape }}</span><span>{{ section.settings.spec_size | escape }}</span></li>
+            {% endif %}
+            {% if section.settings.spec_format != blank %}
+              <li><span>{{ section.settings.spec_format_label | escape }}</span><span>{{ section.settings.spec_format | escape }}</span></li>
+            {% endif %}
+            {% if section.settings.spec_daw != blank %}
+              <li><span>{{ section.settings.spec_daw_label | escape }}</span><span>{{ section.settings.spec_daw | escape }}</span></li>
+            {% endif %}
+            {% if section.settings.spec_license != blank %}
+              <li><span>{{ section.settings.spec_license_label | escape }}</span><span>{{ section.settings.spec_license | escape }}</span></li>
+            {% endif %}
+          </ul>
+          {% if section.settings.spec_footer_note != blank %}
+            <div class="mkp-spec-note">{{ section.settings.spec_footer_note | escape }}</div>
+          {% endif %}
+        </div>
+        {% if product.images.size > 1 %}
+          <div class="mkp-side-img">
+            {{ product.images[1] | image_url: width: 800 | image_tag: loading: 'lazy', alt: product.title }}
+          </div>
+        {% elsif hero_img != blank %}
+          <div class="mkp-side-img">
+            {{ hero_img | image_url: width: 800 | image_tag: loading: 'lazy', alt: product.title }}
+          </div>
+        {% endif %}
+      </div>
+    </section>
+
+    {% if rel_col != blank and rel_col.products_count > 0 %}
+      <section class="mkp-related">
+        <h2>{{ section.settings.related_heading | escape }}</h2>
+        <div class="mkp-rel-grid">
+          {% assign shown = 0 %}
+          {% for p in rel_col.products %}
+            {% if p.id != product.id %}
+              <a class="mkp-rel-card" href="{{ p.url }}">
+                <div class="thumb">
+                  {% if p.featured_image %}
+                    {{ p.featured_image | image_url: width: 600 | image_tag: loading: 'lazy', alt: p.title }}
+                  {% endif %}
+                  <div style="position:absolute;inset:0;background:rgba(0,0,0,0.45);opacity:0;transition:opacity .2s;display:flex;align-items:center;justify-content:center;" class="mkp-rel-hover">
+                    <span style="background:var(--primary);color:var(--on-pri);padding:0.4rem 0.85rem;border-radius:0.25rem;font-size:0.65rem;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;">{{ section.settings.related_cta_label | escape }}</span>
+                  </div>
+                </div>
+                <h3>{{ p.title | escape }}</h3>
+                <div class="price">{{ p.price | money }}</div>
+              </a>
+              {% assign shown = shown | plus: 1 %}
+              {% if shown >= 2 %}{% break %}{% endif %}
+            {% endif %}
+          {% endfor %}
+          <div class="mkp-rel-cta">
+            <span class="material-symbols-outlined" style="font-size:2.5rem;">layers</span>
+            <h3>{{ section.settings.bundle_title | escape }}</h3>
+            <p>{{ section.settings.bundle_text | escape }}</p>
+            {% if collections['drum-kit'] != blank %}
+              <a href="{{ collections['drum-kit'].url }}">{{ section.settings.bundle_btn | escape }}</a>
+            {% else %}
+              <a href="{{ routes.collections_url }}">{{ section.settings.bundle_btn | escape }}</a>
+            {% endif %}
+          </div>
+        </div>
+      </section>
+    {% endif %}
+  </main>
+
+  <footer class="mkp-footer">
+    <div class="mkp-footer-in">
+      <div>
+        <a href="{{ routes.root_url }}" class="mkp-footer-brand">MOZARF</a>
+        <p class="mkp-footer-copy">© {{ 'now' | date: '%Y' }} {{ section.settings.footer_tagline | escape }}</p>
+      </div>
+      <div class="mkp-footer-links">
+        {% for policy in shop.policies %}
+          {% if policy.url != blank %}
+            <a href="{{ policy.url }}">{{ policy.title | escape }}</a>
+          {% endif %}
+        {% endfor %}
+        {% if pages.contact != blank %}
+          <a href="{{ pages.contact.url }}">Support</a>
+        {% endif %}
+        {% if section.settings.instagram_url != blank %}
+          <a href="{{ section.settings.instagram_url }}" target="_blank" rel="noopener noreferrer">Instagram</a>
+        {% endif %}
+        <a href="https://www.beatstars.com/mozarf" target="_blank" rel="noopener noreferrer">BeatStars</a>
+      </div>
+    </div>
+  </footer>
+</div>
+{% endif %}
+
+<style>
+  .mkp-rel-card:hover .mkp-rel-hover { opacity:1 !important; }
+</style>
+
+<script>
+  (function () {
+    var sid = {{ section.id | json }};
+    var wrap = document.getElementById('mkp-product-wrap-' + sid);
+    var formEl = wrap ? wrap.querySelector('form') : null;
+    if (!formEl) return;
+    var audio = document.getElementById('mkp-audio-el-' + sid);
+    var btn = document.getElementById('mkp-audio-play-' + sid);
+    var timeEl = document.getElementById('mkp-audio-time-' + sid);
+    var sel = document.getElementById('mkp-variant-select-' + sid);
+    var hidden = document.getElementById('mkp-variant-' + sid);
+    function moneyFromOption(opt) {
+      var m = opt.textContent.match(/—\s*(.+)$/);
+      return m ? m[1].trim() : '';
+    }
+    function updateAddPrice() {
+      if (!formEl || !hidden) return;
+      var opt = hidden.options[hidden.selectedIndex];
+      if (!opt) return;
+      var sub = formEl.querySelector('button[name="add"]');
+      if (!sub) return;
+      var m = moneyFromOption(opt);
+      var base =
+        {{ section.settings.add_to_cart_label | json }} +
+        (m ? " \u2014 " + m : "");
+      sub.textContent = base;
+    }
+    if (sel && hidden) {
+      sel.addEventListener('change', function () {
+        hidden.value = sel.value;
+        updateAddPrice();
+      });
+    }
+    if (hidden) hidden.addEventListener('change', updateAddPrice);
+    function fmt(t) {
+      if (!isFinite(t) || t < 0) return '—';
+      var m = Math.floor(t / 60);
+      var s = Math.floor(t % 60);
+      return m + ':' + (s < 10 ? '0' : '') + s;
+    }
+    if (audio && btn) {
+      audio.addEventListener('loadedmetadata', function () {
+        if (timeEl) timeEl.textContent = fmt(audio.duration);
+      });
+      audio.addEventListener('timeupdate', function () {
+        if (timeEl && isFinite(audio.duration)) timeEl.textContent = fmt(audio.currentTime) + ' / ' + fmt(audio.duration);
+      });
+      btn.addEventListener('click', function () {
+        if (!audio.src) return;
+        if (audio.paused) {
+          audio.play().catch(function () {});
+          btn.querySelector('.material-symbols-outlined').textContent = 'pause';
+        } else {
+          audio.pause();
+          btn.querySelector('.material-symbols-outlined').textContent = 'play_arrow';
+        }
+      });
+    }
+    document.querySelectorAll('.mkp-aside a[href^="#"]').forEach(function (a) {
+      a.addEventListener('click', function () {
+        document.querySelectorAll('.mkp-aside a').forEach(function (x) {
+          x.classList.remove('is-active');
+        });
+        a.classList.add('is-active');
+      });
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "MOZARF kit — page produit",
+  "tag": "section",
+  "class": "section-mozarf-kit-product-page",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Badge hero"
+    },
+    {
+      "type": "text",
+      "id": "badge_new_label",
+      "label": "Badge si produit récent / tag new",
+      "default": "NOUVEAUTÉ — REPOSITORY"
+    },
+    {
+      "type": "text",
+      "id": "badge_series_label",
+      "label": "Badge par défaut",
+      "default": "SÉRIE KIT — MOZARF"
+    },
+    {
+      "type": "textarea",
+      "id": "hero_lead",
+      "label": "Sous-titre hero",
+      "default": "Pensé pour une sonorité puissante et frontale : le même ADN que le krump et les sessions MOZARF — précision, poids, architecture du son. Chaque kit prolonge cette ligne : des percussions taillées pour occuper l’espace et structurer le mix."
+    },
+    {
+      "type": "text",
+      "id": "add_to_cart_label",
+      "label": "Libellé bouton panier",
+      "default": "Ajouter au panier"
+    },
+    {
+      "type": "text",
+      "id": "trust_line",
+      "label": "Ligne confiance",
+      "default": "Téléchargement — livraison immédiate"
+    },
+    {
+      "type": "text",
+      "id": "player_meter_label",
+      "label": "Libellé vu-mètre",
+      "default": "Sortie master"
+    },
+    {
+      "type": "header",
+      "content": "Manifeste MOZARF"
+    },
+    {
+      "type": "text",
+      "id": "story_heading",
+      "label": "Titre de section",
+      "default": "L'architecture du son MOZARF"
+    },
+    {
+      "type": "richtext",
+      "id": "story_richtext",
+      "label": "Texte (manifeste)"
+    },
+    {
+      "type": "header",
+      "content": "Blocs bento (sans chiffres fictifs)"
+    },
+    {
+      "type": "text",
+      "id": "feat_1_title",
+      "label": "Bloc 1 — titre",
+      "default": "Impact & présence"
+    },
+    {
+      "type": "textarea",
+      "id": "feat_1_text",
+      "label": "Bloc 1 — texte",
+      "default": "Textures et transitoires pensés pour trancher dans le mix — de la battle au mastering."
+    },
+    {
+      "type": "text",
+      "id": "feat_2_title",
+      "label": "Bloc 2 — titre",
+      "default": "Qualité studio"
+    },
+    {
+      "type": "textarea",
+      "id": "feat_2_text",
+      "label": "Bloc 2 — texte",
+      "default": "Livrés dans les formats du produit (WAV / packs selon fiche) — prêts pour toute chaîne pro."
+    },
+    {
+      "type": "text",
+      "id": "feat_3_title",
+      "label": "Bloc 3 — titre",
+      "default": "Ligne MOZARF"
+    },
+    {
+      "type": "textarea",
+      "id": "feat_3_text",
+      "label": "Bloc 3 — texte",
+      "default": "Cohérence esthétique avec les sorties et kits du label : même exigence, même signature."
+    },
+    {
+      "type": "text",
+      "id": "feat_4_title",
+      "label": "Bloc 4 — titre",
+      "default": "Danse & mouvement"
+    },
+    {
+      "type": "textarea",
+      "id": "feat_4_text",
+      "label": "Bloc 4 — texte",
+      "default": "Pensé pour le mouvement — krump, drill, électronique — quand le son doit pousser le corps."
+    },
+    {
+      "type": "header",
+      "content": "Citation (optionnelle)"
+    },
+    {
+      "type": "textarea",
+      "id": "testimonial_quote",
+      "label": "Citation"
+    },
+    {
+      "type": "text",
+      "id": "testimonial_author",
+      "label": "Auteur"
+    },
+    {
+      "type": "header",
+      "content": "Fiche technique"
+    },
+    {
+      "type": "text",
+      "id": "specs_heading",
+      "label": "Titre encart specs",
+      "default": "Spécifications"
+    },
+    {
+      "type": "text",
+      "id": "spec_size_label",
+      "label": "Libellé ligne 1",
+      "default": "Poids / archive"
+    },
+    {
+      "type": "text",
+      "id": "spec_size",
+      "label": "Valeur ligne 1",
+      "info": "Ex. 1,4 Go — laisser vide pour masquer la ligne."
+    },
+    {
+      "type": "text",
+      "id": "spec_format_label",
+      "label": "Libellé ligne 2",
+      "default": "Format"
+    },
+    {
+      "type": "text",
+      "id": "spec_format",
+      "label": "Valeur ligne 2",
+      "default": "WAV / ZIP (selon variant)"
+    },
+    {
+      "type": "text",
+      "id": "spec_daw_label",
+      "label": "Libellé ligne 3",
+      "default": "DAW"
+    },
+    {
+      "type": "text",
+      "id": "spec_daw",
+      "label": "Valeur ligne 3",
+      "default": "Toutes DAW majeures"
+    },
+    {
+      "type": "text",
+      "id": "spec_license_label",
+      "label": "Libellé ligne 4",
+      "default": "Licence"
+    },
+    {
+      "type": "text",
+      "id": "spec_license",
+      "label": "Valeur ligne 4",
+      "default": "Voir fiche produit & conditions"
+    },
+    {
+      "type": "text",
+      "id": "spec_footer_note",
+      "label": "Note sous specs",
+      "default": "Contenu & droits — conformément à la fiche produit Shopify"
+    },
+    {
+      "type": "header",
+      "content": "Kits associés"
+    },
+    {
+      "type": "collection",
+      "id": "related_collection",
+      "label": "Collection liée (défaut drum-kit)"
+    },
+    {
+      "type": "text",
+      "id": "related_heading",
+      "label": "Titre section",
+      "default": "ÉTENDRE LE CATALOGUE"
+    },
+    {
+      "type": "text",
+      "id": "related_cta_label",
+      "label": "Survol carte",
+      "default": "Voir le kit"
+    },
+    {
+      "type": "text",
+      "id": "bundle_title",
+      "label": "Carte bundle — titre",
+      "default": "TOUTE LA SÉRIE"
+    },
+    {
+      "type": "textarea",
+      "id": "bundle_text",
+      "label": "Carte bundle — texte",
+      "default": "Parcourir tous les kits MOZARF sur la collection Drum Kit."
+    },
+    {
+      "type": "text",
+      "id": "bundle_btn",
+      "label": "Carte bundle — bouton",
+      "default": "Voir la collection"
+    },
+    {
+      "type": "header",
+      "content": "Pied de page"
+    },
+    {
+      "type": "text",
+      "id": "footer_tagline",
+      "label": "Sous-marque footer",
+      "default": "MOZARF — SONIC ARCHITECTURE"
+    },
+    {
+      "type": "url",
+      "id": "instagram_url",
+      "label": "Lien Instagram"
+    }
+  ],
+  "presets": [{ "name": "MOZARF kit — page produit" }]
+}
+{% endschema %}

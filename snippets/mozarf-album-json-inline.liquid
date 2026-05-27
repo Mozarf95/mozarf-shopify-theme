@@ -1,0 +1,24 @@
+{%- comment -%}
+  JSON album + contexte produit pour le lecteur sticky (unwrap côté JS).
+  Paramètre : product
+{%- endcomment -%}
+{% capture _mozarf_album_core %}
+  {% render 'mozarf-album-json', product: product %}
+{% endcapture %}
+{% capture cover_u %}
+  {% render 'mozarf-cover-image-url', product: product, width: 600 %}
+{% endcapture %}
+{% assign cover_u = cover_u | strip %}
+{% capture _mozarf_album_core_clean %}
+  {{- _mozarf_album_core | strip_newlines | strip -}}
+{% endcapture %}
+{% capture _mozarf_album_out %}
+{
+  "product_url": {{ product.url | json }},
+  "vendor": {{ product.vendor | json }},
+  "product_title": {{ product.title | json }},
+  "cover_shopify": {{ cover_u | json }},
+  "album": {{ _mozarf_album_core_clean }}
+}
+{% endcapture %}
+{{- _mozarf_album_out | strip_newlines | strip | replace: '</script', '<\/script' | replace: '</Script', '<\/script' -}}

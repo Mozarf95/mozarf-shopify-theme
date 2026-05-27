@@ -1,0 +1,20 @@
+{
+  "sections": {
+    "main": {
+      "type": "mozarf-marketplace-kits",
+      "settings": {
+        "products_per_page": 24,
+        "show_tag_filter_bar": true,
+        "show_filters": true,
+        "enable_filtering": true,
+        "enable_sorting": true,
+        "filter_type": "horizontal",
+        "beatstars_kits_url": "https://www.beatstars.com/explore-sound-kits",
+        "beatstars_link_label": "BeatStars",
+        "empty_collection_hint": "Aucun kit — vérifiez la collection et le template mozarf-kits.",
+        "card_cta_label": "Voir"
+      }
+    }
+  },
+  "order": ["main"]
+}

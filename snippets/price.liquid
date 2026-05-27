@@ -1,0 +1,272 @@
+{% comment %}
+    Renders a list of product's price (regular, sale)
+
+    Accepts:
+    - product: {Object} Product Liquid object (optional)
+    - use_variant: {Boolean} Renders selected or first variant price instead of overall product pricing (optional)
+    - show_badges: {Boolean} Renders 'Sale' and 'Sold Out' tags if the product matches the condition (optional)
+    - price_class: {String} Adds a price class to the price element (optional)
+
+    Usage:
+    {% render 'price', product: product %}
+{% endcomment %}
+{%- liquid
+  if use_variant
+    assign target = product.selected_or_first_available_variant
+  else
+    assign target = product
+  endif
+
+  assign compare_at_price = target.compare_at_price
+  assign price = target.price | default: 1999
+  assign available = target.available | default: false
+  assign money_price = price | money
+  if settings.currency_code_enabled
+    assign money_price = price | money_with_currency
+  endif
+
+  if target == product and product.price_varies
+    assign money_price =  money_price
+  endif
+   
+  assign on_sale = false
+  if product.compare_at_price > product.price
+  assign on_sale = true
+  endif
+-%}
+
+<div class="price
+  {%- if price_class %} {{ price_class }}{% endif -%}
+  {%- if available == false %} price--sold-out {% endif -%}
+  {%- if compare_at_price > price %} price--on-sale {% endif -%}
+  {%- if product.price_varies == false and product.compare_at_price_varies %} price--no-compare{% endif -%}
+  {%- if show_badges %} price--show-badge{% endif %} product-price-current" data-price="{{ money_price }}">
+  <div class="price__container">
+    {%- comment -%}
+      Explanation of description list:
+        - div.price__regular: Displayed when there are no variants on sale
+        - div.price__sale: Displayed when a variant is a sale
+    {%- endcomment -%}
+    <div class="price__regular">
+      <span class="visually-hidden visually-hidden--inline">{{ 'products.product.price.regular_price' | t }}</span>
+      <span class="price-item price-item--regular">
+        {{ money_price }}
+      </span>
+    </div>
+    <div class="price__sale">
+      
+      <span class="visually-hidden visually-hidden--inline">{{ 'products.product.price.sale_price' | t }}</span>
+      <span class="price-item price-item--sale price-item--last">
+        {{ money_price }}
+      </span>
+      {%- unless product.price_varies == false and product.compare_at_price_varies %}
+        <span class="visually-hidden visually-hidden--inline">{{ 'products.product.price.regular_price' | t }}</span>
+        <span>
+          <s class="price-item price-item--regular">
+            {% if settings.currency_code_enabled %}
+              {{ compare_at_price | money_with_currency }}
+            {% else %}
+              {{ compare_at_price | money }}
+            {% endif %}
+          </s>
+        </span>
+      {%- endunless -%}
+      {%  comment %}
+      <div class="product_right_tag  {% if on_sale %} offer_exist {% endif %}">
+          {% if on_sale %}
+          {% if product.compare_at_price > product.price %}
+          <span class="offer-price"> 
+            ( {{ product.compare_at_price | minus:product.price | times:100 | divided_by:product.compare_at_price }}% {{ 'products.product.save' |t }} )
+          </span>
+          {% endif %}
+          {% endif %}         
+        </div>
+      {%  endcomment %}
+    </div>
+    <small class="unit-price caption{% if product.selected_or_first_available_variant.unit_price_measurement == nil %} hidden{% endif %}">
+      <span class="visually-hidden">{{ 'products.product.price.unit_price' | t }}</span>
+      <span class="price-item price-item--last">
+        <span>{{- product.selected_or_first_available_variant.unit_price | money -}}</span>
+        <span aria-hidden="true">/</span>
+        <span class="visually-hidden">&nbsp;{{ 'accessibility.unit_price_separator' | t }}&nbsp;</span>
+        <span>
+          {%- if product.selected_or_first_available_variant.unit_price_measurement.reference_value != 1 -%}
+            {{- product.selected_or_first_available_variant.unit_price_measurement.reference_value -}}
+          {%- endif -%}
+          {{ product.selected_or_first_available_variant.unit_price_measurement.reference_unit }}
+        </span>
+      </span>
+    </small>
+  </div>
+  {%- if show_badges -%}
+    <span class="badge price__badge-sale color-{{ settings.sale_badge_color_scheme }}">
+      {{ 'products.product.on_sale' | t }}
+    </span>
+
+    <span class="badge price__badge-sold-out color-{{ settings.sold_out_badge_color_scheme }}">
+      {{ 'products.product.sold_out' | t }}
+    </span>
+  {%- endif -%}
+</div>
+
+{% if product.metafields.dtx['deal-time'].value != blank %}
+{% assign endTime = product.metafields.dtx['deal-time'].value | date: "%d %b %Y" %}
+
+<div class="product-deal-count" data-end-time="{{ endTime | escape }}">
+{% if request.page_type == 'product' %}  
+  <label class="deal-label product-label">{{ settings.timer_heading}}</label>  
+{% endif %}
+  <div class="deal-clock">
+    <ul>
+      <li class="days"></li>
+      <li class="hours"></li>
+      <li class="minutes"></li>
+      <li class="seconds"></li>
+    </ul>
+  </div>
+</div>
+{% endif %}
+
+{% if settings.display_color_variant %}
+{%- assign file_extension = 'png' -%}
+
+{% for option in product.options %}
+{% assign downcased_option = option | downcase %}    
+{% if downcased_option contains 'color' or downcased_option contains 'colour' %}
+{% assign optionCount = 0 %}
+{% assign optionControl = 4 %}
+{%- assign option_index = forloop.index0 -%}
+{%- assign values = '' -%}
+
+<ul class="variant-option-color">
+  {% for variant in product.variants %}  
+  {%- assign value = variant.options[option_index] -%}
+  {% unless values contains value %}
+  {%- assign values = values | join: ',' -%}
+  {%- assign values = values | append: ',' | append: value -%}
+  {%- assign values = values | split: ',' -%}  
+   {%- capture colorCODE -%}
+    {%- if variant.image != null -%}
+    {%- assign value =   value | replace: ' ' , '-'  -%}
+    {%- if value contains '-' -%}                   
+    bg-variant-image-as-color
+    {%- else -%}
+    bg-color-{{- value -}}
+    {%- endif -%}
+    {%- endif -%}
+    {%- endcapture -%}
+  {% if optionCount < 4 %}  
+  <li class="color-values">            
+    <a data-href="{{ variant.url | within: collection }}" class="swatch swatch-element color {{ colorCODE | downcase -}}" data-swatch-meta="name-{{ downcased_option }}_{{ value | replace: ' ', '_' | downcase }}">
+      <tooltip class="tooltip">{{value}}</tooltip>
+      <span {% if variant.image != null %} data-image="{{ variant.image.src  | product_img_url: '460x' }}"
+            {% else %}
+            data-image="{{ variant.featured_image | product_img_url: '460x' }}"{% endif %} 
+            style="background-size: cover;
+                   {% if settings.show_mixed_swatch %}
+                   {%- if variant.image != null -%}                  
+                   {%- assign value =   value | replace: ' ' , '-'  -%}
+                   {% if value contains '-' %}                   
+                   background-image: url('{{ variant.image.src  | product_img_url: '460x' }}');                  
+                   {%- endif -%}
+                   {% endif %}                   
+                   {%- endif -%}
+                   {% unless settings.show_mixed_swatch %}
+                   {% if variant.image != null %}                   
+                   background-image: url('{{ variant.image.src  | product_img_url: '460x' }}');  
+                   {% else %}
+                   background-color: {{ value | split: ' ' | last | handle }};
+                   {% endif %}
+                   {% endunless %}"
+            data-id="{{variant.id}}"
+            data-variant-title-id="color" data-variant-item="{{ value | replace: ' ', '-' | downcase }}"  data-variant-title="{{ variant.title }}"></span>
+
+    </a>          
+    {% assign optionCount = optionCount | plus : 1 %}
+  </li>
+  {% else %}    
+  <li class="color-values show-on-click" style="display:none">
+    <a data-href="{{ variant.url | within: collection }}" class="swatch color {{ colorCODE | downcase -}}" data-swatch-meta="name-{{ downcased_option }}_{{ value | replace: ' ', '_' | downcase }}">
+{% comment %} <!--       <tooltip class="tooltip">{{value}}</tooltip> --> {% endcomment %}
+      <span {% if variant.image != null %} data-image="{{ variant.image.src  | image_url: width: 460 }}"
+            {% else %}
+            data-image="{{ variant.featured_image | image_url: width: 460 }}"{% endif %} 
+            style="background-size: cover;
+                   {% if settings.show_mixed_swatch %}
+                   {%- if variant.image != null -%}                  
+                   {%- assign value =   value | replace: ' ' , '-'  -%}
+                   {% if value contains '-' %}                   
+                   background-image: url('{{ variant.image.src  | product_img_url: '460x' }}');                  
+                   {%- endif -%}
+                   {% endif %}                   
+                   {%- endif -%}
+                   {% unless settings.show_mixed_swatch %}
+                   {% if variant.image != null %}                   
+                   background-image: url('{{ variant.image.src  | product_img_url: '460x' }}');  
+                   {% else %}
+                   background-color: {{ value | split: ' ' | last | handle }};
+                   {% endif %}
+                   {% endunless %}"
+            data-id="{{variant.id}}"
+            data-variant-title-id="color" data-variant-item="{{ value | replace: ' ', '-' | downcase }}"  data-variant-title="{{ variant.title }}"></span>
+
+    </a>  
+  </li>
+  {% assign optionCount = optionCount | plus : 1 %}
+  {% endif %}
+
+  {% endunless %}
+  {% endfor %}
+
+  {% for itemOption in product.options_with_values %}  
+  {% assign  lowercase_value = itemOption.name | downcase %}    
+  {% if lowercase_value contains 'color' %}  
+  {% if itemOption.values.size > 4 %}
+  <li class="color-values-plus">
+    <span><a href="#">+{{ itemOption.values.size | minus : 4 }}</a></span>
+  </li>
+  {% endif %}
+  {% endif %}
+  {% endfor %}
+
+</ul>
+{% endif %}
+{% endfor %}
+{% endif %}
+
+{% if settings.display_item_size %}
+{% for option in product.options %}
+{% assign downcased_option = option | downcase %}    
+{% if downcased_option contains 'size'  %}
+{%- assign option_index = forloop.index0 -%}
+{%- assign values = '' -%}
+<ul class="variant-option-size">
+  {% for variant in product.variants %}
+  {%- assign value = variant.options[option_index] -%}
+  {% unless values contains value %}
+  {%- assign values = values | join: ',' -%}
+  {%- assign values = values | append: ',' | append: value -%}
+  {%- assign values = values | split: ',' -%}
+  <li class="size-values">   
+    <input 
+           type="radio" 
+           name="id" 
+           class="variant-option hide"
+           value="{{ variant.id }}" 
+           id="variant-option-{{ variant.id }}" 
+           {% unless variant.available %} disabled{% endunless %}
+           {% if current_variant.id == variant.id %} checked{% endif %}
+           >    
+    <a data-url="{{ variant.url | within: collection }}" class="swatch size" data-swatch-meta="name-{{ downcased_option }}_{{ value | replace: ' ', '_' | downcase }}">
+      <span {% if variant.image != null %} data-image="{{ variant.image.src  | product_img_url: '460x' }}"
+            {% else %}
+            data-image="{{ variant.featured_image | product_img_url: '460x' }}"{% endif %} 
+            data-id="{{variant.id}}" data-variant-title-id="size" data-variant-item="{{ value | replace: ' ', '-' | downcase }}" data-variant-title="{{ variant.title }}">{{ value | escape }}</span>
+    </a>          
+  </li>
+  {% endunless %}
+  {% endfor %}
+</ul>
+{% endif %}
+{% endfor %}
+{% endif %}

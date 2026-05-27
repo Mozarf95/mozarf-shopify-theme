@@ -1,0 +1,5 @@
+{% comment %}
+  Param: tracks_list — tableau metaobject ou liste metafield.
+  Sortie : JSON array [...] pour injection dans data-mozarf-album.
+{% endcomment %}
+{% if tracks_list == blank %}[]{% else %}[{% for track in tracks_list %}{% unless forloop.first %},{% endunless %}{% render 'mozarf-track-item-json', track: track %}{% endfor %}]{% endif %}

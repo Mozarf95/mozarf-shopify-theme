@@ -1,0 +1,89 @@
+{{ 'mozarf-marketplace.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'mozarf-marketplace.js' | asset_url }}" defer></script>
+
+<div
+  class="mozarf-mp mozarf-mp--album-product page-width"
+  data-mozarf-marketplace
+  data-preview-seconds="{{ section.settings.preview_seconds }}"
+>
+  {% if section.settings.show_breadcrumb %}
+    {%- liquid
+      if section.settings.back_collection != blank
+        assign back_url = section.settings.back_collection.url
+      else
+        assign back_url = routes.all_products_collection_url
+      endif
+    -%}
+    <p class="mozarf-mp__sub" style="margin-bottom: 1rem;">
+      <a href="{{ back_url }}" class="mozarf-mp-btn">
+        ← {{ section.settings.back_label | escape }}
+      </a>
+    </p>
+  {% endif %}
+
+  <script type="application/json" data-mozarf-inline-album-json>
+    {% render 'mozarf-album-json-inline', product: product %}
+  </script>
+
+  {% render 'mozarf-marketplace-modal',
+    modal_suffix: section.id,
+    inline_mode: true,
+    tracklist_heading: section.settings.tracklist_heading,
+    empty_tracks_hint: section.settings.empty_tracks_hint,
+    preview_legal_hint: section.settings.preview_legal_hint
+  %}
+</div>
+
+{% schema %}
+{
+  "name": "MOZARF album player",
+  "tag": "section",
+  "class": "section-mozarf-album-product",
+  "settings": [
+    {
+      "type": "range",
+      "id": "preview_seconds",
+      "min": 15,
+      "max": 60,
+      "step": 5,
+      "default": 30,
+      "label": "Preview length (seconds)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_breadcrumb",
+      "default": true,
+      "label": "Show back link"
+    },
+    {
+      "type": "text",
+      "id": "back_label",
+      "label": "Back link label",
+      "default": "All releases"
+    },
+    {
+      "type": "collection",
+      "id": "back_collection",
+      "label": "Back link target (collection)"
+    },
+    {
+      "type": "text",
+      "id": "tracklist_heading",
+      "label": "Track list heading",
+      "default": "Tracks & formats"
+    },
+    {
+      "type": "textarea",
+      "id": "empty_tracks_hint",
+      "label": "Hint when no tracks",
+      "default": "Add metafield custom.mozarf_album_data (JSON) on this product."
+    },
+    {
+      "type": "textarea",
+      "id": "preview_legal_hint",
+      "label": "Preview notice",
+      "default": "30-second preview. Purchase for full files and license."
+    }
+  ]
+}
+{% endschema %}

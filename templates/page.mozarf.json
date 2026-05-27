@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "mozarf-main": {
+      "type": "mozarf-mozarf-page",
+      "settings": {}
+    }
+  },
+  "order": ["mozarf-main"]
+}

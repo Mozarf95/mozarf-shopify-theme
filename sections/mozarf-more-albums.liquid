@@ -1,0 +1,172 @@
+{%- liquid
+  assign more_col = section.settings.albums_collection
+  assign limit_n = section.settings.product_limit
+-%}
+
+{% if more_col == blank %}
+  <div class="page-width mozarf-mp">
+    <p class="mozarf-mp-empty-collection">{{ section.settings.empty_collection_message | escape }}</p>
+  </div>
+{% else %}
+  {{ 'mozarf-marketplace.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'mozarf-marketplace.js' | asset_url }}" defer></script>
+
+  <div
+    class="mozarf-mp page-width"
+    data-mozarf-marketplace
+    data-preview-seconds="{{ section.settings.preview_seconds }}"
+    style="padding-top: 1rem; padding-bottom: 5rem;"
+  >
+    <h2 class="mozarf-mp__title" style="font-size: 1.1rem; margin-bottom: 1.25rem;">
+      {{ section.settings.heading | escape }}
+    </h2>
+
+    {% if more_col.products_count == 0 %}
+      <p class="mozarf-mp-empty-collection">{{ section.settings.empty_products_message | escape }}</p>
+    {% else %}
+      <ul class="mozarf-mp__grid mozarf-mp__grid--more-3" role="list">
+        {% for p in more_col.products limit: limit_n %}
+          {% if product == blank or p.id != product.id %}
+            {%- liquid
+              assign am = p.metafields.custom.mozarf_album_data.value
+              assign track_n = 0
+              if am != blank and am.tracks != blank
+                assign track_n = am.tracks.size
+              endif
+              if track_n == 0
+                assign mo_tl = p.metafields.album.tracklist_mozarf.value
+                if mo_tl == blank
+                  assign mo_tl = p.metafields.custom.tracklist_mozarf.value
+                endif
+                if mo_tl == blank
+                  assign mo_tl = p.metafields.mozarf.tracklist.value
+                endif
+                if mo_tl != blank
+                  assign track_n = mo_tl.size
+                endif
+              endif
+            -%}
+            <li
+              class="mozarf-mp-album-card"
+              data-album-title="{{ p.title | escape }}"
+              data-vendor="{{ p.vendor | escape }}"
+            >
+              <script type="application/json" id="mozarf-more-{{ section.id }}-{{ p.id }}">
+                {% render 'mozarf-album-json-inline', product: p %}
+              </script>
+              <div class="mozarf-mp__card mozarf-mp-album-card__box">
+                <div class="mozarf-mp__card-media mozarf-mp__card-media--zoom">
+                  <a href="{{ p.url }}" class="mozarf-mp-album-card__cover-link" aria-label="{{ p.title | escape }}"></a>
+                  {% render 'mozarf-product-card-cover-img',
+                    product: p,
+                    width: 600,
+                    widths: '200,400,600',
+                    sizes: '30vw',
+                    class: 'mozarf-mp__card-img'
+                  %}
+                  <button
+                    type="button"
+                    class="mozarf-mp__card-play-fab"
+                    data-mozarf-open-album
+                    data-album-json-id="mozarf-more-{{ section.id }}-{{ p.id }}"
+                    aria-label="Play {{ p.title | escape }}"
+                  >
+                    ▶
+                  </button>
+                </div>
+                <a href="{{ p.url }}" class="mozarf-mp__card-body mozarf-mp__card--link">
+                  <span class="mozarf-mp__card-title">{{ p.title | escape }}</span>
+                  <p class="mozarf-mp__card-tracks">
+                    {% if track_n > 0 %}
+                      {{ track_n }} titres
+                    {% else %}
+                      Album
+                    {% endif %}
+                  </p>
+                </a>
+                <a href="{{ p.url }}" class="mozarf-mp__voir-album">{{ section.settings.view_album_label | escape }}</a>
+              </div>
+            </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+  </div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "MOZARF plus albums",
+  "tag": "section",
+  "class": "section-mozarf-more-albums",
+  "settings": [
+    {
+      "type": "collection",
+      "id": "albums_collection",
+      "label": "Albums collection"
+    },
+    {
+      "type": "range",
+      "id": "product_limit",
+      "min": 3,
+      "max": 24,
+      "step": 3,
+      "default": 9,
+      "label": "Max products"
+    },
+    {
+      "type": "range",
+      "id": "preview_seconds",
+      "min": 15,
+      "max": 60,
+      "step": 5,
+      "default": 30,
+      "label": "Preview length (modal)"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Autres albums"
+    },
+    {
+      "type": "text",
+      "id": "view_album_label",
+      "label": "Lien voir l'album",
+      "default": "Voir l'album"
+    },
+    {
+      "type": "text",
+      "id": "tracklist_heading",
+      "label": "Modal track list heading",
+      "default": "Tracks & formats"
+    },
+    {
+      "type": "textarea",
+      "id": "empty_tracks_hint",
+      "label": "Modal empty tracks hint",
+      "default": "Add custom.mozarf_album_data (JSON) on each album product."
+    },
+    {
+      "type": "textarea",
+      "id": "preview_legal_hint",
+      "label": "Modal preview notice",
+      "default": "30-second preview. Purchase for full files and license."
+    },
+    {
+      "type": "text",
+      "id": "empty_collection_message",
+      "label": "Message if no collection selected",
+      "default": "Select an albums collection in this section."
+    },
+    {
+      "type": "text",
+      "id": "empty_products_message",
+      "label": "Message if collection empty",
+      "default": "No other albums in this collection yet."
+    }
+  ],
+  "presets": [{ "name": "MOZARF plus albums" }]
+}
+{% endschema %}

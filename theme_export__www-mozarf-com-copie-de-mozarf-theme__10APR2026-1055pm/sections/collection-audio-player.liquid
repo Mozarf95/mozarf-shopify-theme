@@ -1,0 +1,175 @@
+<div class="audio-player" id="audio-player" aria-hidden="true">
+  <div class="audio-player__artwork">
+    <img id="player-artwork" src="" alt="">
+  </div>
+  <div class="audio-player__info">
+    <span class="audio-player__title" id="player-title">—</span>
+    <span class="audio-player__vendor" id="player-vendor">—</span>
+  </div>
+  <div class="audio-player__controls">
+    <button class="player-btn" id="player-prev" aria-label="Précédent">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="white">
+        <path d="M3 2h2v12H3zm2.5 6L13 2v12z"/>
+      </svg>
+    </button>
+    <button class="player-btn player-btn--main" id="player-play" aria-label="Play/Pause">
+      <svg id="icon-play" width="18" height="18" viewBox="0 0 20 20" fill="black">
+        <polygon points="5,3 17,10 5,17"/>
+      </svg>
+      <svg id="icon-pause" width="18" height="18" viewBox="0 0 20 20" fill="black" style="display:none">
+        <rect x="4" y="3" width="4" height="14"/><rect x="12" y="3" width="4" height="14"/>
+      </svg>
+    </button>
+    <button class="player-btn" id="player-next" aria-label="Suivant">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="white">
+        <path d="M11 2h2v12h-2zM3 2l7.5 6L3 14z"/>
+      </svg>
+    </button>
+  </div>
+  <div class="audio-player__progress-wrap">
+    <span class="audio-player__time" id="player-current">0:00</span>
+    <div class="audio-player__progress" id="player-progress">
+      <div class="audio-player__progress-bar" id="player-bar"></div>
+    </div>
+    <span class="audio-player__time" id="player-duration">0:00</span>
+  </div>
+  <div class="audio-player__volume">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="#888">
+      <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>
+    </svg>
+    <input type="range" id="player-volume" min="0" max="1" step="0.01" value="0.8">
+  </div>
+  <a class="audio-player__buy-btn" id="player-buy" href="#">ACHETER</a>
+</div>
+
+<style>
+.audio-player {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 72px;
+  background: #111;
+  border-top: 1px solid #222;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 24px;
+  z-index: 1000;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+.audio-player.is-visible {
+  transform: translateY(0);
+}
+.audio-player__artwork {
+  width: 48px;
+  height: 48px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #222;
+  flex-shrink: 0;
+}
+.audio-player__artwork img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.audio-player__info {
+  display: flex;
+  flex-direction: column;
+  min-width: 140px;
+}
+.audio-player__title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.audio-player__vendor {
+  font-size: 9px;
+  color: #666;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.audio-player__controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.player-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  transition: opacity 0.15s;
+}
+.player-btn:hover { opacity: 1; }
+.player-btn--main {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #c8f000;
+  opacity: 1;
+}
+.audio-player__progress-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.audio-player__progress {
+  flex: 1;
+  height: 3px;
+  background: #333;
+  border-radius: 2px;
+  cursor: pointer;
+  position: relative;
+}
+.audio-player__progress-bar {
+  height: 100%;
+  background: #c8f000;
+  border-radius: 2px;
+  width: 0%;
+  transition: width 0.1s linear;
+}
+.audio-player__time {
+  font-size: 9px;
+  color: #666;
+  font-variant-numeric: tabular-nums;
+  min-width: 28px;
+}
+.audio-player__volume {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.audio-player__volume input[type=range] {
+  width: 70px;
+  accent-color: #c8f000;
+}
+.audio-player__buy-btn {
+  padding: 8px 16px;
+  background: #c8f000;
+  color: #000;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.audio-player__buy-btn:hover { background: #d4ff00; }
+</style>
+{% schema %}
+{
+  "name": "Audio Player",
+  "settings": []
+}
+{% endschema %}

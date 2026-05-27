@@ -1,0 +1,175 @@
+{{ 'mozarf-marketplace.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign beatstars_kits_url = section.settings.beatstars_kits_url
+  assign products_per_page = section.settings.products_per_page
+-%}
+
+<div class="mozarf-mp mozarf-mp-kits page-width" style="padding-bottom: 3rem;">
+  <header class="mozarf-mp__header">
+    <h1 class="mozarf-mp__title">{{ collection.title | escape }}</h1>
+    {% if collection.description != blank %}
+      <p class="mozarf-mp__sub">{{ collection.description | strip_html | truncate: 260 }}</p>
+    {% endif %}
+    {% if beatstars_kits_url != blank %}
+      <p class="mozarf-mp__sub" style="margin-top: 0.75rem;">
+        <a
+          href="{{ beatstars_kits_url }}"
+          class="mozarf-mp-btn mozarf-mp-btn--primary"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {{ section.settings.beatstars_link_label | escape }}
+        </a>
+      </p>
+    {% endif %}
+  </header>
+
+  {% if section.settings.show_tag_filter_bar %}
+    {% render 'mozarf-collection-tag-bar',
+      collection: collection,
+      preset_tags: '808s,Hi-Hats,Snares,Loops,One Shots,Full Kit,Gratuit,Payant'
+    %}
+  {% endif %}
+
+  {% if section.settings.show_filters %}
+    <div class="mozarf-mp-filters" style="margin-bottom: 1.5rem;">
+      {% render 'facets',
+        results: collection,
+        enable_filtering: section.settings.enable_filtering,
+        enable_sorting: false,
+        filter_type: section.settings.filter_type
+      %}
+    </div>
+  {% endif %}
+
+  {% if collection.products_count == 0 %}
+    <p class="mozarf-mp-empty-collection">{{ section.settings.empty_collection_hint | escape }}</p>
+  {% endif %}
+
+  <ul class="mozarf-mp__grid" role="list">
+    {% paginate collection.products by products_per_page %}
+      {% for product in collection.products %}
+        <li>
+          <a href="{{ product.url }}" class="mozarf-mp__card mozarf-mp__card--link">
+            <div class="mozarf-mp__card-media">
+              {% if product.featured_image %}
+                {{
+                  product.featured_image
+                  | image_url: width: 600
+                  | image_tag: loading: 'lazy', widths: '200,400,600', sizes: '(min-width: 750px) 25vw, 50vw'
+                }}
+              {% endif %}
+            </div>
+            <div class="mozarf-mp__card-body">
+              <h2 class="mozarf-mp__card-title">{{ product.title | escape }}</h2>
+              <p class="mozarf-mp__kit-type">
+                {% if product.type != blank %}
+                  {{ product.type | escape }}
+                {% else %}
+                  Drum kit
+                {% endif %}
+              </p>
+              {% assign kit_blurb = '' %}
+              {% if product.metafields.custom.mozarf_kit_blurb != blank %}
+                {% assign kit_blurb = product.metafields.custom.mozarf_kit_blurb.value %}
+              {% endif %}
+              {% if kit_blurb != blank %}
+                <p class="mozarf-mp__card-blurb">{{ kit_blurb | strip_html | truncate: 90 | escape }}</p>
+              {% elsif product.description != blank %}
+                <p class="mozarf-mp__card-blurb">{{ product.description | strip_html | truncate: 90 }}</p>
+              {% endif %}
+              <p class="mozarf-mp__kit-price">{{ product.price | money }}</p>
+              <span class="mozarf-mp__kit-cta">{{ section.settings.card_cta_label | escape }}</span>
+            </div>
+          </a>
+        </li>
+      {% endfor %}
+
+      {% if paginate.pages > 1 %}
+        <li class="mozarf-mp-pagination" style="grid-column: 1 / -1;">
+          {{ paginate | default_pagination }}
+        </li>
+      {% endif %}
+    {% endpaginate %}
+  </ul>
+</div>
+
+{% schema %}
+{
+  "name": "MOZARF kits grille",
+  "tag": "section",
+  "class": "section-mozarf-marketplace-kits",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "default": 24,
+      "label": "Products per page"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tag_filter_bar",
+      "default": true,
+      "label": "Barre filtres tags + recherche + tri"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_filters",
+      "default": true,
+      "label": "Show filters"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_filtering",
+      "default": true,
+      "label": "Enable filtering"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sorting",
+      "default": true,
+      "label": "Enable sorting"
+    },
+    {
+      "type": "select",
+      "id": "filter_type",
+      "label": "Filter layout",
+      "default": "horizontal",
+      "options": [
+        { "value": "horizontal", "label": "Horizontal" },
+        { "value": "vertical", "label": "Vertical" },
+        { "value": "drawer", "label": "Drawer" }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "beatstars_kits_url",
+      "label": "BeatStars sound kits URL",
+      "default": "https://www.beatstars.com/explore-sound-kits"
+    },
+    {
+      "type": "text",
+      "id": "beatstars_link_label",
+      "label": "BeatStars link label",
+      "default": "Explore on BeatStars"
+    },
+    {
+      "type": "text",
+      "id": "empty_collection_hint",
+      "label": "Message if collection has no products",
+      "default": "No kits in this collection yet — add products or assign another collection template."
+    },
+    {
+      "type": "text",
+      "id": "card_cta_label",
+      "label": "Libellé bouton carte",
+      "default": "Voir"
+    }
+  ],
+  "presets": [{ "name": "MOZARF kits grille" }]
+}
+{% endschema %}

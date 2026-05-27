@@ -1,0 +1,49 @@
+{%- comment -%}
+  Sortie JSON pour la modale marketplace / lecteur (échapper pour attribut HTML si besoin).
+  Metafield optionnel : namespace `custom`, clé `mozarf_album_data`, type JSON.
+  Si la liste de pistes métaobjet (tracklist_mozarf / mozarf.tracklist) est renseignée, elle est
+  prioritaire pour titres + preview (corrige JSON incomplet sans noms).
+{%- endcomment -%}
+{%- capture img -%}
+  {%- render 'mozarf-cover-image-url', product: product, width: 1200 -%}
+{%- endcapture -%}
+{%- assign img = img | strip -%}
+{%- liquid
+  assign mf = product.metafields.custom.mozarf_album_data
+
+  assign mo_tracks = product.metafields.album.tracklist_mozarf.value
+  if mo_tracks == blank
+    assign mo_tracks = product.metafields.custom.tracklist_mozarf.value
+  endif
+  if mo_tracks == blank
+    assign mo_tracks = product.metafields.mozarf.tracklist.value
+  endif
+
+  assign vid = product.selected_or_first_available_variant.id
+-%}
+{%- if mo_tracks != blank and mo_tracks.size > 0 -%}
+  {%- echo '{"title":' -%}
+  {%- echo product.title | json -%}
+  {%- echo ',"featured_image":' -%}
+  {%- echo img | json -%}
+  {%- echo ',"tracks":[' -%}
+  {%- assign track_sep = false -%}
+  {%- for mo in mo_tracks -%}
+    {%- if track_sep -%},{%- endif -%}
+    {%- assign track_sep = true -%}
+    {%- render 'mozarf-album-json-track-from-mo', mo: mo -%}
+  {%- endfor -%}
+  {%- echo '],"full_album_variant_id":' -%}
+  {%- echo vid -%}
+  {%- echo ',"full_album_label":"Full album"}' -%}
+{%- elsif mf != blank and mf.value != blank -%}
+  {{- mf.value | json -}}
+{%- else -%}
+  {%- echo '{"title":' -%}
+  {%- echo product.title | json -%}
+  {%- echo ',"featured_image":' -%}
+  {%- echo img | json -%}
+  {%- echo ',"tracks":[],"full_album_variant_id":' -%}
+  {%- echo vid -%}
+  {%- echo ',"full_album_label":"Full album"}' -%}
+{%- endif -%}

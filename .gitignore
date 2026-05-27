@@ -1,0 +1,8 @@
+node_modules/
+.shopify/
+# Magasin local (ne pas committer ton domaine si le depot est public)
+shopify.theme.toml
+.env
+.env.*
+*.log
+.DS_Store

@@ -1,0 +1,223 @@
+/* MOZARF — Lecteur sticky (page album + global)
+   Styles actifs du bar : assets/mozarf-player.css (snippet mozarf-player).
+   Bloc demandé pour #mozarf-sticky-player (slide-up) : */
+#mozarf-sticky-player {
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+#mozarf-sticky-player.is-active {
+  transform: translateY(0);
+}
+
+/* Ancien mode bar seul (éviter de charger en double avec mozarf-player.css) */
+body.mozarf-player-bar-open {
+  padding-bottom: 88px;
+}
+
+#mozarf-bar {
+  position: fixed;
+  bottom: -120px;
+  left: 0;
+  width: 100%;
+  min-height: 72px;
+  background: #0d0d0d;
+  color: #fff;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 8px 16px 10px;
+  gap: 12px;
+  z-index: 99999;
+  transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.55);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+#mozarf-bar.mozarf-bar--visible {
+  bottom: 0;
+}
+
+#mozarf-bar.mozarf-bar--album-page {
+  bottom: 0;
+}
+
+#mozarf-bar__cover {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 6px;
+  background: #2a2a2a;
+  flex-shrink: 0;
+}
+
+#mozarf-bar__info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 0 1 120px;
+}
+
+#mozarf-bar__title {
+  font-weight: 700;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#mozarf-bar__artist {
+  font-size: 0.72rem;
+  color: #a3a3a3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#mozarf-bar__progress-area {
+  flex: 1 1 200px;
+  min-width: 140px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  justify-content: center;
+}
+
+#mozarf-bar__progress {
+  height: 6px;
+  border-radius: 999px;
+  background: #2a2a2a;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+#mozarf-bar__progress-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #c8f000, #9bc700);
+  pointer-events: none;
+}
+
+#mozarf-bar__time {
+  display: flex;
+  gap: 4px;
+  font-size: 0.68rem;
+  color: #737373;
+  font-variant-numeric: tabular-nums;
+}
+
+#mozarf-bar__controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+#mozarf-bar__controls button {
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 4px;
+  opacity: 0.9;
+}
+
+#mozarf-bar__controls button:hover {
+  opacity: 1;
+  color: #c8f000;
+}
+
+#mozarf-bar__play {
+  width: 44px;
+  height: 44px;
+  background: #c8f000 !important;
+  color: #111 !important;
+  border-radius: 50% !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1 !important;
+}
+
+#mozarf-bar__volume-wrap {
+  width: 88px;
+  flex-shrink: 0;
+}
+
+#mozarf-bar__volume {
+  width: 100%;
+  accent-color: #c8f000;
+  height: 4px;
+}
+
+#mozarf-bar__tracklist,
+#mozarf-bar__close {
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  opacity: 0.65;
+  padding: 4px;
+  flex-shrink: 0;
+}
+
+#mozarf-bar__tracklist:hover,
+#mozarf-bar__close:hover {
+  opacity: 1;
+}
+
+#mozarf-bar__audio {
+  display: none;
+}
+
+@media (max-width: 749px) {
+  #mozarf-bar__volume-wrap {
+    display: none;
+  }
+
+  #mozarf-bar__progress-area {
+    order: 10;
+    flex: 1 1 100%;
+  }
+}
+
+#mozarf-tracklist {
+  position: fixed;
+  bottom: 72px;
+  left: 0;
+  width: 100%;
+  background: #111;
+  color: #fff;
+  z-index: 99998;
+  max-height: min(38vh, 280px);
+  overflow-y: auto;
+  display: none;
+  border-top: 1px solid #222;
+}
+
+#mozarf-tracklist.mozarf-tracklist--visible {
+  display: block;
+}
+
+#mozarf-tracklist ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#mozarf-tracklist ul li {
+  padding: 12px 20px;
+  cursor: pointer;
+  border-bottom: 1px solid #222;
+  font-size: 0.9rem;
+}
+
+#mozarf-tracklist ul li:hover {
+  background: #1a1a1a;
+  color: #c8f000;
+}
+
+#mozarf-tracklist ul li.active {
+  font-weight: 700;
+  color: #c8f000;
+}

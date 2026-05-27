@@ -1,0 +1,37 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "mozarf_album_bs": {
+      "type": "mozarf-album-beatstars-page",
+      "settings": {
+        "show_back_link": true,
+        "back_label": "← Albums",
+        "tracklist_heading": "Titres",
+        "empty_tracks_hint": "Ajoutez le metafield JSON custom.mozarf_album_data sur ce produit.",
+        "preview_legal_hint": "Aperçu limité. Achat pour téléchargement complet et licence."
+      }
+    },
+    "mozarf_album_more": {
+      "type": "mozarf-more-albums",
+      "settings": {
+        "product_limit": 12,
+        "preview_seconds": 30,
+        "heading": "Plus de sorties",
+        "tracklist_heading": "Titres & formats",
+        "empty_tracks_hint": "Ajoutez custom.mozarf_album_data (JSON) sur chaque produit album.",
+        "preview_legal_hint": "Aperçu 30 s. Achat pour fichiers complets et licence.",
+        "empty_collection_message": "",
+        "empty_products_message": "Aucun autre album dans cette collection pour l’instant."
+      }
+    }
+  },
+  "order": ["mozarf_album_bs", "mozarf_album_more"]
+}

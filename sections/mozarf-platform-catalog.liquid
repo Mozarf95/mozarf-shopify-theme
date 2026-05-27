@@ -1,0 +1,293 @@
+{{ 'mozarf-platform.css' | asset_url | stylesheet_tag }}
+
+<div class="shopify-section mozarf-platform-catalog-section">
+  <div id="mozarf-platform-root" data-skip-drop-campaign="true">
+    <header class="top">
+      <div class="top-inner">
+        <a href="{{ routes.root_url }}" class="brand" id="logo-home" aria-label="Accueil">MOZ<span>ARF</span></a>
+        <div class="search-wrap">
+          <input type="search" class="search" placeholder="Beats, albums, producteurs…" id="search-input" />
+        </div>
+        <div class="top-actions">
+          <span id="preview-sell-slot"></span>
+          <span id="user-pill" class="user-pill hidden" title="Compte"></span>
+          <a href="{{ routes.account_login_url }}" class="btn btn-ghost" id="btn-connexion">Connexion</a>
+          <button type="button" class="btn btn-ghost hidden" id="btn-logout">Déconnexion</button>
+          <a href="{{ routes.cart_url }}" class="btn btn-accent" id="btn-cart">Panier · 0</a>
+        </div>
+      </div>
+    </header>
+
+    <div id="view-home" class="view is-active">
+      <div id="drop-page-bg-root" class="drop-page-bg-root hidden" aria-hidden="true"></div>
+      <section id="drop-hero" class="drop-hero hidden" aria-hidden="true"></section>
+
+      <section
+        class="hero hidden"
+        id="standard-hero"
+        style="display:none!important;height:0;margin:0;padding:0;overflow:hidden;border:0;visibility:hidden"
+        aria-hidden="true"
+      ></section>
+
+      <div class="filters">
+        <span class="filters-label">Filtrer</span>
+        <button type="button" class="chip is-on" data-filter="all">Tout</button>
+        <button type="button" class="chip" data-filter="single">Singles</button>
+        <button type="button" class="chip" data-filter="album">Albums</button>
+      </div>
+
+      <div class="main">
+        <h2 class="section-title font-display" id="preview-catalog-heading">Catalogue démo</h2>
+        <div class="grid" id="catalog-grid"></div>
+      </div>
+    </div>
+
+    <div id="view-detail" class="view">
+      <div class="detail-back">
+        <button type="button" id="btn-back">← Retour au catalogue</button>
+      </div>
+      <article class="bc-release" id="detail-root"></article>
+    </div>
+
+    <div id="view-login" class="view">
+      <div class="auth-page">
+        <div class="auth-back">
+          <button type="button" id="btn-back-login">← Retour</button>
+        </div>
+        <header class="auth-head">
+          <h1 class="font-display">CONNEXION</h1>
+          <p id="preview-login-intro">Prévisualisation locale.</p>
+        </header>
+
+        <div class="auth-grid">
+          <div class="auth-panel">
+            <h2>Se connecter</h2>
+            <p class="auth-hint" id="preview-login-hint">Démo locale : formulaire factice.</p>
+            <div id="login-loading" class="auth-loading" aria-live="polite">Connexion en cours…</div>
+            <div id="login-success" class="auth-success" role="status">
+              <strong>Connecté (démo).</strong><span id="preview-login-success-tail"></span>
+            </div>
+            <form id="login-form" novalidate>
+              <div class="field">
+                <label for="login-email">Email</label>
+                <input type="email" id="login-email" name="email" autocomplete="username" placeholder="toi@email.com" required />
+              </div>
+              <div class="field">
+                <label for="login-password">Mot de passe</label>
+                <input
+                  type="password"
+                  id="login-password"
+                  name="password"
+                  autocomplete="current-password"
+                  placeholder="••••••••"
+                  required
+                />
+              </div>
+              <button type="submit" class="btn btn-accent" style="width: 100%; margin-top: 0.25rem">Entrer</button>
+            </form>
+            <p style="margin: 1rem 0 0; font-size: 0.85rem; color: var(--muted)">
+              <a href="{{ routes.account_register_url }}" id="link-signup">Créer un compte</a><span id="preview-signup-suffix"></span>
+            </p>
+          </div>
+
+          <div class="auth-panel steps-panel">
+            <h2>Après connexion</h2>
+            <p class="steps-lead" id="preview-steps-lead">Feuille de route indicative.</p>
+            <ol class="steps-list" id="steps-list">
+              <li class="is-next" data-step="1">
+                Vérification du compte
+                <span>Email ou OTP.</span>
+              </li>
+              <li data-step="2">
+                Profil
+                <span>Infos et commandes.</span>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer id="preview-footer">MOZARF — prévisualisation locale (thème Shopify)</footer>
+
+    <div id="audio-dock" class="audio-dock hidden" aria-live="polite">
+      <div class="audio-dock-inner">
+        <button type="button" class="audio-dock-play" id="audio-dock-play" aria-label="Pause / lecture">❚❚</button>
+        <div class="audio-dock-meta">
+          <span class="audio-dock-title" id="audio-dock-title">Préécoute</span>
+          <span class="audio-dock-time" id="audio-dock-time">0:00 / 0:00</span>
+        </div>
+        <input type="range" class="audio-dock-seek" id="audio-dock-seek" min="0" max="1000" value="0" aria-label="Position dans la piste" />
+      </div>
+      <audio id="buckcamp-audio" preload="metadata"></audio>
+    </div>
+  </div>
+</div>
+
+<script>
+  window.__MOZARF_SHOPIFY_STORE__ = true;
+  window.__MOZARF_DROP_HANDLE__ = "";
+  window.__MOZARF_DROP_ACTIVE_UNTIL__ = "2000-01-01T00:00:00";
+  window.__MOZARF_SHOPIFY_PRODUCTS__ = [
+    {% for product in collections['frontpage'].products %}
+    {% capture cov_full %}{% render 'mozarf-cover-image-url', product: product, width: 2048 %}{% endcapture %}
+    {% capture cov_thumb %}{% render 'mozarf-cover-image-url', product: product, width: 1000 %}{% endcapture %}
+    {% capture cov_med %}{% render 'mozarf-cover-image-url', product: product, width: 600 %}{% endcapture %}
+    {% liquid
+      assign cov_full = cov_full | strip
+      assign cov_thumb = cov_thumb | strip
+      assign cov_med = cov_med | strip
+      assign al_prev = product.metafields.album.preview_link.value
+      assign al_prev_json = ''
+      if al_prev != blank
+        if al_prev.url != blank
+          assign al_prev_json = al_prev.url
+        else
+          assign al_prev_json = al_prev | file_url
+          if al_prev_json == blank
+            assign al_prev_json = al_prev
+          endif
+        endif
+      endif
+      assign al_aud = product.metafields.album.audio_url.value
+      assign al_aud_json = ''
+      if al_aud != blank
+        if al_aud.url != blank
+          assign al_aud_json = al_aud.url
+        else
+          assign al_aud_json = al_aud | file_url
+          if al_aud_json == blank
+            assign al_aud_json = al_aud
+          endif
+        endif
+      endif
+      assign col_h = product.metafields.album.collection_handle.value
+      if col_h == blank
+        assign col_h = product.metafields.album.collection_handle
+      endif
+    %}
+    {
+      "id": {{ product.id }},
+      "title": {{ product.title | json }},
+      "handle": {{ product.handle | json }},
+      "url": {{ product.url | json }},
+      "type": {{ product.type | json }},
+      "price": {{ product.price }},
+      "price_formatted": {{ product.price | money | json }},
+      "image": {{ cov_full | json }},
+      "image_thumb": {{ cov_thumb | json }},
+      "image_medium": {{ cov_med | json }},
+      "tags": {{ product.tags | json }},
+      "description": {{ product.description | strip_html | json }},
+      "preview_link": {{ al_prev_json | json }},
+      "audio_url": {{ al_aud_json | json }},
+      "collection_handle": {{ col_h | json }},
+      "track_count": {{ product.metafields.album.track_count.value | default: product.metafields.album.track_count | json }},
+      "artist_name": {{ product.metafields.album.artist_name.value | default: product.metafields.album.artist_name | json }},
+      "variants": [
+        {% for variant in product.variants %}
+        {
+          "id": {{ variant.id }},
+          "title": {{ variant.title | json }},
+          "price": {{ variant.price }},
+          "available": {{ variant.available }}
+        }{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+      ],
+      "tracks": [
+        {% assign mo_tracks = product.metafields.album.tracklist_mozarf.value %}
+        {% if mo_tracks == blank %}
+          {% assign mo_tracks = product.metafields.custom.tracklist_mozarf.value %}
+        {% endif %}
+        {% if mo_tracks == blank %}
+          {% assign mo_tracks = product.metafields.mozarf.tracklist.value %}
+        {% endif %}
+        {% if mo_tracks != blank %}
+          {% assign track_sep = false %}
+          {% for mo in mo_tracks %}
+            {% if track_sep %},{% endif %}
+            {% assign track_sep = true %}
+            {% render 'mozarf-platform-catalog-track-json', mo: mo, product: product %}
+          {% endfor %}
+        {% else %}
+          {% if col_h != blank and collections[col_h] != blank %}
+            {% assign track_sep = false %}
+            {% for track in collections[col_h].products %}
+              {% liquid
+                assign tr_pl = track.metafields.track.preview_link.value
+                assign tr_au = track.metafields.track.audio_url.value
+                assign tr_pl_s = ''
+                if tr_pl != blank
+                  if tr_pl.url != blank
+                    assign tr_pl_s = tr_pl.url
+                  else
+                    assign tr_pl_s = tr_pl | file_url
+                    if tr_pl_s == blank
+                      assign tr_pl_s = tr_pl
+                    endif
+                  endif
+                endif
+                assign tr_au_s = ''
+                if tr_au != blank
+                  if tr_au.url != blank
+                    assign tr_au_s = tr_au.url
+                  else
+                    assign tr_au_s = tr_au | file_url
+                    if tr_au_s == blank
+                      assign tr_au_s = tr_au
+                    endif
+                  endif
+                endif
+                assign tr_audio_ok = false
+                if tr_pl_s != blank or tr_au_s != blank
+                  assign tr_audio_ok = true
+                endif
+                assign album_artist = product.metafields.album.artist_name.value | default: product.metafields.album.artist_name | default: product.vendor
+              %}
+              {% if track.id != product.id %}
+                {% if track.type == 'Digital Track' or tr_audio_ok %}
+                  {% if track_sep %},{% endif %}
+                  {% assign track_sep = true %}
+                  {
+                    "id": {{ track.id }},
+                    "title": {{ track.title | json }},
+                    "preview_link": {{ tr_pl_s | json }},
+                    "preview_url": {{ tr_pl_s | json }},
+                    "audio_url": {{ tr_au_s | json }},
+                    "bpm": {{ track.metafields.track.bpm.value | default: track.metafields.track.bpm | json }},
+                    "duration": {{ track.metafields.track.track_time.value | default: track.metafields.track.track_time | json }},
+                    "track_time": {{ track.metafields.track.track_time.value | default: track.metafields.track.track_time | json }},
+                    "artist": {{ album_artist | json }},
+                    "cover": {{ cov_med | json }},
+                    "product_url": {{ track.url | prepend: request.origin | json }},
+                    "productUrl": {{ track.url | prepend: request.origin | json }},
+                    "variant_id": {% if track.variants.first %}{{ track.variants.first.id }}{% else %}null{% endif %},
+                    "price": {% if track.variants.first %}{{ track.variants.first.price }}{% else %}0{% endif %}
+                  }
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+        {% endif %}
+      ],
+      "metafields": {
+        "artist_name": {{ product.metafields.album.artist_name.value | default: product.metafields.album.artist_name | json }},
+        "track_count": {{ product.metafields.album.track_count.value | default: product.metafields.album.track_count | json }},
+        "preview_link": {{ al_prev_json | json }},
+        "audio_url": {{ al_aud_json | json }},
+        "collection_handle": {{ col_h | json }}
+      }
+    }{% unless forloop.last %},{% endunless %}
+    {% endfor %}
+  ];
+</script>
+
+<script src="{{ 'mozarf-platform.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Mozarf Platform Catalog",
+  "settings": []
+}
+{% endschema %}
+

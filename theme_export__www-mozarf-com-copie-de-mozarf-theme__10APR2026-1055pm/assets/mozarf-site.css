@@ -1,0 +1,161 @@
+/* BeatStars — Inter partout, fond #0f0f0f */
+:root {
+  --mozarf-font-ui: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mozarf-bs-bg: #0f0f0f;
+  --mozarf-bs-text: #ffffff;
+  --mozarf-bs-muted: #a0a0a0;
+  --mozarf-bs-accent: #f5c518;
+  --mozarf-bs-card: #1a1a1a;
+  --mozarf-bs-nav: #111111;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+}
+
+body.mozarf-beatstars-ui.gradient,
+body.mozarf-beatstars-ui {
+  background: var(--mozarf-bs-bg) !important;
+  color: var(--mozarf-bs-text);
+  letter-spacing: 0.01em;
+}
+
+body.mozarf-beatstars-ui #MainContent,
+body.mozarf-beatstars-ui .content-for-layout {
+  background: var(--mozarf-bs-bg);
+  color: var(--mozarf-bs-text);
+}
+
+body.mozarf-beatstars-ui .header-wrapper,
+body.mozarf-beatstars-ui sticky-header.header-wrapper {
+  background: var(--mozarf-bs-nav) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+body.mozarf-beatstars-ui .header {
+  background: transparent !important;
+}
+
+body.mozarf-beatstars-ui .header__menu-item,
+body.mozarf-beatstars-ui .header__heading-link,
+body.mozarf-beatstars-ui .header__icon {
+  transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+body.mozarf-beatstars-ui .header__menu-item:hover,
+body.mozarf-beatstars-ui .header__heading-link:hover {
+  color: var(--mozarf-bs-accent) !important;
+}
+
+body,
+body h1,
+body h2,
+body h3,
+body h4,
+body h5,
+body h6,
+body p,
+body a:not(.mozarf-cf__pill),
+body button,
+body input,
+body textarea,
+body select,
+body nav,
+body .header,
+body .footer,
+body label {
+  font-family: var(--mozarf-font-ui) !important;
+}
+
+body.mozarf-beatstars-ui a {
+  transition: color 0.2s ease, opacity 0.2s ease, border-color 0.2s ease;
+}
+
+.fa,
+.fa::before,
+[class^="fa-"],
+[class*=" fa-"] {
+  font-family: FontAwesome !important;
+}
+
+.mozarf-mp,
+.mozarf-mp-showcase,
+.mozarf-mp-modal,
+.mozarf-page-dark {
+  font-family: var(--mozarf-font-ui);
+}
+
+h1,
+h2,
+h3,
+.mozarf-mp__title,
+.mozarf-mp-modal__h,
+.mozarf-mp-showcase__title {
+  letter-spacing: 0.04em;
+}
+
+/* Pages texte MOZARF */
+.mozarf-page-dark {
+  background: var(--mozarf-bs-bg);
+  color: var(--mozarf-bs-text);
+  min-height: 50vh;
+  padding-top: 2rem;
+  padding-bottom: 5rem;
+}
+
+.mozarf-page-dark .mozarf-page-dark__title {
+  margin: 0 0 1.25rem;
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--mozarf-bs-text);
+}
+
+.mozarf-page-dark .rte,
+.mozarf-page-dark .rte p,
+.mozarf-page-dark .rte li {
+  color: var(--mozarf-bs-muted);
+  line-height: 1.65;
+}
+
+.mozarf-page-dark .rte a {
+  color: var(--mozarf-bs-accent);
+}
+
+/* Fond page album produit */
+body.mozarf-album-page-template #MainContent {
+  background: var(--mozarf-bs-bg);
+}
+
+/* Filtres couleur (facettes) : éviter qu’une pastille ne s’étire sur toute la page (orange/beige) */
+body.mozarf-beatstars-ui .facets__list-color label.facet-checkbox,
+body.mozarf-beatstars-ui .facets__list-color-swatch label.facet-checkbox {
+  flex-grow: 0 !important;
+}
+body.mozarf-beatstars-ui .facets__list-color .facet-checkbox span[class*="bg-color-"],
+body.mozarf-beatstars-ui .facets__list-color-swatch .facet-checkbox span[class*="bg-color-"] {
+  display: inline-block !important;
+  flex: 0 0 auto !important;
+  width: 1.75rem !important;
+  height: 1.75rem !important;
+  min-width: 1.75rem !important;
+  min-height: 1.75rem !important;
+  max-width: 1.75rem !important;
+  max-height: 1.75rem !important;
+  border-radius: 50% !important;
+  box-sizing: border-box !important;
+}
+body.mozarf-beatstars-ui .facets__list-color .list-menu__item label[class*="Filter-"]:before,
+body.mozarf-beatstars-ui .facets__list-color-swatch .list-menu__item label[class*="Filter-"]:before {
+  content: '' !important;
+  display: inline-block !important;
+  width: 1.75rem !important;
+  height: 1.75rem !important;
+  max-width: 1.75rem !important;
+  max-height: 1.75rem !important;
+  border-radius: 50% !important;
+  flex-shrink: 0 !important;
+  background-size: cover !important;
+  background-position: center !important;
+  margin-right: 0.5rem !important;
+}

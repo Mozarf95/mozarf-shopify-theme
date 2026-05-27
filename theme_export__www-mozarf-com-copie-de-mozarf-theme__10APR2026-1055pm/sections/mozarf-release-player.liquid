@@ -1,0 +1,392 @@
+{% comment %}
+  Lecteur release MOZARF — à placer sur le template Collection (ex. Albums / frontpage).
+  1) Admin → Boutique en ligne → Thème → Modifier le code
+  2) Ajoutez ce fichier dans sections/, les assets dans assets/
+  3) Personnaliser le thème → ouvrez /collections/frontpage → Ajouter une section → « MOZARF lecteur release »
+{% endcomment %}
+
+{%- liquid
+  assign show_section = true
+  if section.settings.only_this_collection_handle != blank
+    if collection == nil or collection.handle != section.settings.only_this_collection_handle
+      assign show_section = false
+    endif
+  endif
+-%}
+
+{% if show_section %}
+  {{ 'mozarf-release.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'mozarf-release-player.js' | asset_url }}" defer></script>
+
+  {% if section.settings.load_google_font %}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet" />
+  {% endif %}
+
+  {% capture mozarf_tracks_json %}
+  [
+    {%- assign need_comma = false -%}
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'track' -%}
+        {%- if need_comma -%},{%- endif -%}
+        {
+          "title": {{ block.settings.title | json }},
+          "src": {{ block.settings.audio_url | json }},
+          "previewOnly": {% if block.settings.locked %}true{% else %}false{% endif %},
+          "productUrl": {{ block.settings.product_url | json }}
+        }
+        {%- assign need_comma = true -%}
+      {%- endif -%}
+    {%- endfor -%}
+  ]
+  {% endcapture %}
+
+  {% assign cover_url = '' %}
+  {% if section.settings.cover_image != blank %}
+    {% assign cover_url = section.settings.cover_image | image_url: width: 1600 %}
+  {% endif %}
+
+  <div
+    class="mozarf-release mozarf-release-player{% if section.settings.full_width %} mozarf-release--fullbleed{% endif %}"
+    data-mozarf-root
+    {{ section.shopify_attributes }}
+  >
+    <script type="application/json" data-mozarf-config>
+      {"artist":{{ section.settings.artist | json }},"cover":{{ cover_url | json }},"tracks":{{ mozarf_tracks_json | strip_newlines }}}
+    </script>
+
+    {% if section.settings.show_inner_header %}
+      <header class="site-header">
+        <a href="{{ routes.root_url }}" class="logo">{{ section.settings.header_logo_text }}</a>
+        <nav class="nav">
+          <a href="#mozarf-release-{{ section.id }}">{{ section.settings.nav_listen_label }}</a>
+          <a href="#mozarf-buy-{{ section.id }}">{{ section.settings.nav_buy_label }}</a>
+        </nav>
+      </header>
+    {% endif %}
+
+    <main>
+      <section class="hero" id="mozarf-release-{{ section.id }}">
+        <div class="hero__art">
+          {% if section.settings.cover_image != blank %}
+            {{
+              section.settings.cover_image
+              | image_url: width: 1200
+              | image_tag: loading: 'lazy', widths: '400,600,800,1000,1200', sizes: '(min-width: 800px) 420px, 100vw', alt: section.settings.album_title
+            }}
+          {% else %}
+            {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+          {% endif %}
+        </div>
+        <div class="hero__meta">
+          {% if section.settings.eyebrow != blank %}
+            <p class="eyebrow">{{ section.settings.eyebrow | escape }}</p>
+          {% endif %}
+          <h1 class="title">{{ section.settings.album_title | escape }}</h1>
+          <p class="artist">{{ section.settings.artist | escape }}</p>
+          {% if section.settings.tagline != blank %}
+            <p class="tagline">{{ section.settings.tagline | escape }}</p>
+          {% endif %}
+          <div class="hero__actions">
+            {% if section.settings.buy_url != blank %}
+              <a class="btn btn--primary" href="{{ section.settings.buy_url }}">{{ section.settings.buy_button_label | escape }}</a>
+            {% else %}
+              <a class="btn btn--primary" href="#mozarf-buy-{{ section.id }}">{{ section.settings.buy_button_label | escape }}</a>
+            {% endif %}
+            <button type="button" class="btn btn--ghost mozarf-js-play-all">{{ section.settings.play_all_label | escape }}</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="tracklist-section">
+        <h2 class="section-title">{{ section.settings.tracklist_heading | escape }}</h2>
+        <ol class="tracklist mozarf-tracklist"></ol>
+      </section>
+
+      <section class="purchase" id="mozarf-buy-{{ section.id }}">
+        <div class="purchase__card">
+          <h2 class="section-title">{{ section.settings.purchase_heading | escape }}</h2>
+          {% if section.settings.formats_text != blank %}
+            <ul class="formats">
+              {% assign fmt_lines = section.settings.formats_text | newline_to_br | split: '<br />' %}
+              {% for line in fmt_lines %}
+                {% assign t = line | strip %}
+                {% if t != '' %}
+                  <li>{{ t }}</li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          {% endif %}
+          {% if section.settings.checkout_url != blank %}
+            <a class="btn btn--primary btn--block" href="{{ section.settings.checkout_url }}" target="_blank" rel="noopener">
+              {{- section.settings.checkout_label | escape -}}
+            </a>
+          {% endif %}
+          {% if section.settings.fineprint != blank %}
+            <p class="fineprint">{{ section.settings.fineprint | escape }}</p>
+          {% endif %}
+        </div>
+      </section>
+    </main>
+
+    {% if section.settings.show_inner_footer %}
+      <footer class="site-footer">
+        <p>{{ section.settings.footer_text | escape }}</p>
+      </footer>
+    {% endif %}
+
+    <div class="player-bar mozarf-player-bar" id="playerBar-{{ section.id }}" aria-hidden="true">
+      <div class="player-bar__inner">
+        <div class="player-bar__track">
+          {% if section.settings.cover_image != blank %}
+            {{
+              section.settings.cover_image
+              | image_url: width: 96
+              | image_tag: class: 'player-bar__thumb mozarf-player-thumb', loading: 'lazy', alt: ''
+            }}
+          {% else %}
+            <img class="player-bar__thumb mozarf-player-thumb" src="" alt="" width="48" height="48" />
+          {% endif %}
+          <div class="player-bar__text">
+            <span class="player-bar__title mozarf-player-title">—</span>
+            <span class="player-bar__artist mozarf-player-artist">{{ section.settings.artist | escape }}</span>
+          </div>
+        </div>
+        <div class="player-bar__controls">
+          <button type="button" class="icon-btn mozarf-js-prev" aria-label="Morceau précédent">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 6h2v12H6V6zm11 12l-8-6 8-6v12z"/></svg>
+          </button>
+          <button type="button" class="icon-btn icon-btn--play mozarf-js-toggle-play" aria-label="Lecture / pause">
+            <svg class="ico-play" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg>
+            <svg class="ico-pause" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+          </button>
+          <button type="button" class="icon-btn mozarf-js-next" aria-label="Morceau suivant">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+          </button>
+        </div>
+        <div class="player-bar__scrub">
+          <span class="time mozarf-time-current">0:00</span>
+          <div
+            class="scrub mozarf-scrub"
+            role="slider"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow="0"
+            tabindex="0"
+          >
+            <div class="scrub__fill mozarf-scrub-fill"></div>
+          </div>
+          <span class="time mozarf-time-total">0:00</span>
+        </div>
+        <div class="player-bar__vol">
+          <button type="button" class="icon-btn mozarf-js-mute" aria-label="Couper le son">
+            <svg class="ico-vol" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M3 10v4h4l5 5V5L7 10H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+          </button>
+          <input type="range" class="vol-range mozarf-vol-range" min="0" max="1" step="0.01" value="1" aria-label="Volume" />
+        </div>
+      </div>
+      <audio class="mozarf-audio" preload="metadata"></audio>
+    </div>
+  </div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "MOZARF lecteur release",
+  "tag": "section",
+  "class": "section-mozarf-release-player",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Pour n’afficher que sur la collection Albums (handle frontpage), laissez le champ ci-dessous sur « frontpage ». Vide = visible partout où la section est ajoutée."
+    },
+    {
+      "type": "text",
+      "id": "only_this_collection_handle",
+      "label": "Handle collection (affichage limité)",
+      "default": "frontpage"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Pleine largeur (sortir du cadre page)",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "load_google_font",
+      "label": "Charger la police DM Sans (Google Fonts)",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_inner_header",
+      "label": "Afficher l’en-tête interne (logo + liens)",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "header_logo_text",
+      "label": "Texte logo",
+      "default": "MOZARF"
+    },
+    {
+      "type": "text",
+      "id": "nav_listen_label",
+      "label": "Lien écouter",
+      "default": "Écouter"
+    },
+    {
+      "type": "text",
+      "id": "nav_buy_label",
+      "label": "Lien acheter",
+      "default": "Acheter"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_inner_footer",
+      "label": "Afficher le pied de page interne",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "footer_text",
+      "label": "Texte pied de page",
+      "default": "© MOZARF · Tous droits réservés"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Sur-titre",
+      "default": "Nouvelle sortie"
+    },
+    {
+      "type": "text",
+      "id": "album_title",
+      "label": "Titre de l’album",
+      "default": "Nom de l’album"
+    },
+    {
+      "type": "text",
+      "id": "artist",
+      "label": "Artiste",
+      "default": "MOZARF"
+    },
+    {
+      "type": "textarea",
+      "id": "tagline",
+      "label": "Accroche courte",
+      "default": "Écoutez en streaming intégral après achat — pré-écoute ci-dessous."
+    },
+    {
+      "type": "image_picker",
+      "id": "cover_image",
+      "label": "Pochette"
+    },
+    {
+      "type": "text",
+      "id": "buy_button_label",
+      "label": "Libellé bouton principal",
+      "default": "Acheter"
+    },
+    {
+      "type": "url",
+      "id": "buy_url",
+      "label": "Lien bouton principal (page produit, etc.)"
+    },
+    {
+      "type": "text",
+      "id": "play_all_label",
+      "label": "Libellé lecture depuis le début",
+      "default": "Lire depuis le début"
+    },
+    {
+      "type": "text",
+      "id": "tracklist_heading",
+      "label": "Titre bloc morceaux",
+      "default": "Morceaux"
+    },
+    {
+      "type": "text",
+      "id": "purchase_heading",
+      "label": "Titre bloc achat",
+      "default": "Formats"
+    },
+    {
+      "type": "textarea",
+      "id": "formats_text",
+      "label": "Liste formats (une ligne = une puce)",
+      "default": "Téléchargement HD — WAV + MP3 320\nStreaming intégral — accès sur cette page"
+    },
+    {
+      "type": "text",
+      "id": "checkout_label",
+      "label": "Libellé bouton checkout",
+      "default": "Ouvrir la boutique"
+    },
+    {
+      "type": "url",
+      "id": "checkout_url",
+      "label": "URL checkout / produit"
+    },
+    {
+      "type": "textarea",
+      "id": "fineprint",
+      "label": "Mention légale / note",
+      "default": "Remplacez par votre lien produit Shopify ou Single."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "track",
+      "name": "Morceau",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Titre",
+          "default": "Titre"
+        },
+        {
+          "type": "url",
+          "id": "audio_url",
+          "label": "URL du fichier audio (MP3 dans Fichiers ou CDN)"
+        },
+        {
+          "type": "checkbox",
+          "id": "locked",
+          "label": "Verrouillé (aperçu désactivé / après achat)",
+          "default": false
+        },
+        {
+          "type": "url",
+          "id": "product_url",
+          "label": "Lien produit (bouton Acheter ce morceau)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "MOZARF lecteur release",
+      "blocks": [
+        {
+          "type": "track",
+          "settings": {
+            "title": "Intro",
+            "locked": false
+          }
+        },
+        {
+          "type": "track",
+          "settings": {
+            "title": "Titre principal",
+            "locked": false
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
