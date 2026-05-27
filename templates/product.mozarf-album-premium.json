@@ -1,0 +1,15 @@
+{
+  "sections": {
+    "mozarf_album_premium": {
+      "type": "mozarf-album-premium",
+      "settings": {
+        "show_back_link": true,
+        "back_label": "Albums",
+        "tracklist_heading": "TRACKLIST",
+        "empty_tracks_hint": "Aucune piste disponible.",
+        "preview_legal_hint": "Aperçu limité · Achat pour téléchargement complet et licence."
+      }
+    }
+  },
+  "order": ["mozarf_album_premium"]
+}
