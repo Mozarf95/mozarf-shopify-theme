@@ -1,0 +1,6 @@
+{
+  "sections": {
+    "main": { "type": "yt-playlist-downloader", "settings": {} }
+  },
+  "order": ["main"]
+}
