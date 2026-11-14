@@ -1,9 +1,14 @@
-# YT Playlist Downloader (usage perso)
+# YT Playlist → MP3 (usage perso, depuis le téléphone)
 
-1. Installer Python + ffmpeg.
-2. `pip install -r requirements.txt`
-3. `python server.py` (laisser la fenêtre ouverte)
-4. Dans Shopify : Pages > Ajouter une page, modèle `page.yt-downloader` (la laisser hors menu, la visibiliser seulement avec le lien direct).
-5. Ouvrir la page, coller le lien de la playlist, cliquer Télécharger.
+## Héberger le serveur (gratuit, depuis un téléphone)
+1. Va sur render.com, crée un compte avec GitHub.
+2. New > Blueprint, choisis ce dépôt (il lit `render.yaml`).
+3. Quand Render demande `YTD_TOKEN`, invente un mot de passe.
+4. Une fois déployé, note l'adresse (ex. `https://mozarf-yt-downloader.onrender.com`).
 
-Le serveur écoute uniquement sur ton ordinateur (127.0.0.1) : la page ne marche que depuis ton PC.
+## Brancher la page Shopify
+Éditeur de thème > page « yt-downloader » > section : colle l'adresse du serveur et le même mot de passe.
+
+## Limites
+- Offre gratuite : le serveur s'endort (1er chargement ~1 min) et coupe les téléchargements trop longs. Prévois des petites playlists.
+- YouTube bloque souvent les serveurs d'hébergement : des erreurs « Sign in to confirm you're not a bot » sont possibles.

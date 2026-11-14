@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: mozarf-yt-downloader
+    runtime: docker
+    dockerContext: .
+    dockerfilePath: ./Dockerfile
+    rootDir: tools/yt-downloader
+    plan: free
+    envVars:
+      - key: YTD_TOKEN
+        sync: false
